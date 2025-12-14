@@ -339,4 +339,4 @@ This source code is licensed for use by the purchasing customer only. Redistribu
 
 ## Support
 
-For questions or issues, please contact support@schedulr.dev
+For questions or issues, please contact support@calendarkit.io
