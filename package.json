@@ -1,6 +1,6 @@
 {
   "name": "@schedulr/pro",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "ProScheduler - Professional React calendar with drag-drop, timezone, i18n, and resources",
   "private": true,
   "scripts": {
