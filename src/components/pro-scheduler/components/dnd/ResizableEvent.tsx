@@ -10,6 +10,7 @@ interface ResizableEventProps {
   children: React.ReactNode;
   className?: string;
   style?: React.CSSProperties;
+  readonly?: boolean;
 }
 
 export const ResizableEvent: React.FC<ResizableEventProps> = ({
@@ -20,6 +21,7 @@ export const ResizableEvent: React.FC<ResizableEventProps> = ({
   children,
   className,
   style,
+  readonly,
 }) => {
   const [isResizing, setIsResizing] = useState(false);
   const [resizeHeight, setResizeHeight] = useState<number | null>(null);
@@ -99,12 +101,13 @@ export const ResizableEvent: React.FC<ResizableEventProps> = ({
       {/* Resize Handle */}
       <div
         className={cn(
-          "absolute bottom-0 left-0 right-0 h-3 cursor-ns-resize z-20 flex items-center justify-center",
-          "opacity-0 group-hover:opacity-100 transition-opacity",
+          readonly ? "cursor-default" : "cursor-ns-resize group-hover:opacity-100",
+          "absolute bottom-0 left-0 right-0 h-3 z-20 flex items-center justify-center",
+          "opacity-0 transition-opacity",
           isResizing && "opacity-100"
         )}
-        onMouseDown={handleResizeStart}
-        onTouchStart={handleResizeStart}
+        onMouseDown={readonly ? undefined : handleResizeStart}
+        onTouchStart={readonly ? undefined : handleResizeStart}
       >
         <div className={cn(
           "w-8 h-1 rounded-full transition-all",

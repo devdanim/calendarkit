@@ -24,7 +24,7 @@ const EventItem = React.memo(({ event, onEventClick }: { event: CalendarEvent, o
             className={cn(
               "text-xs px-2.5 py-1.5 rounded-lg truncate cursor-pointer shadow-sm transition-all duration-200",
               "hover:shadow-md hover:scale-[1.02] hover:z-10",
-              !event.color && "bg-primary/10 text-primary hover:bg-primary/15 border border-primary/20"
+              !event.color && "bg-primary/10 text-primary hover:bg-primary/15 border-[0.5px] border-primary/20"
             )}
             style={event.color ? {
               backgroundColor: `${event.color}20`,
@@ -55,8 +55,8 @@ export const MonthView: React.FC<MonthViewProps> = ({
   
   // Dynamic week days generation
   const weekDays = useMemo(() => {
-    const start = startOfWeek(currentDate, { weekStartsOn: 0 });
-    const end = endOfWeek(currentDate, { weekStartsOn: 0 });
+    const start = startOfWeek(currentDate, { weekStartsOn: 1 });
+    const end = endOfWeek(currentDate, { weekStartsOn: 1 });
     return eachDayOfInterval({ start, end });
   }, [currentDate]);
 
@@ -85,14 +85,14 @@ export const MonthView: React.FC<MonthViewProps> = ({
   }, [events, getZonedDate]);
 
   return (
-    <div className="flex flex-col h-full bg-background border border-border/50 rounded-2xl overflow-hidden min-w-[800px] md:min-w-0 shadow-sm">
+    <div className="flex flex-col h-full bg-background border-[0.5px] scrollbar-hide border-border/50 rounded-2xl overflow-hidden min-w-[800px] md:min-w-0 shadow-sm">
       <div className="overflow-y-auto flex-1 relative">
         {/* Sticky Header */}
-        <div className="grid grid-cols-7 border-b border-border/50 bg-gradient-to-r from-muted/30 via-muted/40 to-muted/30 sticky top-0 z-20 backdrop-blur-sm">
+        <div className="grid grid-cols-7 border-b-[0.5px] border-border/50 bg-gradient-to-r from-muted/30 via-muted/40 to-muted/30 sticky top-0 z-20 backdrop-blur-sm">
           {weekDays.map((day) => (
             <div
               key={day.toISOString()}
-              className="py-3 text-center text-xs font-semibold text-muted-foreground border-r border-border/30 last:border-r-0 uppercase tracking-wider"
+              className="py-3 text-center text-xs font-semibold text-muted-foreground border-r-[0.5px] border-border/30 last:border-r-0 uppercase tracking-wider"
             >
               {format(day, 'EEE', { locale })}
             </div>
@@ -112,7 +112,7 @@ export const MonthView: React.FC<MonthViewProps> = ({
               id={cellId}
               date={day}
               className={cn(
-                "h-[130px] p-2 border-b border-r border-border/30 last:border-r-0 relative transition-all duration-200 hover:bg-accent/5 flex flex-col gap-1.5 overflow-hidden group",
+                "h-[130px] p-2 border-b-[0.5px] border-r-[0.5px] border-border/30 last:border-r-0 relative transition-all duration-200 hover:bg-accent/5 flex flex-col gap-1.5 overflow-hidden group",
                 !isCurrentMonth && "bg-muted/5 text-muted-foreground/60",
                 isToday(day) && "bg-primary/5 ring-1 ring-inset ring-primary/20"
               )}
@@ -134,7 +134,7 @@ export const MonthView: React.FC<MonthViewProps> = ({
                 )}
               </div>
 
-              <div className="flex-1 flex flex-col gap-1 overflow-y-auto scrollbar-thin">
+              <div className="flex-1 flex flex-col gap-1 scrollbar-hide overflow-y-auto overflow-x-hidden">
                 {dayEvents.slice(0, 4).map(event => (
                    <EventItem key={`${event.id}-${dayKey}`} event={event} onEventClick={onEventClick} />
                 ))}

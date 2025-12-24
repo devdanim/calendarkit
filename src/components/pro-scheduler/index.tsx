@@ -274,18 +274,11 @@ export const Scheduler: React.FC<CalendarProps> = ({
                     onEventCreate={handleCreateEvent}
                     timezone={timezone}
                     onTimezoneChange={onTimezoneChange}
-                    className="w-full h-full border-r"
+                    className="w-full h-full"
                     readOnly={readOnly}
                     calendars={calendars}
                     onCalendarToggle={onCalendarToggle}
                     translations={t}
-                    events={filteredEvents}
-                    onImport={(importedEvents) => {
-                      // Call onEventCreate for each imported event
-                      importedEvents.forEach(event => {
-                        onEventCreate?.(event);
-                      });
-                    }}
                 />
             </motion.div>
 
@@ -346,6 +339,7 @@ export const Scheduler: React.FC<CalendarProps> = ({
                                 onEventResize={handleEventResize}
                                 timezone={timezone}
                                 locale={locale}
+                                readonly={readOnly}
                                 />
                             )}
                             {view === 'day' && (
@@ -357,6 +351,7 @@ export const Scheduler: React.FC<CalendarProps> = ({
                                     onEventResize={handleEventResize}
                                     timezone={timezone}
                                     locale={locale}
+                                    readonly={readOnly}
                                 />
                             )}
                             {view === 'agenda' && (

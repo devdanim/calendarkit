@@ -119,14 +119,14 @@ export const EventContextMenu: React.FC<EventContextMenuProps> = ({
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: -5 }}
         transition={{ duration: 0.15, ease: 'easeOut' }}
-        className="fixed z-[100] min-w-[180px] bg-background border border-border rounded-xl shadow-xl overflow-hidden"
+        className="fixed z-[100] min-w-[180px] bg-background border-[0.5px] border-border rounded-xl shadow-xl overflow-hidden"
         style={{
           left: adjustedPosition.x,
           top: adjustedPosition.y,
         }}
       >
         {/* Event preview header */}
-        <div className="px-3 py-2 border-b border-border bg-muted/30">
+        <div className="px-3 py-2 border-b-[0.5px] border-border bg-muted/30">
           <div className="flex items-center gap-2">
             <div
               className="w-2.5 h-2.5 rounded-full shrink-0"

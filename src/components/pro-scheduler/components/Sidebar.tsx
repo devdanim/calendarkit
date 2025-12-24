@@ -7,7 +7,6 @@ import { toZonedTime } from 'date-fns-tz';
 import { format } from 'date-fns';
 
 import { ViewType, CalendarEvent } from '../types';
-import { downloadICS, importICSFile } from '../lib/ics';
 
 interface SidebarProps {
   currentDate: Date;
@@ -42,10 +41,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   calendars,
   onCalendarToggle,
   translations,
-  events,
-  onImport
 }) => {
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const [calendarsOpen, setCalendarsOpen] = useState(true);
   const [timezoneOpen, setTimezoneOpen] = useState(false);
   const [now, setNow] = useState<Date | null>(null);
@@ -139,7 +135,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const selectedTimezoneLabel = selectedTzObj ? formatTzLabel(selectedTzObj) : (translations?.localTime || 'Local Time');
 
   return (
-    <div className={cn("flex flex-col w-[260px] h-full bg-gradient-to-b from-background via-background to-muted/10 border-r border-border/50 pt-4 pb-4 overflow-y-auto hidden lg:flex", className)}>
+    <div className={cn("flex flex-col w-[260px] overflow-x-hidden h-full bg-gradient-to-b scrollbar-hide from-background via-background to-muted/10 pt-4 pb-4 overflow-y-auto hidden lg:flex", className)}>
       {!readOnly && (
         <div className="px-4 mb-6">
             <Button
@@ -156,7 +152,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
       <div className="flex-1 px-4 space-y-5 mt-5">
         {/* Calendars List */}
-        <div className="bg-muted/20 rounded-2xl p-3 border border-border/30">
+        <div className="bg-muted/20 rounded-2xl p-3 border-[0px] border-border/30">
           <div
             className="flex items-center justify-between cursor-pointer hover:bg-accent/50 p-2 -m-1 rounded-xl mb-2 transition-all duration-200"
             onClick={() => setCalendarsOpen(!calendarsOpen)}
@@ -213,64 +209,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
           )}
         </div>
       </div>
-      
-      {/* Import/Export Section */}
-      {!readOnly && (
-        <div className="px-4 pt-5">
-          <div className="bg-muted/20 rounded-2xl p-3 border border-border/30">
-            <div className="flex items-center gap-2 mb-3">
-              <span className="text-sm font-semibold text-foreground">{translations?.importExport || 'Import / Export ICS'}</span>
-            </div>
-            <div className="flex gap-2">
-              <button
-                onClick={() => fileInputRef.current?.click()}
-                className="flex-1 flex items-center justify-center gap-2 bg-background/50 hover:bg-background/80 border border-border/50 rounded-xl py-2.5 px-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all duration-200"
-              >
-                <Upload className="w-4 h-4" />
-                <span className="font-medium">{translations?.import || 'Import'}</span>
-              </button>
-              <button
-                onClick={() => {
-                  if (events && events.length > 0) {
-                    downloadICS(events, `calendar-${format(new Date(), 'yyyy-MM-dd')}.ics`);
-                  }
-                }}
-                disabled={!events || events.length === 0}
-                className={cn(
-                  "flex-1 flex items-center justify-center gap-2 bg-background/50 hover:bg-background/80 border border-border/50 rounded-xl py-2.5 px-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all duration-200",
-                  (!events || events.length === 0) && "opacity-50 cursor-not-allowed"
-                )}
-              >
-                <Download className="w-4 h-4" />
-                <span className="font-medium">{translations?.export || 'Export'}</span>
-              </button>
-            </div>
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept=".ics,.ical,.ifb,.icalendar"
-              className="hidden"
-              onChange={async (e) => {
-                const file = e.target.files?.[0];
-                if (file && onImport) {
-                  try {
-                    const importedEvents = await importICSFile(file);
-                    onImport(importedEvents);
-                  } catch (error) {
-                    console.error('Failed to import ICS file:', error);
-                  }
-                }
-                // Reset input
-                e.target.value = '';
-              }}
-            />
-          </div>
-        </div>
-      )}
 
       {/* Timezone Selector - Custom UI */}
       <div className="mt-auto px-4 pt-5">
-          <div className="bg-muted/20 rounded-2xl p-3 border border-border/30">
+          <div className="bg-muted/20 rounded-2xl p-3">
               <div className="flex items-center gap-2 mb-3">
                   <div className="p-1.5 bg-primary/10 rounded-lg">
                       <Globe className="w-4 h-4 text-primary" />
@@ -281,7 +223,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               <div className="relative">
                 <button
                     onClick={() => setTimezoneOpen(!timezoneOpen)}
-                    className="w-full flex items-center justify-between bg-background/50 hover:bg-background/80 border border-border/50 rounded-xl py-2.5 pl-4 pr-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/50 transition-all duration-200 text-left"
+                    className="w-full flex items-center justify-between bg-blue-200/40  hover:bg-blue-200/80 rounded-xl py-2.5 pl-4 pr-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/50 transition-all duration-200 text-left"
                 >
                     <div className="flex-1 truncate mr-2 font-medium">{selectedTimezoneLabel}</div>
                     <ChevronDown className={cn("w-4 h-4 text-muted-foreground transition-transform duration-200", timezoneOpen && "rotate-180")} />
@@ -290,7 +232,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 {timezoneOpen && (
                     <>
                         <div className="fixed inset-0 z-40" onClick={() => setTimezoneOpen(false)} />
-                        <div className="absolute bottom-full left-0 w-full mb-2 bg-background border border-border rounded-xl shadow-2xl z-50 max-h-[260px] overflow-y-auto p-1.5 animate-in fade-in zoom-in-95 duration-200 backdrop-blur-none">
+                        <div className="absolute bottom-full left-0 w-full mb-2 bg-background rounded-xl shadow-2xl z-50 max-h-[260px] overflow-y-auto p-1.5 animate-in fade-in zoom-in-95 duration-200 backdrop-blur-none">
                             {timezones.map(tz => (
                                 <div
                                     key={tz.value}

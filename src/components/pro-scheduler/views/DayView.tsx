@@ -16,6 +16,7 @@ interface DayViewProps {
   onEventResize?: (event: CalendarEvent, newEnd: Date) => void;
   timezone?: string;
   locale?: Locale;
+  readonly?: boolean;
 }
 
 export const DayView: React.FC<DayViewProps> = ({
@@ -25,7 +26,8 @@ export const DayView: React.FC<DayViewProps> = ({
   onTimeSlotClick,
   onEventResize,
   timezone,
-  locale
+  locale,
+  readonly
 }) => {
   const hours = Array.from({ length: 24 }, (_, i) => i);
   const hourHeight = 80; // Larger height for Day View
@@ -41,8 +43,12 @@ export const DayView: React.FC<DayViewProps> = ({
   // Auto-scroll to 8am on mount
   React.useEffect(() => {
     if (scrollContainerRef.current) {
-      const scrollTo8am = 8 * hourHeight;
-      scrollContainerRef.current.scrollTop = scrollTo8am;
+        const scrollToActualTime = () => {
+            const currentHour = now.getHours();
+            const offsetHour = 3; // Scroll a bit above current hour
+            return (currentHour - offsetHour) * hourHeight;
+        }
+      scrollContainerRef.current.scrollTop = scrollToActualTime();
     }
   }, []);
 
@@ -64,9 +70,9 @@ export const DayView: React.FC<DayViewProps> = ({
   const nowFormat = locale?.code === 'fr' ? 'H:mm' : 'h:mm a';
 
   return (
-    <div className="flex flex-col h-full bg-background border border-border/50 rounded-2xl overflow-hidden shadow-sm">
+    <div className="flex flex-col h-full bg-background border-[0.5px] border-border/50 rounded-2xl overflow-hidden shadow-sm">
         {/* Header */}
-        <div className="px-6 py-4 border-b border-border/50 bg-gradient-to-r from-muted/20 via-background to-muted/20 text-center shrink-0">
+        <div className="px-6 py-4 border-b-[0.5px] border-border/50 bg-gradient-to-r from-muted/20 via-background to-muted/20 text-center shrink-0">
             <div className="flex items-center justify-center gap-3">
                 <h2 className="text-xl font-semibold capitalize text-foreground">
                     {format(currentDate, 'EEEE, MMMM d, yyyy', { locale })}
@@ -83,15 +89,15 @@ export const DayView: React.FC<DayViewProps> = ({
         <div ref={scrollContainerRef} className="flex-1 overflow-y-auto relative">
             <div className="flex relative" style={{ height: hours.length * hourHeight }}>
                 {/* Time Labels */}
-                <div className="w-20 bg-muted/5 border-r border-border/30 relative">
+                <div className="w-20 bg-muted/5 border-r-[0.5px] border-border/30 relative">
                      {hours.map((hour) => (
                         <div
                             key={hour}
-                            className="relative border-b border-border/20 box-border"
+                            className="relative w-full"
                             style={{ height: hourHeight }}
                         >
                             {hour !== 0 && (
-                                <span className="absolute -top-3 left-1/2 -translate-x-1/2 text-[11px] text-muted-foreground/80 font-medium tabular-nums bg-background px-1.5 py-0.5 rounded-md">
+                                <span className="absolute w-full text-center -top-3 left-1/2 -translate-x-1/2 text-[11px] text-muted-foreground/80 font-medium tabular-nums bg-background px-1.5 py-0.5 rounded-md">
                                     {format(new Date().setHours(hour, 0, 0, 0), timeFormat, { locale })}
                                 </span>
                             )}
@@ -119,7 +125,7 @@ export const DayView: React.FC<DayViewProps> = ({
                          return (
                             <div
                                 key={hour}
-                                className="border-b border-dashed border-border/20 box-border relative hover:bg-accent/5 transition-colors"
+                                className="border-b-[0.5px] border-dashed border-border/20 box-border relative hover:bg-accent/5 transition-colors"
                                 style={{ height: hourHeight }}
                             >
                                 {/* 4 x 15-minute intervals */}
@@ -187,7 +193,7 @@ export const DayView: React.FC<DayViewProps> = ({
                          <DraggableEvent
                             key={`${event.id}-${currentDate.toISOString()}`}
                             event={event}
-                            className="absolute z-10 transition-all"
+                            className={`absolute z-10 transition-all ${readonly ? "cursor-default" : ""}`}
                             style={{
                                 top: `${top}px`,
                                 height: `${Math.max(height, 28)}px`,
@@ -197,6 +203,7 @@ export const DayView: React.FC<DayViewProps> = ({
                             }}
                          >
                             <ResizableEvent
+                                readonly={readonly}
                                 event={event}
                                 hourHeight={hourHeight}
                                 onResize={onEventResize}
@@ -205,8 +212,9 @@ export const DayView: React.FC<DayViewProps> = ({
                             >
                                 <div
                                     className={cn(
-                                        "h-full rounded-lg border shadow-sm overflow-hidden cursor-pointer transition-all hover:shadow-lg hover:z-20 group",
+                                        "h-full rounded-lg border-[0.5px] shadow-sm overflow-hidden transition-all hover:shadow-lg hover:z-20 group",
                                         "glass backdrop-blur-sm",
+                                        readonly ? "cursor-default" : "cursor-grab active:cursor-grabbing",
                                         !event.color && "bg-primary/10 border-primary/20",
                                         isShortEvent ? "px-2 flex items-center" : "px-3 py-2",
                                         count > 1 && "border-l-4"

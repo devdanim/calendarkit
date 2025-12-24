@@ -16,6 +16,7 @@ interface WeekViewProps {
   onEventResize?: (event: CalendarEvent, newEnd: Date) => void;
   timezone?: string;
   locale?: Locale;
+  readonly?: boolean;
 }
 
 export const WeekView: React.FC<WeekViewProps> = ({
@@ -25,11 +26,12 @@ export const WeekView: React.FC<WeekViewProps> = ({
   onTimeSlotClick,
   onEventResize,
   timezone,
-  locale
+  locale,
+  readonly,
 }) => {
   // Generate days for the week
-  const start = startOfWeek(currentDate, { weekStartsOn: 0 });
-  const end = endOfWeek(currentDate, { weekStartsOn: 0 });
+  const start = startOfWeek(currentDate, { weekStartsOn: 1 });
+  const end = endOfWeek(currentDate, { weekStartsOn: 1 });
   const weekDays = eachDayOfInterval({ start, end });
   const hours = Array.from({ length: 24 }, (_, i) => i);
 
@@ -46,8 +48,12 @@ export const WeekView: React.FC<WeekViewProps> = ({
   // Auto-scroll to 8am on mount for better UX
   React.useEffect(() => {
     if (scrollContainerRef.current) {
-      const scrollTo8am = 8 * hourHeight; // 8am position
-      scrollContainerRef.current.scrollTop = scrollTo8am;
+        const scrollToActualTime = () => {
+            const currentHour = now.getHours();
+            const offsetHour = 4; // Scroll a bit above current hour
+            return (currentHour - offsetHour) * hourHeight;
+        }
+      scrollContainerRef.current.scrollTop = scrollToActualTime();
     }
   }, []);
 
@@ -56,7 +62,7 @@ export const WeekView: React.FC<WeekViewProps> = ({
     return timezone ? toZonedTime(date, timezone) : date;
   };
 
-  const zonedNow = getZonedDate(now);
+  const zonedNow = getZonedDate(new Date());
 
   const getTimezoneDisplay = (tz: string | undefined) => {
       // Use zonedNow if tz matches, otherwise calculate for specific tz if needed
@@ -107,21 +113,21 @@ export const WeekView: React.FC<WeekViewProps> = ({
   const nowFormat = locale?.code === 'fr' ? 'H:mm' : 'h:mm';
 
   return (
-    <div className="flex flex-col h-full bg-background border border-border/50 rounded-2xl overflow-hidden min-w-[800px] md:min-w-0 shadow-sm">
+    <div className="flex flex-col h-full bg-background border-[0.5px] border-border/50 rounded-2xl overflow-hidden min-w-[800px] md:min-w-0 shadow-sm">
       {/* Scrollable Container - includes header for proper alignment */}
       <div
         ref={scrollContainerRef}
-        className="flex-1 overflow-y-auto relative bg-background scroll-smooth"
+        className="flex-1 overflow-y-auto scrollbar-hide relative bg-background scroll-smooth"
         style={{ scrollbarGutter: 'stable' }}
       >
         {/* Header - sticky inside scroll container */}
-        <div className="flex border-b border-border/50 bg-gradient-to-r from-muted/20 via-background to-muted/20 z-20 sticky top-0 backdrop-blur-sm">
-          <div className="flex-none p-3 text-center text-xs font-semibold text-muted-foreground w-16 flex items-center justify-center border-r border-border/30 bg-muted/10">
+        <div className="flex border-b-[0.5px] border-border/50 bg-gradient-to-r from-muted/20 via-background to-muted/20 z-20 sticky top-0 backdrop-blur-sm">
+          <div className="flex-none p-3 text-center text-xs font-semibold text-muted-foreground w-16 flex items-center justify-center border-r-[0.5px] border-border/30 bg-muted/10">
             {getTimezoneDisplay(timezone)}
           </div>
           <div className="flex-1 grid grid-cols-7">
               {weekDays.map((day, index) => (
-              <div key={day.toISOString()} className={cn("py-3 px-2 text-center", index > 0 && "border-l border-border/30")}>
+              <div key={day.toISOString()} className={cn("py-3 px-2 text-center", index > 0 && "border-l-[0.5px] border-border/30")}>
                   <div className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5">{format(day, 'EEE', { locale })}</div>
                   <div className={cn(
                     "w-9 h-9 flex items-center justify-center rounded-xl mx-auto text-sm font-semibold transition-all duration-200",
@@ -142,11 +148,11 @@ export const WeekView: React.FC<WeekViewProps> = ({
           style={{ height: hours.length * hourHeight }}
         >
           {/* Time Labels Column */}
-          <div className="flex-none w-16 border-r border-border/30 relative bg-muted/5">
+          <div className="flex-none w-16 border-r-[0.5px] border-border/30 relative bg-muted/5">
             {hours.map((hour) => (
                  <div
                    key={hour}
-                   className="relative w-full text-[11px] text-muted-foreground/80 text-right pr-3 font-medium tabular-nums box-border border-b border-border/20"
+                   className="relative w-full text-[11px] text-muted-foreground/80 text-right pr-3 font-medium tabular-nums box-border"
                    style={{ height: hourHeight }}
                  >
                    <span className="block -translate-y-1/2">
@@ -166,13 +172,13 @@ export const WeekView: React.FC<WeekViewProps> = ({
                 });
 
                 return (
-                <div key={day.toISOString()} className={cn("relative h-full", dayIndex > 0 && "border-l border-border/30")}>
+                <div key={day.toISOString()} className={cn("relative h-full", dayIndex > 0 && "border-l-[0.5px] border-border/30")}>
                     {/* Grid Rows (Droppable Cells) */}
                     {hours.map((hour) => {
                         return (
                             <div
                                 key={hour}
-                                className="w-full border-b border-dashed border-border/20 box-border relative hover:bg-accent/5 transition-colors"
+                                className="w-full border-b-[0.5px] border-dashed border-border/20 box-border relative hover:bg-accent/5 transition-colors"
                                 style={{ height: hourHeight }}
                             >
                                 {/* 4 x 15-minute intervals */}
@@ -247,7 +253,7 @@ export const WeekView: React.FC<WeekViewProps> = ({
                             <DraggableEvent
                                 key={`${event.id}-${day.toISOString()}`}
                                 event={event}
-                                className="absolute z-10 transition-all"
+                                className={`absolute z-10 transition-all ${readonly ? "cursor-default" : ""}`}
                                 style={{
                                     top: `${top}px`,
                                     height: `${Math.max(height, 20)}px`,
@@ -258,6 +264,7 @@ export const WeekView: React.FC<WeekViewProps> = ({
                                 }}
                             >
                                 <ResizableEvent
+                                    readonly={readonly}
                                     event={event}
                                     hourHeight={hourHeight}
                                     onResize={onEventResize}
@@ -266,8 +273,9 @@ export const WeekView: React.FC<WeekViewProps> = ({
                                 >
                                     <div
                                         className={cn(
-                                            "rounded-md border shadow-sm transition-all hover:shadow-md cursor-grab active:cursor-grabbing group overflow-hidden relative",
+                                            "rounded-md border shadow-sm transition-all hover:shadow-md group overflow-hidden relative",
                                             "glass",
+                                            readonly ? "cursor-default" : "cursor-grab active:cursor-grabbing",
                                             !event.color && "border-primary/20 bg-primary/10",
                                             isShortEvent ? "px-1 flex items-center justify-center" : "p-2",
                                             // Add active border for overlapped events to distinguish them
@@ -339,7 +347,7 @@ export const WeekView: React.FC<WeekViewProps> = ({
         <div 
             className="absolute left-0 w-16 pointer-events-none z-30 flex justify-end pr-2"
             style={{
-                top: `${(zonedNow.getHours() * 60 + zonedNow.getMinutes()) / 60 * hourHeight}px`,
+                top: `${(zonedNow.getHours() * 60 + zonedNow.getMinutes()) / 60 * hourHeight + 80}px`,
             }}
         >
             <span className="text-[10px] font-bold text-primary-foreground bg-primary px-1.5 py-0.5 rounded-md shadow-md -translate-y-1/2 backdrop-blur-none">
