@@ -46,7 +46,7 @@ export const CalendarHeader: React.FC<CalendarHeaderProps> = ({
   ] as const;
 
   return (
-    <div className="flex flex-col md:flex-row items-center justify-between px-3 md:px-5 py-3 border-b border-border/50 bg-gradient-to-r from-background via-background to-muted/20 gap-3 md:gap-0 min-h-[64px]">
+    <div className="flex flex-col md:flex-row items-center justify-between px-3 md:px-5 py-3 border-b-[0px] border-border/50 bg-gradient-to-r from-background via-background to-muted/20 gap-3 md:gap-0 min-h-[64px]">
       {/* Left Section: Menu, Navigation, Title */}
       <div className="flex items-center gap-2 w-full md:w-auto justify-between md:justify-start">
         <div className="flex items-center gap-2 md:gap-3">
@@ -64,7 +64,7 @@ export const CalendarHeader: React.FC<CalendarHeaderProps> = ({
             <Button
               variant="outline"
               onClick={onToday}
-              className="h-9 px-5 rounded-xl text-sm font-medium hidden sm:inline-flex border-border/60 hover:border-primary/40 hover:bg-primary/5 hover:text-primary transition-all duration-200"
+              className="h-9 px-5 rounded-xl text-sm font-medium hidden sm:inline-flex border-[0.5px] border-border/60 hover:border-primary/40 hover:bg-primary/5 hover:text-primary transition-all duration-200"
             >
                 {translations.today}
             </Button>
@@ -130,7 +130,7 @@ export const CalendarHeader: React.FC<CalendarHeaderProps> = ({
 
         {/* View Switcher */}
         {!hideViewSwitcher && (
-          <div className="flex items-center bg-muted/50 backdrop-blur-sm rounded-xl p-1 border border-border/30">
+          <div className="flex items-center bg-muted/50 backdrop-blur-sm rounded-xl p-1">
             {viewConfig.map(({ key, icon: Icon }) => (
               <Button
                 key={key}
@@ -140,7 +140,7 @@ export const CalendarHeader: React.FC<CalendarHeaderProps> = ({
                 className={cn(
                   "h-8 px-3 text-xs rounded-lg transition-all duration-200 gap-1.5",
                   view === key
-                    ? "bg-background shadow-sm text-foreground font-medium border border-border/50"
+                    ? "bg-background shadow-sm text-foreground font-medium border-[0.5px] border-border/50"
                     : "text-muted-foreground hover:text-foreground hover:bg-background/50"
                 )}
               >
