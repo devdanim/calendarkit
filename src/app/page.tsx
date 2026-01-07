@@ -1,8 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Scheduler } from "@/components/pro-scheduler";
-import { CalendarEvent, ViewType, Resource, EventType } from "@/components/pro-scheduler/types";
+import { Scheduler, CalendarEvent, ViewType, Resource, EventType } from "@/index";
 
 interface Calendar {
   id: string;

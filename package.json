@@ -1,18 +1,64 @@
 {
-  "name": "@schedulr/pro",
+  "name": "calendarkit-pro",
   "version": "1.1.0",
-  "description": "ProScheduler - Professional React calendar with drag-drop, timezone, i18n, and resources",
-  "private": true,
+  "description": "Professional React calendar with drag-drop, recurring events, timezone support, resource scheduling, and i18n",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
+      },
+      "require": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      }
+    }
+  },
+  "sideEffects": false,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "build:lib": "tsup",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "prepublishOnly": "npm run build:lib"
   },
+  "keywords": [
+    "react",
+    "calendar",
+    "scheduler",
+    "drag-drop",
+    "recurring-events",
+    "timezone",
+    "i18n",
+    "resource-scheduling",
+    "datepicker",
+    "events",
+    "typescript",
+    "ui-component",
+    "calendarkit"
+  ],
+  "author": "CalendarKit Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Zesor/calendarkit-pro.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Zesor/calendarkit-pro/issues"
+  },
+  "homepage": "https://calendarkit.io",
   "peerDependencies": {
-    "react": ">=18",
-    "react-dom": ">=18",
-    "next": ">=13"
+    "react": "^18.0.0 || ^19.0.0",
+    "react-dom": "^18.0.0 || ^19.0.0"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
@@ -34,8 +80,10 @@
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "autoprefixer": "^10.4.20",
+    "next": "^15.0.0",
     "postcss": "^8.4.49",
     "tailwindcss": "^3.4.17",
+    "tsup": "^8.3.5",
     "typescript": "^5.7.2"
   }
 }

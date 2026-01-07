@@ -1,74 +1,56 @@
-# ProScheduler
+# CalendarKit Pro
 
-A professional React calendar component with drag-and-drop, timezone support, internationalization, resource views, and recurring events.
+A professional, feature-rich React calendar component with drag-and-drop, recurring events, timezone support, resource scheduling, and internationalization.
+
+[![npm version](https://badge.fury.io/js/calendarkit-pro.svg)](https://www.npmjs.com/package/calendarkit-pro)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## Features
 
-- **Multiple Views**: Month, Week, Day, Agenda, and Resource views
-- **Drag & Drop**: Move and resize events with smooth animations
-- **Timezone Support**: Full timezone handling with automatic conversion
-- **Internationalization**: Built-in i18n support (EN/FR included)
-- **Dark Mode**: Toggle between light and dark themes
-- **Resources**: Schedule across multiple resources (rooms, people, equipment)
-- **Recurring Events**: Support for daily, weekly, monthly, and yearly recurrence
-- **Event Types**: Categorize events with custom types and colors
-- **Multiple Calendars**: Filter events by calendar with toggle visibility
-- **Virtualized Rendering**: Smooth performance with many events
-- **Custom Event Forms**: Override the default event form with your own
-- **TypeScript Support**: Full type definitions included
+- **5 Views** - Month, Week, Day, Agenda, and Resource views
+- **Drag & Drop** - Move events with smooth animations and grid snapping
+- **Event Resize** - Drag event edges to adjust duration
+- **Recurring Events** - Daily, weekly, monthly, yearly with RRule support
+- **Timezone Support** - Full IANA timezone handling
+- **i18n Ready** - Built-in English/French, fully customizable
+- **Resource Scheduling** - Schedule across rooms, people, or equipment
+- **Dark Mode** - Built-in theme toggle
+- **ICS Import/Export** - RFC 5545 compliant
+- **Mobile Friendly** - Touch gestures and responsive layout
+- **TypeScript** - Full type definitions included
+- **High Performance** - Handles 10,000+ events
+
+## Installation
+
+```bash
+npm install calendarkit-pro
+```
+
+## Requirements
+
+CalendarKit Pro requires **TailwindCSS**. Add the package to your Tailwind config:
+
+```js
+// tailwind.config.js
+module.exports = {
+  content: [
+    // ... your paths
+    './node_modules/calendarkit-pro/**/*.{js,mjs}',
+  ],
+}
+```
 
 ## Quick Start
 
-### Installation
-
-```bash
-npm install
-```
-
-### Development
-
-```bash
-npm run dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) to see the demo.
-
-### Production Build
-
-```bash
-npm run build
-npm run start
-```
-
-## Usage
-
 ```tsx
-import { Scheduler } from "@/components/pro-scheduler";
-import { CalendarEvent, ViewType, Resource, EventType } from "@/components/pro-scheduler/types";
-import { fr, enUS } from "date-fns/locale";
+import { Scheduler } from 'calendarkit-pro';
+import type { CalendarEvent, ViewType } from 'calendarkit-pro';
+import { useState } from 'react';
 
 function MyCalendar() {
   const [events, setEvents] = useState<CalendarEvent[]>([]);
-  const [view, setView] = useState<ViewType>("week");
+  const [view, setView] = useState<ViewType>('week');
   const [date, setDate] = useState(new Date());
-  const [isDarkMode, setIsDarkMode] = useState(false);
-  const [language, setLanguage] = useState<"en" | "fr">("en");
-  const [timezone, setTimezone] = useState("America/New_York");
-
-  const calendars = [
-    { id: "work", label: "Work", color: "#3b82f6", active: true },
-    { id: "personal", label: "Personal", color: "#10b981", active: true },
-  ];
-
-  const resources: Resource[] = [
-    { id: "room-a", label: "Conference Room A", color: "#3b82f6" },
-    { id: "room-b", label: "Conference Room B", color: "#10b981" },
-  ];
-
-  const eventTypes: EventType[] = [
-    { id: "meeting", label: "Meeting", color: "#3b82f6" },
-    { id: "focus", label: "Focus Time", color: "#8b5cf6" },
-  ];
 
   return (
     <Scheduler
@@ -77,58 +59,52 @@ function MyCalendar() {
       onViewChange={setView}
       date={date}
       onDateChange={setDate}
-      calendars={calendars}
-      onCalendarToggle={(id, active) => { /* toggle calendar */ }}
-      onEventCreate={(event) => { /* create event */ }}
-      onEventUpdate={(event) => { /* update event */ }}
-      onEventDelete={(eventId) => { /* delete event */ }}
-      resources={resources}
-      eventTypes={eventTypes}
-      isDarkMode={isDarkMode}
-      onThemeToggle={() => setIsDarkMode(!isDarkMode)}
-      timezone={timezone}
-      onTimezoneChange={setTimezone}
-      language={language}
-      onLanguageChange={(lang) => setLanguage(lang)}
-      locale={language === "fr" ? fr : enUS}
+      onEventCreate={(event) => {
+        setEvents([...events, { ...event, id: crypto.randomUUID() } as CalendarEvent]);
+      }}
+      onEventUpdate={(event) => {
+        setEvents(events.map(e => e.id === event.id ? event : e));
+      }}
+      onEventDelete={(id) => {
+        setEvents(events.filter(e => e.id !== id));
+      }}
     />
   );
 }
 ```
 
-## Props Reference
+## Props
 
-### Scheduler Props
+| Prop | Type | Description |
+|------|------|-------------|
+| `events` | `CalendarEvent[]` | Array of events to display |
+| `view` | `ViewType` | Current view: `'month'` \| `'week'` \| `'day'` \| `'agenda'` \| `'resource'` |
+| `date` | `Date` | Currently focused date |
+| `onViewChange` | `(view: ViewType) => void` | View change callback |
+| `onDateChange` | `(date: Date) => void` | Date change callback |
+| `onEventCreate` | `(event: Partial<CalendarEvent>) => void` | Event creation callback |
+| `onEventUpdate` | `(event: CalendarEvent) => void` | Event update callback |
+| `onEventDelete` | `(eventId: string) => void` | Event deletion callback |
+| `onEventResize` | `(event, start, end) => void` | Event resize callback |
+| `calendars` | `Calendar[]` | Multiple calendar support |
+| `resources` | `Resource[]` | Resources for resource view |
+| `eventTypes` | `EventType[]` | Pre-defined event types |
+| `timezone` | `string` | IANA timezone (e.g., `'America/New_York'`) |
+| `onTimezoneChange` | `(tz: string) => void` | Timezone change callback |
+| `language` | `'en'` \| `'fr'` | UI language |
+| `translations` | `Partial<CalendarTranslations>` | Custom translations |
+| `locale` | `Locale` | date-fns locale for formatting |
+| `isDarkMode` | `boolean` | Enable dark mode |
+| `onThemeToggle` | `() => void` | Dark mode toggle callback |
+| `theme` | `CalendarTheme` | Custom theme colors |
+| `readOnly` | `boolean` | Disable editing |
+| `isLoading` | `boolean` | Show loading skeletons |
+| `hideViewSwitcher` | `boolean` | Hide view switcher |
+| `renderEventForm` | `(props) => ReactNode` | Custom event form |
 
-| Prop | Type | Required | Description |
-|------|------|----------|-------------|
-| `events` | `CalendarEvent[]` | Yes | Array of events to display |
-| `view` | `ViewType` | Yes | Current view: "month", "week", "day", "agenda", or "resource" |
-| `onViewChange` | `(view: ViewType) => void` | Yes | Callback when view changes |
-| `date` | `Date` | Yes | Currently focused date |
-| `onDateChange` | `(date: Date) => void` | Yes | Callback when date changes |
-| `calendars` | `Calendar[]` | No | Array of calendar definitions |
-| `onCalendarToggle` | `(id: string, active: boolean) => void` | No | Toggle calendar visibility |
-| `onEventCreate` | `(event: Partial<CalendarEvent>) => void` | No | Callback when creating an event |
-| `onEventUpdate` | `(event: CalendarEvent) => void` | No | Callback when updating an event |
-| `onEventDelete` | `(eventId: string) => void` | No | Callback when deleting an event |
-| `resources` | `Resource[]` | No | Resources for Resource view |
-| `eventTypes` | `EventType[]` | No | Predefined event types |
-| `timezone` | `string` | No | IANA timezone (e.g., "America/New_York") |
-| `onTimezoneChange` | `(tz: string) => void` | No | Callback when timezone changes |
-| `isDarkMode` | `boolean` | No | Enable dark mode |
-| `onThemeToggle` | `() => void` | No | Toggle dark mode |
-| `language` | `"en" \| "fr"` | No | UI language |
-| `onLanguageChange` | `(lang: string) => void` | No | Callback when language changes |
-| `locale` | `Locale` | No | date-fns locale for formatting |
-| `translations` | `Partial<CalendarTranslations>` | No | Custom translations |
-| `theme` | `CalendarTheme` | No | Custom theme colors |
-| `readOnly` | `boolean` | No | Disable editing |
-| `isLoading` | `boolean` | No | Show loading overlay |
-| `hideViewSwitcher` | `boolean` | No | Hide the view switcher |
-| `renderEventForm` | `(props) => ReactNode` | No | Custom event form renderer |
+## Types
 
-### CalendarEvent Type
+### CalendarEvent
 
 ```typescript
 interface CalendarEvent {
@@ -142,6 +118,9 @@ interface CalendarEvent {
   calendarId?: string;
   resourceId?: string;
   type?: string;
+  guests?: string[];
+  attachments?: EventAttachment[];
+  reminders?: EventReminder[];
   recurrence?: {
     freq: 'DAILY' | 'WEEKLY' | 'MONTHLY' | 'YEARLY';
     interval?: number;
@@ -152,7 +131,7 @@ interface CalendarEvent {
 }
 ```
 
-### Resource Type
+### Resource
 
 ```typescript
 interface Resource {
@@ -163,128 +142,146 @@ interface Resource {
 }
 ```
 
-### EventType Type
+### CalendarTheme
 
 ```typescript
-interface EventType {
-  id: string;
-  label: string;
-  color?: string;
-  icon?: React.ReactNode;
+interface CalendarTheme {
+  colors?: {
+    primary?: string;
+    secondary?: string;
+    background?: string;
+    foreground?: string;
+    border?: string;
+    muted?: string;
+    accent?: string;
+  };
+  fontFamily?: string;
+  borderRadius?: string;
 }
 ```
 
-## Internationalization
+## Views
 
-ProScheduler supports full internationalization. Pass custom translations:
+### Month View
+Full month grid with event indicators. Click a date to switch to day view.
 
-```tsx
-const frenchTranslations = {
-  today: "Aujourd'hui",
-  month: "Mois",
-  week: "Semaine",
-  day: "Jour",
-  agenda: "Agenda",
-  resource: "Ressource",
-  createEvent: "Créer un événement",
-  editEvent: "Modifier l'événement",
-  delete: "Supprimer",
-  save: "Enregistrer",
-  cancel: "Annuler",
-  // ... more translations
-};
+### Week View
+7-day view with hourly time slots. Drag events to reschedule, resize from bottom edge.
 
-<Scheduler
-  translations={frenchTranslations}
-  locale={fr} // date-fns French locale
-/>
-```
+### Day View
+Single day with 15-minute time slots. Ideal for detailed scheduling.
 
-## Timezone Support
+### Agenda View
+Chronological list of upcoming events for 30 days. Shows event details and metadata.
 
-ProScheduler handles timezones automatically. All events are displayed in the selected timezone:
-
-```tsx
-<Scheduler
-  timezone="Europe/Paris"
-  onTimezoneChange={(tz) => console.log("Timezone changed to", tz)}
-/>
-```
+### Resource View
+Horizontal timeline for scheduling across resources (rooms, people, equipment).
 
 ## Recurring Events
 
-Create events that repeat on a schedule:
-
 ```tsx
 const recurringEvent: CalendarEvent = {
-  id: "1",
-  title: "Weekly Meeting",
+  id: '1',
+  title: 'Weekly Standup',
   start: new Date(),
-  end: addHours(new Date(), 1),
+  end: new Date(Date.now() + 3600000),
   recurrence: {
-    freq: "WEEKLY",
+    freq: 'WEEKLY',
     interval: 1,
-    count: 10, // Repeat 10 times
-    // Or use: until: new Date("2025-12-31")
+    count: 10, // or use 'until' for end date
   },
 };
 ```
 
-## Theming
-
-### CSS Variables
-
-```css
-:root {
-  --background: 0 0% 100%;
-  --foreground: 222.2 84% 4.9%;
-  --primary: 221.2 83.2% 53.3%;
-  --primary-foreground: 210 40% 98%;
-  --secondary: 210 40% 96.1%;
-  --secondary-foreground: 222.2 47.4% 11.2%;
-  --muted: 210 40% 96.1%;
-  --muted-foreground: 215.4 16.3% 46.9%;
-  --accent: 210 40% 96.1%;
-  --accent-foreground: 222.2 47.4% 11.2%;
-  --border: 214.3 31.8% 91.4%;
-  --ring: 221.2 83.2% 53.3%;
-}
-
-.dark {
-  --background: 222.2 84% 4.9%;
-  --foreground: 210 40% 98%;
-  /* ... dark mode values */
-}
-```
-
-### Theme Prop
+## Timezone Support
 
 ```tsx
 <Scheduler
+  timezone="Europe/Paris"
+  onTimezoneChange={(tz) => console.log('Timezone:', tz)}
+/>
+```
+
+## Internationalization
+
+```tsx
+import { fr } from 'date-fns/locale';
+
+const frenchTranslations = {
+  today: "Aujourd'hui",
+  month: 'Mois',
+  week: 'Semaine',
+  day: 'Jour',
+  agenda: 'Agenda',
+  createEvent: 'Créer un événement',
+  // ... more translations
+};
+
+<Scheduler
+  language="fr"
+  locale={fr}
+  translations={frenchTranslations}
+/>
+```
+
+## Theming
+
+```tsx
+<Scheduler
+  isDarkMode={darkMode}
+  onThemeToggle={() => setDarkMode(!darkMode)}
   theme={{
     colors: {
-      primary: "#3b82f6",
-      background: "#ffffff",
-      foreground: "#1a1a1a",
+      primary: '#3b82f6',
+      background: '#ffffff',
+      foreground: '#1a1a1a',
     },
-    fontFamily: "Inter, sans-serif",
-    borderRadius: "8px",
+    fontFamily: 'Inter, sans-serif',
+    borderRadius: '12px',
+  }}
+/>
+```
+
+## Resource Scheduling
+
+```tsx
+const resources: Resource[] = [
+  { id: 'room-a', label: 'Conference Room A', color: '#3b82f6' },
+  { id: 'room-b', label: 'Conference Room B', color: '#10b981' },
+];
+
+<Scheduler
+  view="resource"
+  resources={resources}
+  events={events}
+/>
+```
+
+## Multiple Calendars
+
+```tsx
+const calendars = [
+  { id: 'work', label: 'Work', color: '#3b82f6', active: true },
+  { id: 'personal', label: 'Personal', color: '#10b981', active: true },
+];
+
+<Scheduler
+  calendars={calendars}
+  onCalendarToggle={(id, active) => {
+    // Toggle calendar visibility
   }}
 />
 ```
 
 ## Custom Event Form
 
-Override the default event form with your own:
-
 ```tsx
 <Scheduler
-  renderEventForm={({ isOpen, onClose, event, initialDate, onSave, onDelete }) => (
-    <MyCustomEventForm
+  renderEventForm={({ isOpen, onClose, event, onSave, onDelete }) => (
+    <MyCustomForm
       open={isOpen}
       onClose={onClose}
       event={event}
-      initialDate={initialDate}
       onSave={onSave}
       onDelete={onDelete}
     />
@@ -292,51 +289,43 @@ Override the default event form with your own:
 />
 ```
 
-## Project Structure
+## Exports
 
+```typescript
+// Components
+export { Scheduler } from 'calendarkit-pro';
+
+// Types
+export type {
+  CalendarEvent,
+  CalendarProps,
+  CalendarTheme,
+  CalendarTranslations,
+  ViewType,
+  EventType,
+  Resource,
+  EventReminder,
+  EventAttachment,
+  ThemeColors,
+} from 'calendarkit-pro';
+
+// Utilities
+export { cn } from 'calendarkit-pro';
 ```
-src/
-├── app/
-│   ├── globals.css
-│   ├── layout.tsx
-│   └── page.tsx
-├── components/
-│   └── pro-scheduler/
-│       ├── index.tsx          # Main component
-│       ├── types.ts           # TypeScript definitions
-│       ├── utils.ts           # Utility functions
-│       ├── components/
-│       │   ├── CalendarHeader.tsx
-│       │   ├── Sidebar.tsx
-│       │   ├── MiniCalendar.tsx
-│       │   ├── EventModal.tsx
-│       │   ├── ui/
-│       │   │   ├── Button.tsx
-│       │   │   └── Modal.tsx
-│       │   └── dnd/
-│       │       ├── DraggableEvent.tsx
-│       │       └── DroppableCell.tsx
-│       ├── views/
-│       │   ├── MonthView.tsx
-│       │   ├── WeekView.tsx
-│       │   ├── DayView.tsx
-│       │   ├── AgendaView.tsx
-│       │   └── ResourceView.tsx
-│       ├── hooks/
-│       │   └── useCalendarLogic.ts
-│       ├── lib/
-│       │   ├── date.ts
-│       │   └── theme.ts
-│       └── locales/
-│           └── index.ts
-└── lib/
-    └── utils.ts
-```
+
+## Browser Support
+
+- Chrome (latest)
+- Firefox (latest)
+- Safari (latest)
+- Edge (latest)
 
 ## License
 
-This source code is licensed for use by the purchasing customer only. Redistribution or resale is prohibited.
+MIT License - see [LICENSE](LICENSE) for details.
 
-## Support
+## Links
 
-For questions or issues, please contact support@calendarkit.io
+- [GitHub](https://github.com/Zesor/calendarkit-pro)
+- [Issues](https://github.com/Zesor/calendarkit-pro/issues)
+- [CalendarKit](https://calendarkit.io)

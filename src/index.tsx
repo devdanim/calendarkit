@@ -19,6 +19,23 @@ import { useCalendarLogic } from './hooks/useCalendarLogic';
 import { differenceInMinutes, format } from 'date-fns';
 import { useViewSwipe } from './hooks/useSwipeGesture';
 
+// Re-export types for consumers
+export type {
+  ViewType,
+  CalendarEvent,
+  CalendarProps,
+  CalendarTheme,
+  CalendarTranslations,
+  EventType,
+  Resource,
+  EventReminder,
+  EventAttachment,
+  ThemeColors,
+} from './types';
+
+// Re-export utilities
+export { cn } from './utils';
+
 export const Scheduler: React.FC<CalendarProps> = ({
   events = [],
   view: controlledView,
