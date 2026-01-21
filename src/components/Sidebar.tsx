@@ -1,76 +1,145 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Button } from './ui/button';
-import { Plus, ChevronDown, Globe, Download, Upload } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { ChevronDown, Globe } from 'lucide-react';
 import { MiniCalendar } from './MiniCalendar';
 import { cn } from '../utils';
 import { toZonedTime } from 'date-fns-tz';
-import { format } from 'date-fns';
+import { format, Locale } from 'date-fns';
 
-import { ViewType, CalendarEvent } from '../types';
+import { ViewType, CalendarEvent, CalendarFilterItem, CalendarFilterSection } from '../types';
 
 interface SidebarProps {
   currentDate: Date;
   onDateChange: (date: Date) => void;
   onViewChange?: (view: ViewType) => void;
-  onEventCreate?: () => void;
   timezone?: string;
   onTimezoneChange?: (timezone: string) => void;
   className?: string;
-  readOnly?: boolean;
-  calendars?: {
-    id: string;
-    label: string;
-    color?: string;
-    active?: boolean;
-  }[];
+  calendars?: CalendarFilterItem[] | CalendarFilterSection[];
   onCalendarToggle?: (calendarId: string, active: boolean) => void;
-  translations?: any;
+  translations?: Record<string, string>;
   events?: CalendarEvent[];
   onImport?: (events: Partial<CalendarEvent>[]) => void;
+  /** Show/hide the mini calendar (default: true) */
+  showMiniCalendar?: boolean;
+  /** Show/hide the calendar filters (default: true) */
+  showCalendarFilters?: boolean;
+  /** Show/hide the timezone selector (default: true) */
+  showTimezoneSelector?: boolean;
+  /** Date-fns locale for formatting */
+  locale?: Locale;
+}
+
+/**
+ * Helper to determine if calendars prop is using the new section format
+ */
+function isFilterSectionArray(
+  calendars: CalendarFilterItem[] | CalendarFilterSection[]
+): calendars is CalendarFilterSection[] {
+  if (!calendars || calendars.length === 0) return false;
+  // Check if first item has 'items' property (section format)
+  return 'items' in calendars[0];
+}
+
+/**
+ * Normalize calendars to section format for consistent rendering
+ */
+function normalizeToSections(
+  calendars: CalendarFilterItem[] | CalendarFilterSection[] | undefined,
+  defaultTitle: string
+): CalendarFilterSection[] {
+  if (!calendars || calendars.length === 0) {
+    // Return default demo data as a section
+    return [
+      {
+        id: 'default',
+        title: defaultTitle,
+        items: [
+          { id: '1', label: 'My Calendar', color: '#3b82f6', active: true },
+          { id: '2', label: 'Birthdays', color: '#10b981', active: true },
+          { id: '3', label: 'Tasks', color: '#6366f1', active: true },
+        ],
+      },
+    ];
+  }
+
+  if (isFilterSectionArray(calendars)) {
+    return calendars;
+  }
+
+  // Convert flat array to single section
+  return [
+    {
+      id: 'default',
+      title: defaultTitle,
+      items: calendars,
+    },
+  ];
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
   currentDate,
   onDateChange,
   onViewChange,
-  onEventCreate,
   timezone,
   onTimezoneChange,
   className,
-  readOnly,
   calendars,
   onCalendarToggle,
   translations,
+  showMiniCalendar = true,
+  showCalendarFilters = true,
+  showTimezoneSelector = true,
+  locale,
 }) => {
-  const [calendarsOpen, setCalendarsOpen] = useState(true);
   const [timezoneOpen, setTimezoneOpen] = useState(false);
   const [now, setNow] = useState<Date | null>(null);
   const [hasMounted, setHasMounted] = useState(false);
 
+  // Normalize calendars to sections format
+  const filterSections = normalizeToSections(calendars, translations?.calendars || 'Calendars');
+
+  // Track collapsed state for each section
+  const [collapsedSections, setCollapsedSections] = useState<Record<string, boolean>>(() => {
+    const initial: Record<string, boolean> = {};
+    filterSections.forEach((section) => {
+      initial[section.id] = section.collapsed ?? false;
+    });
+    return initial;
+  });
+
+  const toggleSection = (sectionId: string) => {
+    setCollapsedSections((prev) => ({
+      ...prev,
+      [sectionId]: !prev[sectionId],
+    }));
+  };
+
   // Only run on client to prevent hydration mismatch
   useEffect(() => {
-    setHasMounted(true);
-    setNow(new Date());
+    const initializeTime = () => {
+      setHasMounted(true);
+      setNow(new Date());
+    };
+    // Use setTimeout to avoid synchronous setState warning
+    const initTimer = setTimeout(initializeTime, 0);
     const timer = setInterval(() => setNow(new Date()), 60000);
-    return () => clearInterval(timer);
+    return () => {
+      clearTimeout(initTimer);
+      clearInterval(timer);
+    };
   }, []);
-  
-  // Default demo data if no calendars provided
-  const defaultCalendars = [
-    { id: '1', label: 'My Calendar', color: '#3b82f6', active: true },
-    { id: '2', label: 'Birthdays', color: '#10b981', active: true },
-    { id: '3', label: 'Tasks', color: '#6366f1', active: true },
-  ];
-
-  const displayCalendars = calendars || defaultCalendars;
 
   const getAcronym = (tz: string) => {
-      if (!tz || !now) return 'LOC';
-      try {
-        return new Intl.DateTimeFormat('en-US', { timeZone: tz, timeZoneName: 'short' })
-            .formatToParts(now)
-            .find(part => part.type === 'timeZoneName')?.value || '';
-      } catch (e) { return ''; }
+    if (!tz || !now) return 'LOC';
+    try {
+      return (
+        new Intl.DateTimeFormat('en-US', { timeZone: tz, timeZoneName: 'short' })
+          .formatToParts(now)
+          .find((part) => part.type === 'timeZoneName')?.value || ''
+      );
+    } catch {
+      return '';
+    }
   };
 
   const timezones = [
@@ -90,172 +159,214 @@ export const Sidebar: React.FC<SidebarProps> = ({
   ];
 
   // Format label with time: HH:MM (ACR)
-  const formatTzLabel = (tz: { value: string, label: string, acronym: string }, showTime: boolean = true) => {
-      // Don't show time if not mounted yet (SSR) to prevent hydration mismatch
-      if (!hasMounted || !now || !showTime) {
-          return <span>{tz.label}</span>;
+  const formatTzLabel = (
+    tz: { value: string; label: string; acronym: string },
+    showTime: boolean = true
+  ) => {
+    // Don't show time if not mounted yet (SSR) to prevent hydration mismatch
+    if (!hasMounted || !now || !showTime) {
+      return <span>{tz.label}</span>;
+    }
+
+    let time = '';
+    let acronym = tz.acronym;
+
+    try {
+      if (!tz.value) {
+        time = format(now, 'HH:mm');
+        // Try to get real local acronym
+        try {
+          acronym =
+            new Intl.DateTimeFormat('en-US', { timeZoneName: 'short' })
+              .formatToParts(now)
+              .find((part) => part.type === 'timeZoneName')?.value || 'LOC';
+        } catch {}
+      } else {
+        const zDate = toZonedTime(now, tz.value);
+        time = format(zDate, 'HH:mm');
+        // Calculate dynamic acronym if needed (e.g. DST changes)
+        const dynAcronym = getAcronym(tz.value);
+        if (dynAcronym && !dynAcronym.includes('GMT') && !dynAcronym.includes('Time')) {
+          acronym = dynAcronym;
+        }
       }
+    } catch {
+      return <span>{tz.label}</span>;
+    }
 
-      let time = '';
-      let acronym = tz.acronym;
-
-      try {
-          if (!tz.value) {
-              time = format(now, 'HH:mm');
-              // Try to get real local acronym
-              try {
-                  acronym = new Intl.DateTimeFormat('en-US', { timeZoneName: 'short' })
-                      .formatToParts(now)
-                      .find(part => part.type === 'timeZoneName')?.value || 'LOC';
-              } catch (e) {}
-          } else {
-              const zDate = toZonedTime(now, tz.value);
-              time = format(zDate, 'HH:mm');
-              // Calculate dynamic acronym if needed (e.g. DST changes)
-              const dynAcronym = getAcronym(tz.value);
-              if (dynAcronym && !dynAcronym.includes('GMT') && !dynAcronym.includes('Time')) {
-                  acronym = dynAcronym;
-              }
-          }
-      } catch (e) {
-          return <span>{tz.label}</span>;
-      }
-
-      return (
-          <div className="flex justify-between w-full">
-              <span>{tz.label}</span>
-              <span className="text-muted-foreground ml-2 tabular-nums">
-                  {time} <span className="text-xs opacity-75">({acronym})</span>
-              </span>
-          </div>
-      );
+    return (
+      <div className="flex w-full justify-between">
+        <span>{tz.label}</span>
+        <span className="ml-2 tabular-nums text-muted-foreground">
+          {time} <span className="text-xs opacity-75">({acronym})</span>
+        </span>
+      </div>
+    );
   };
-  
-  const selectedTzObj = timezones.find(t => t.value === (timezone || ''));
-  const selectedTimezoneLabel = selectedTzObj ? formatTzLabel(selectedTzObj) : (translations?.localTime || 'Local Time');
+
+  const selectedTzObj = timezones.find((t) => t.value === (timezone || ''));
+  const selectedTimezoneLabel = selectedTzObj
+    ? formatTzLabel(selectedTzObj)
+    : translations?.localTime || 'Local Time';
 
   return (
-    <div className={cn("flex flex-col w-[260px] overflow-x-hidden h-full bg-gradient-to-b scrollbar-hide from-background via-background to-muted/10 pt-4 pb-4 overflow-y-auto hidden lg:flex", className)}>
-      {!readOnly && (
-        <div className="px-4 mb-6">
-            <Button
-              className="w-full rounded-2xl shadow-lg bg-primary text-primary-foreground hover:bg-primary/90 h-12 gap-3 justify-center transition-all duration-300 hover:shadow-xl hover:shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] font-semibold"
-              onClick={onEventCreate}
-            >
-              <Plus className="w-5 h-5" />
-              <span className="text-sm">{translations?.create || 'Create'}</span>
-            </Button>
-        </div>
+    <div
+      className={cn(
+        'scrollbar-hide flex h-full min-w-[256px] flex-col overflow-y-auto overflow-x-hidden bg-gradient-to-b from-background via-background to-muted/10 pb-4 pt-4',
+        className
+      )}
+    >
+      {showMiniCalendar && (
+        <MiniCalendar
+          currentDate={currentDate}
+          onDateChange={onDateChange}
+          onViewChange={onViewChange}
+          locale={locale}
+        />
       )}
 
-      <MiniCalendar currentDate={currentDate} onDateChange={onDateChange} onViewChange={onViewChange} />
+      <div className={cn('flex-1 space-y-4 px-4', showMiniCalendar ? 'mt-5' : 'mt-0')}>
+        {/* Filter Sections */}
+        {showCalendarFilters &&
+          filterSections.map((section) => {
+            const isCollapsed = collapsedSections[section.id] ?? false;
 
-      <div className="flex-1 px-4 space-y-5 mt-5">
-        {/* Calendars List */}
-        <div className="bg-muted/20 rounded-2xl p-3 border-[0px] border-border/30">
-          <div
-            className="flex items-center justify-between cursor-pointer hover:bg-accent/50 p-2 -m-1 rounded-xl mb-2 transition-all duration-200"
-            onClick={() => setCalendarsOpen(!calendarsOpen)}
-          >
-            <span className="text-sm font-semibold text-foreground">{translations?.calendars || 'Calendars'}</span>
-            <ChevronDown className={cn("w-4 h-4 text-muted-foreground transition-transform duration-200", calendarsOpen && "rotate-180")} />
-          </div>
-
-          {calendarsOpen && (
-            <div className="space-y-1">
-              {displayCalendars.map(cal => (
+            return (
+              <div
+                key={section.id}
+                className="rounded-2xl border-[0px] border-border/30 bg-muted/20 p-3"
+              >
                 <div
-                    key={cal.id}
-                    className="flex items-center gap-3 py-2 px-2 hover:bg-accent/60 rounded-xl cursor-pointer group transition-all duration-200"
-                    onClick={() => onCalendarToggle?.(cal.id, !(cal.active ?? true))}
+                  className="-m-1 mb-2 flex cursor-pointer items-center justify-between rounded-xl p-2 transition-all duration-200 hover:bg-accent/50"
+                  onClick={() => toggleSection(section.id)}
                 >
-                  <div className="relative flex items-center justify-center">
-                    <input
-                        type="checkbox"
-                        checked={cal.active ?? true}
-                        onChange={(e) => {
-                             e.stopPropagation();
-                             onCalendarToggle?.(cal.id, e.target.checked);
-                        }}
-                        className="peer h-5 w-5 rounded-md border-2 border-border/60 cursor-pointer appearance-none checked:border-transparent transition-all duration-200"
-                        style={{ '--primary-color': cal.color } as React.CSSProperties}
-                        data-cal-id={cal.id}
-                    />
-                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-0 peer-checked:opacity-100 transition-opacity">
-                        <svg className="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                        </svg>
-                    </div>
-                    <style>{`
-                      input[type="checkbox"][data-cal-id="${cal.id}"]:checked {
-                        background-color: ${cal.color} !important;
-                        border-color: ${cal.color} !important;
-                      }
-                      input[type="checkbox"][data-cal-id="${cal.id}"]:focus {
-                        --tw-ring-color: ${cal.color}40 !important;
-                      }
-                    `}</style>
-                  </div>
-                  <div className="flex items-center gap-2 flex-1 min-w-0">
-                    <span className="text-sm text-foreground/90 truncate font-medium">{cal.label}</span>
-                  </div>
-                  <div
-                    className="w-2 h-2 rounded-full opacity-60 group-hover:opacity-100 transition-opacity"
-                    style={{ backgroundColor: cal.color }}
+                  <span className="text-sm font-semibold text-foreground">{section.title}</span>
+                  <ChevronDown
+                    className={cn(
+                      'h-4 w-4 text-muted-foreground transition-transform duration-200',
+                      !isCollapsed && 'rotate-180'
+                    )}
                   />
                 </div>
-              ))}
-            </div>
-          )}
-        </div>
+
+                {!isCollapsed && (
+                  <div className="space-y-1">
+                    {section.items.map((item) => (
+                      <div
+                        key={item.id}
+                        className="group flex cursor-pointer items-center gap-3 rounded-xl px-2 py-2 transition-all duration-200 hover:bg-accent/60"
+                        onClick={() => onCalendarToggle?.(item.id, !(item.active ?? true))}
+                      >
+                        <div className="relative flex items-center justify-center">
+                          <input
+                            type="checkbox"
+                            checked={item.active ?? true}
+                            onChange={(e) => {
+                              e.stopPropagation();
+                              onCalendarToggle?.(item.id, e.target.checked);
+                            }}
+                            className="peer h-5 w-5 cursor-pointer appearance-none rounded-md border-2 border-border/60 transition-all duration-200 checked:border-transparent"
+                            style={{ '--primary-color': item.color } as React.CSSProperties}
+                            data-cal-id={item.id}
+                          />
+                          <div className="pointer-events-none absolute inset-0 flex items-center justify-center opacity-0 transition-opacity peer-checked:opacity-100">
+                            <svg
+                              className="h-3.5 w-3.5 text-white"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                              strokeWidth={3}
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M5 13l4 4L19 7"
+                              />
+                            </svg>
+                          </div>
+                          <style>{`
+                          input[type="checkbox"][data-cal-id="${item.id}"]:checked {
+                            background-color: ${item.color} !important;
+                            border-color: ${item.color} !important;
+                          }
+                          input[type="checkbox"][data-cal-id="${item.id}"]:focus {
+                            --tw-ring-color: ${item.color}40 !important;
+                          }
+                        `}</style>
+                        </div>
+                        <div className="flex min-w-0 flex-1 items-center gap-2">
+                          <span className="truncate text-sm font-medium text-foreground/90">
+                            {item.label}
+                          </span>
+                        </div>
+                        <div
+                          className="h-2 w-2 rounded-full opacity-60 transition-opacity group-hover:opacity-100"
+                          style={{ backgroundColor: item.color }}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })}
       </div>
 
       {/* Timezone Selector - Custom UI */}
-      <div className="mt-auto px-4 pt-5">
-          <div className="bg-muted/20 rounded-2xl p-3">
-              <div className="flex items-center gap-2 mb-3">
-                  <div className="p-1.5 bg-primary/10 rounded-lg">
-                      <Globe className="w-4 h-4 text-primary" />
-                  </div>
-                  <span className="text-sm font-semibold text-foreground">{translations?.timezone || 'Timezone'}</span>
+      {showTimezoneSelector && (
+        <div className="mt-auto px-4 pt-5">
+          <div className="rounded-2xl bg-muted/20 p-3">
+            <div className="mb-3 flex items-center gap-2">
+              <div className="rounded-lg bg-primary/10 p-1.5">
+                <Globe className="h-4 w-4 text-primary" />
               </div>
+              <span className="text-sm font-semibold text-foreground">
+                {translations?.timezone || 'Timezone'}
+              </span>
+            </div>
 
-              <div className="relative">
-                <button
-                    onClick={() => setTimezoneOpen(!timezoneOpen)}
-                    className="w-full flex items-center justify-between bg-blue-200/40  hover:bg-blue-200/80 rounded-xl py-2.5 pl-4 pr-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/50 transition-all duration-200 text-left"
-                >
-                    <div className="flex-1 truncate mr-2 font-medium">{selectedTimezoneLabel}</div>
-                    <ChevronDown className={cn("w-4 h-4 text-muted-foreground transition-transform duration-200", timezoneOpen && "rotate-180")} />
-                </button>
+            <div className="relative">
+              <button
+                onClick={() => setTimezoneOpen(!timezoneOpen)}
+                className="flex w-full items-center justify-between rounded-xl bg-blue-200/40 py-2.5 pl-4 pr-3 text-left text-sm text-foreground transition-all duration-200 hover:bg-blue-200/80 focus:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/20"
+              >
+                <div className="mr-2 flex-1 truncate font-medium">{selectedTimezoneLabel}</div>
+                <ChevronDown
+                  className={cn(
+                    'h-4 w-4 text-muted-foreground transition-transform duration-200',
+                    timezoneOpen && 'rotate-180'
+                  )}
+                />
+              </button>
 
-                {timezoneOpen && (
-                    <>
-                        <div className="fixed inset-0 z-40" onClick={() => setTimezoneOpen(false)} />
-                        <div className="absolute bottom-full left-0 w-full mb-2 bg-background rounded-xl shadow-2xl z-50 max-h-[260px] overflow-y-auto p-1.5 animate-in fade-in zoom-in-95 duration-200 backdrop-blur-none">
-                            {timezones.map(tz => (
-                                <div
-                                    key={tz.value}
-                                    className={cn(
-                                        "px-3 py-2.5 text-sm rounded-lg cursor-pointer transition-all duration-200",
-                                        (timezone || '') === tz.value
-                                            ? "bg-primary text-primary-foreground font-semibold"
-                                            : "text-foreground hover:bg-accent/80"
-                                    )}
-                                    onClick={() => {
-                                        onTimezoneChange?.(tz.value);
-                                        setTimezoneOpen(false);
-                                    }}
-                                >
-                                    {formatTzLabel(tz)}
-                                </div>
-                            ))}
-                        </div>
-                    </>
-                 )}
-               </div>
+              {timezoneOpen && (
+                <>
+                  <div className="fixed inset-0 z-40" onClick={() => setTimezoneOpen(false)} />
+                  <div className="animate-in fade-in zoom-in-95 absolute bottom-full left-0 z-50 mb-2 max-h-[260px] w-full overflow-y-auto rounded-xl bg-background p-1.5 shadow-2xl backdrop-blur-none duration-200">
+                    {timezones.map((tz) => (
+                      <div
+                        key={tz.value}
+                        className={cn(
+                          'cursor-pointer rounded-lg px-3 py-2.5 text-sm transition-all duration-200',
+                          (timezone || '') === tz.value
+                            ? 'bg-primary font-semibold text-primary-foreground'
+                            : 'text-foreground hover:bg-accent/80'
+                        )}
+                        onClick={() => {
+                          onTimezoneChange?.(tz.value);
+                          setTimezoneOpen(false);
+                        }}
+                      >
+                        {formatTzLabel(tz)}
+                      </div>
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
           </div>
-      </div>
+        </div>
+      )}
     </div>
   );
 };

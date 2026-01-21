@@ -63,16 +63,20 @@ html {
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   background-color: hsl(var(--background));
   color: hsl(var(--foreground));
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
 }
 
 /* Smooth theme transitions */
 .dark body,
 body {
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
 }
 
 /* Custom scrollbar for dark mode */
@@ -118,11 +122,11 @@ body {
 /* Glass effect utility */
 @layer utilities {
   .glass {
-    @apply backdrop-blur-sm bg-background/80;
+    @apply bg-background/80 backdrop-blur-sm;
   }
 
   .dark .glass {
-    @apply backdrop-blur-md bg-background/70;
+    @apply bg-background/70 backdrop-blur-md;
   }
 
   /* Better focus states for dark mode */
@@ -137,8 +141,9 @@ body {
   }
 
   .dark .event-card:hover {
-    box-shadow: 0 10px 15px -3px hsl(var(--primary) / 0.1),
-                0 4px 6px -2px hsl(var(--background) / 0.3);
+    box-shadow:
+      0 10px 15px -3px hsl(var(--primary) / 0.1),
+      0 4px 6px -2px hsl(var(--background) / 0.3);
   }
 }
 
@@ -173,13 +178,15 @@ body {
 
 /* Better shadows for dark mode */
 .dark .shadow-soft {
-  box-shadow: 0 4px 6px -1px hsl(0 0% 0% / 0.3),
-              0 2px 4px -1px hsl(0 0% 0% / 0.2);
+  box-shadow:
+    0 4px 6px -1px hsl(0 0% 0% / 0.3),
+    0 2px 4px -1px hsl(0 0% 0% / 0.2);
 }
 
 .dark .shadow-elevated {
-  box-shadow: 0 10px 25px -5px hsl(0 0% 0% / 0.4),
-              0 8px 10px -6px hsl(0 0% 0% / 0.3);
+  box-shadow:
+    0 10px 25px -5px hsl(0 0% 0% / 0.4),
+    0 8px 10px -6px hsl(0 0% 0% / 0.3);
 }
 
 /* Calendar grid lines for dark mode */
@@ -211,7 +218,8 @@ body {
 
 /* Pulse animation for current time indicator */
 @keyframes time-pulse {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 1;
     transform: scale(1);
   }

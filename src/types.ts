@@ -32,13 +32,6 @@ export interface CalendarEvent {
   attachments?: EventAttachment[];
   guests?: string[]; // Array of email addresses
   reminders?: EventReminder[]; // Event reminders
-  recurrence?: {
-    freq: 'DAILY' | 'WEEKLY' | 'MONTHLY' | 'YEARLY';
-    interval?: number;
-    count?: number;
-    until?: Date;
-    byweekday?: number[]; // 0=MO, 6=SU
-  };
   // eslint-disable-next-line
   [key: string]: any;
 }
@@ -75,48 +68,77 @@ export interface CalendarTheme {
 }
 
 export interface CalendarTranslations {
-    today: string;
-    month: string;
-    week: string;
-    day: string;
-    agenda: string;
-    resource: string;
-    createEvent: string;
-    editEvent: string;
-    delete: string;
-    save: string;
-    cancel: string;
-    title: string;
-    start: string;
-    end: string;
-    allDay: string;
-    description: string;
-    repeat: string;
-    noRepeat: string;
-    selectCalendar: string;
-    selectType: string;
-    daily: string;
-    weekly: string;
-    monthly: string;
-    yearly: string;
-    event: string;
-    task: string;
-    appointmentSchedule: string;
-    new: string;
-    dateAndTime: string;
-    timezone: string;
-    whosJoining: string;
-    suggestedTimes: string;
-    viewSuggestions: string;
-    whereWillItBe: string;
-    location: string;
-    descriptionAndAttachments: string;
-    dragAndDrop: string;
-    guests: string;
-    addAttachment: string;
-    moreOptions: string;
-    doesNotRepeat: string;
-    locationHelpText: string;
+  today: string;
+  month: string;
+  week: string;
+  day: string;
+  agenda: string;
+  resource: string;
+  createEvent: string;
+  editEvent: string;
+  delete: string;
+  save: string;
+  cancel: string;
+  title: string;
+  start: string;
+  end: string;
+  allDay: string;
+  description: string;
+  repeat: string;
+  noRepeat: string;
+  selectCalendar: string;
+  selectType: string;
+  daily: string;
+  weekly: string;
+  monthly: string;
+  yearly: string;
+  event: string;
+  task: string;
+  appointmentSchedule: string;
+  new: string;
+  dateAndTime: string;
+  timezone: string;
+  whosJoining: string;
+  suggestedTimes: string;
+  viewSuggestions: string;
+  whereWillItBe: string;
+  location: string;
+  descriptionAndAttachments: string;
+  dragAndDrop: string;
+  guests: string;
+  addAttachment: string;
+  moreOptions: string;
+  doesNotRepeat: string;
+  locationHelpText: string;
+  calendars: string;
+}
+
+export interface SidebarConfig {
+  /** Show/hide the entire sidebar (default: true) */
+  enabled?: boolean;
+  /** Show/hide the mini calendar (default: true) */
+  showMiniCalendar?: boolean;
+  /** Show/hide the calendar filters (default: true) */
+  showCalendarFilters?: boolean;
+  /** Show/hide the timezone selector (default: true) */
+  showTimezoneSelector?: boolean;
+}
+
+/** Individual filter item (e.g., "Work", "Personal") */
+export interface CalendarFilterItem {
+  id: string;
+  label: string;
+  color?: string;
+  active?: boolean;
+}
+
+/** A section of filters with a title (e.g., "By Type", "By Category") */
+export interface CalendarFilterSection {
+  id: string;
+  title: string;
+  items: CalendarFilterItem[];
+  /** Whether the section is collapsed (default: false) */
+  collapsed?: boolean;
 }
 
 export interface CalendarProps {
@@ -128,29 +150,34 @@ export interface CalendarProps {
   onDateChange?: (date: Date) => void;
   onEventClick?: (event: CalendarEvent) => void;
   onEventDrop?: (event: CalendarEvent, start: Date, end: Date) => void;
-  onEventResize?: (event: CalendarEvent, start: Date, end: Date) => void;
-  onEventCreate?: (event: Partial<CalendarEvent>) => void;
-  onEventUpdate?: (event: CalendarEvent) => void;
-  onEventDelete?: (eventId: string) => void;
   theme?: CalendarTheme;
   locale?: Locale; // from date-fns
   timezone?: string; // e.g. "America/New_York"
   onTimezoneChange?: (timezone: string) => void;
   className?: string;
   readOnly?: boolean;
-  calendars?: {
-    id: string;
-    label: string;
-    color?: string;
-    active?: boolean;
-  }[];
+  /**
+   * Calendar filters - can be either:
+   * - A simple array of items (legacy format, displayed in a single "Calendars" section)
+   * - An array of sections, each with its own title and items
+   */
+  calendars?: CalendarFilterItem[] | CalendarFilterSection[];
   resources?: Resource[];
   eventTypes?: EventType[]; // Pre-defined types
   onCalendarToggle?: (calendarId: string, active: boolean) => void;
   isLoading?: boolean;
   isDarkMode?: boolean;
   onThemeToggle?: () => void;
+  /** @deprecated Use sidebarConfig.enabled instead */
+  showSidebar?: boolean;
+  onSidebarToggle?: (isOpen: boolean) => void;
+  /** Fine-grained sidebar configuration */
+  sidebarConfig?: SidebarConfig;
   hideViewSwitcher?: boolean;
+  /** Hide the language selector in the header (default: false) */
+  hideLanguageSelector?: boolean;
+  /** Hide the dark mode toggle in the header (default: false) */
+  hideDarkModeToggle?: boolean;
   language?: 'en' | 'fr';
   onLanguageChange?: (lang: 'en' | 'fr') => void;
   renderEventForm?: (props: {

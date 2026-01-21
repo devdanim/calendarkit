@@ -38,7 +38,10 @@ const foldLine = (line: string): string => {
 };
 
 // Generate ICS content from events
-export const generateICS = (events: CalendarEvent[], calendarName: string = 'Scheduler Pro'): string => {
+export const generateICS = (
+  events: CalendarEvent[],
+  calendarName: string = 'Scheduler Pro'
+): string => {
   const lines: string[] = [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
@@ -48,7 +51,7 @@ export const generateICS = (events: CalendarEvent[], calendarName: string = 'Sch
     'METHOD:PUBLISH',
   ];
 
-  events.forEach(event => {
+  events.forEach((event) => {
     lines.push('BEGIN:VEVENT');
     lines.push(`UID:${event.id}@schedulerpro`);
     lines.push(`DTSTAMP:${formatDateForICS(new Date())}`);
@@ -65,26 +68,6 @@ export const generateICS = (events: CalendarEvent[], calendarName: string = 'Sch
 
     if (event.description) {
       lines.push(`DESCRIPTION:${escapeICSText(event.description)}`);
-    }
-
-    // Add recurrence rule if present
-    if (event.recurrence) {
-      let rrule = `RRULE:FREQ=${event.recurrence.freq}`;
-      if (event.recurrence.interval && event.recurrence.interval > 1) {
-        rrule += `;INTERVAL=${event.recurrence.interval}`;
-      }
-      if (event.recurrence.count) {
-        rrule += `;COUNT=${event.recurrence.count}`;
-      }
-      if (event.recurrence.until) {
-        rrule += `;UNTIL=${formatDateForICS(event.recurrence.until)}`;
-      }
-      if (event.recurrence.byweekday && event.recurrence.byweekday.length > 0) {
-        const days = ['MO', 'TU', 'WE', 'TH', 'FR', 'SA', 'SU'];
-        const byDay = event.recurrence.byweekday.map(d => days[d]).join(',');
-        rrule += `;BYDAY=${byDay}`;
-      }
-      lines.push(rrule);
     }
 
     lines.push('END:VEVENT');
@@ -171,8 +154,6 @@ export const parseICS = (icsContent: string): Partial<CalendarEvent>[] => {
         }
       } else if (key.startsWith('DTEND')) {
         currentEvent.end = parseICSDate(key, value);
-      } else if (key === 'RRULE') {
-        currentEvent.recurrence = parseRRule(value);
       }
     }
   }
@@ -208,41 +189,6 @@ const parseICSDate = (key: string, value: string): Date => {
   return new Date(year, month, day, hour, minute, second);
 };
 
-// Parse RRULE string
-const parseRRule = (rruleStr: string): CalendarEvent['recurrence'] => {
-  const parts = rruleStr.split(';');
-  const recurrence: CalendarEvent['recurrence'] = {
-    freq: 'DAILY',
-  };
-
-  for (const part of parts) {
-    const [key, value] = part.split('=');
-
-    switch (key) {
-      case 'FREQ':
-        if (['DAILY', 'WEEKLY', 'MONTHLY', 'YEARLY'].includes(value)) {
-          recurrence.freq = value as 'DAILY' | 'WEEKLY' | 'MONTHLY' | 'YEARLY';
-        }
-        break;
-      case 'INTERVAL':
-        recurrence.interval = parseInt(value);
-        break;
-      case 'COUNT':
-        recurrence.count = parseInt(value);
-        break;
-      case 'UNTIL':
-        recurrence.until = parseICSDate('UNTIL', value);
-        break;
-      case 'BYDAY':
-        const dayMap: Record<string, number> = { MO: 0, TU: 1, WE: 2, TH: 3, FR: 4, SA: 5, SU: 6 };
-        recurrence.byweekday = value.split(',').map(d => dayMap[d]).filter(d => d !== undefined);
-        break;
-    }
-  }
-
-  return recurrence;
-};
-
 // Read file and parse ICS
 export const importICSFile = (file: File): Promise<Partial<CalendarEvent>[]> => {
   return new Promise((resolve, reject) => {
@@ -253,7 +199,7 @@ export const importICSFile = (file: File): Promise<Partial<CalendarEvent>[]> => 
         const content = e.target?.result as string;
         const events = parseICS(content);
         resolve(events);
-      } catch (error) {
+      } catch {
         reject(new Error('Failed to parse ICS file'));
       }
     };

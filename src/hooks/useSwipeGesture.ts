@@ -17,9 +17,7 @@ interface TouchInfo {
   startTime: number;
 }
 
-export const useSwipeGesture = <T extends HTMLElement>(
-  options: SwipeGestureOptions
-) => {
+export const useSwipeGesture = <T extends HTMLElement>(options: SwipeGestureOptions) => {
   const {
     onSwipeLeft,
     onSwipeRight,
@@ -34,49 +32,55 @@ export const useSwipeGesture = <T extends HTMLElement>(
   const touchInfoRef = useRef<TouchInfo | null>(null);
   const elementRef = useRef<T>(null);
 
-  const handleTouchStart = useCallback((e: TouchEvent) => {
-    if (!enabled) return;
+  const handleTouchStart = useCallback(
+    (e: TouchEvent) => {
+      if (!enabled) return;
 
-    const touch = e.touches[0];
-    touchInfoRef.current = {
-      startX: touch.clientX,
-      startY: touch.clientY,
-      startTime: Date.now(),
-    };
-  }, [enabled]);
+      const touch = e.touches[0];
+      touchInfoRef.current = {
+        startX: touch.clientX,
+        startY: touch.clientY,
+        startTime: Date.now(),
+      };
+    },
+    [enabled]
+  );
 
-  const handleTouchEnd = useCallback((e: TouchEvent) => {
-    if (!enabled || !touchInfoRef.current) return;
+  const handleTouchEnd = useCallback(
+    (e: TouchEvent) => {
+      if (!enabled || !touchInfoRef.current) return;
 
-    const touch = e.changedTouches[0];
-    const { startX, startY, startTime } = touchInfoRef.current;
+      const touch = e.changedTouches[0];
+      const { startX, startY, startTime } = touchInfoRef.current;
 
-    const distX = touch.clientX - startX;
-    const distY = touch.clientY - startY;
-    const elapsedTime = Date.now() - startTime;
+      const distX = touch.clientX - startX;
+      const distY = touch.clientY - startY;
+      const elapsedTime = Date.now() - startTime;
 
-    // Check if swipe was fast enough
-    if (elapsedTime <= allowedTime) {
-      // Horizontal swipe
-      if (Math.abs(distX) >= threshold && Math.abs(distY) <= restraint) {
-        if (distX > 0) {
-          onSwipeRight?.();
-        } else {
-          onSwipeLeft?.();
+      // Check if swipe was fast enough
+      if (elapsedTime <= allowedTime) {
+        // Horizontal swipe
+        if (Math.abs(distX) >= threshold && Math.abs(distY) <= restraint) {
+          if (distX > 0) {
+            onSwipeRight?.();
+          } else {
+            onSwipeLeft?.();
+          }
+        }
+        // Vertical swipe
+        else if (Math.abs(distY) >= threshold && Math.abs(distX) <= restraint) {
+          if (distY > 0) {
+            onSwipeDown?.();
+          } else {
+            onSwipeUp?.();
+          }
         }
       }
-      // Vertical swipe
-      else if (Math.abs(distY) >= threshold && Math.abs(distX) <= restraint) {
-        if (distY > 0) {
-          onSwipeDown?.();
-        } else {
-          onSwipeUp?.();
-        }
-      }
-    }
 
-    touchInfoRef.current = null;
-  }, [enabled, threshold, restraint, allowedTime, onSwipeLeft, onSwipeRight, onSwipeUp, onSwipeDown]);
+      touchInfoRef.current = null;
+    },
+    [enabled, threshold, restraint, allowedTime, onSwipeLeft, onSwipeRight, onSwipeUp, onSwipeDown]
+  );
 
   useEffect(() => {
     const element = elementRef.current;

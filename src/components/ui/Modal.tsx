@@ -42,37 +42,29 @@ export const Modal: React.FC<ModalProps> = ({
 
   // Render inside parent container (absolute positioning) instead of portal to document.body
   return (
-    <div className="absolute inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-md animate-in fade-in duration-300">
-      <div
-        ref={overlayRef}
-        className="absolute inset-0"
-        onClick={onClose}
-      />
+    <div className="animate-in fade-in absolute inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-md duration-300">
+      <div ref={overlayRef} className="absolute inset-0" onClick={onClose} />
       <div
         className={cn(
-          "relative bg-background rounded-2xl shadow-2xl w-full max-w-md flex flex-col max-h-[70vh] sm:max-h-[80vh] animate-in zoom-in-95 slide-in-from-bottom-4 duration-300 border border-border/50",
+          'animate-in zoom-in-95 slide-in-from-bottom-4 relative flex max-h-[70vh] w-full max-w-md flex-col rounded-2xl border border-border/50 bg-background shadow-2xl duration-300 sm:max-h-[80vh]',
           className
         )}
       >
         {!hideHeader && (
-          <div className="flex items-center justify-between px-6 py-4 border-b border-border/50 shrink-0 bg-gradient-to-r from-muted/20 to-background">
-            <h3 className="text-lg font-semibold text-foreground">
-              {title}
-            </h3>
+          <div className="flex shrink-0 items-center justify-between border-b border-border/50 bg-gradient-to-r from-muted/20 to-background px-6 py-4">
+            <h3 className="text-lg font-semibold text-foreground">{title}</h3>
             <Button
               variant="ghost"
               size="sm"
               onClick={onClose}
-              className="h-9 w-9 p-0 rounded-xl hover:bg-accent/80 transition-all duration-200"
+              className="h-9 w-9 rounded-xl p-0 transition-all duration-200 hover:bg-accent/80"
             >
               <X className="h-4 w-4" />
               <span className="sr-only">Close</span>
             </Button>
           </div>
         )}
-        <div className={cn("overflow-y-auto flex-1", !hideHeader && "p-6")}>
-          {children}
-        </div>
+        <div className={cn('flex-1 overflow-y-auto', !hideHeader && 'p-6')}>{children}</div>
       </div>
     </div>
   );

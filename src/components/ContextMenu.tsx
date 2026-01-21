@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { CalendarEvent } from '../types';
 import { cn } from '../utils';
-import { Edit3, Trash2, Copy, Calendar, Clock, X } from 'lucide-react';
+import { Edit3, Trash2, Copy } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 
 interface ContextMenuAction {
@@ -74,35 +74,47 @@ export const EventContextMenu: React.FC<EventContextMenuProps> = ({
   if (!event || !position) return null;
 
   const actions: ContextMenuAction[] = [
-    ...(onEdit ? [{
-      id: 'edit',
-      label: translations?.edit || 'Edit',
-      icon: <Edit3 className="w-4 h-4" />,
-      onClick: () => {
-        onEdit(event);
-        onClose();
-      },
-    }] : []),
-    ...(onDuplicate ? [{
-      id: 'duplicate',
-      label: translations?.duplicate || 'Duplicate',
-      icon: <Copy className="w-4 h-4" />,
-      onClick: () => {
-        onDuplicate(event);
-        onClose();
-      },
-    }] : []),
+    ...(onEdit
+      ? [
+          {
+            id: 'edit',
+            label: translations?.edit || 'Edit',
+            icon: <Edit3 className="h-4 w-4" />,
+            onClick: () => {
+              onEdit(event);
+              onClose();
+            },
+          },
+        ]
+      : []),
+    ...(onDuplicate
+      ? [
+          {
+            id: 'duplicate',
+            label: translations?.duplicate || 'Duplicate',
+            icon: <Copy className="h-4 w-4" />,
+            onClick: () => {
+              onDuplicate(event);
+              onClose();
+            },
+          },
+        ]
+      : []),
     ...customActions,
-    ...(onDelete ? [{
-      id: 'delete',
-      label: translations?.delete || 'Delete',
-      icon: <Trash2 className="w-4 h-4" />,
-      onClick: () => {
-        onDelete(event.id);
-        onClose();
-      },
-      variant: 'danger' as const,
-    }] : []),
+    ...(onDelete
+      ? [
+          {
+            id: 'delete',
+            label: translations?.delete || 'Delete',
+            icon: <Trash2 className="h-4 w-4" />,
+            onClick: () => {
+              onDelete(event.id);
+              onClose();
+            },
+            variant: 'danger' as const,
+          },
+        ]
+      : []),
   ];
 
   // Calculate position to ensure menu stays within viewport
@@ -119,22 +131,20 @@ export const EventContextMenu: React.FC<EventContextMenuProps> = ({
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: -5 }}
         transition={{ duration: 0.15, ease: 'easeOut' }}
-        className="fixed z-[100] min-w-[180px] bg-background border-[0.5px] border-border rounded-xl shadow-xl overflow-hidden"
+        className="fixed z-[100] min-w-[180px] overflow-hidden rounded-xl border-[0.5px] border-border bg-background shadow-xl"
         style={{
           left: adjustedPosition.x,
           top: adjustedPosition.y,
         }}
       >
         {/* Event preview header */}
-        <div className="px-3 py-2 border-b-[0.5px] border-border bg-muted/30">
+        <div className="border-b-[0.5px] border-border bg-muted/30 px-3 py-2">
           <div className="flex items-center gap-2">
             <div
-              className="w-2.5 h-2.5 rounded-full shrink-0"
+              className="h-2.5 w-2.5 shrink-0 rounded-full"
               style={{ backgroundColor: event.color || 'var(--primary)' }}
             />
-            <span className="text-sm font-medium truncate text-foreground">
-              {event.title}
-            </span>
+            <span className="truncate text-sm font-medium text-foreground">{event.title}</span>
           </div>
         </div>
 
@@ -142,18 +152,16 @@ export const EventContextMenu: React.FC<EventContextMenuProps> = ({
         <div className="py-1">
           {actions.map((action, index) => (
             <React.Fragment key={action.id}>
-              {index > 0 && action.variant === 'danger' && (
-                <div className="h-px bg-border my-1" />
-              )}
+              {index > 0 && action.variant === 'danger' && <div className="my-1 h-px bg-border" />}
               <button
                 onClick={action.onClick}
                 disabled={action.disabled}
                 className={cn(
-                  "w-full flex items-center gap-3 px-3 py-2 text-sm transition-colors",
-                  action.disabled && "opacity-50 cursor-not-allowed",
+                  'flex w-full items-center gap-3 px-3 py-2 text-sm transition-colors',
+                  action.disabled && 'cursor-not-allowed opacity-50',
                   action.variant === 'danger'
-                    ? "text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20"
-                    : "text-foreground hover:bg-accent"
+                    ? 'text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20'
+                    : 'text-foreground hover:bg-accent'
                 )}
               >
                 {action.icon}
