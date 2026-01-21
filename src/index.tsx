@@ -119,17 +119,21 @@ export const Scheduler: React.FC<CalendarProps> = ({
   });
 
   // Sidebar: controlled or uncontrolled mode
-  // sidebarConfig.enabled takes precedence over showSidebar prop
-  const sidebarEnabled = sidebarConfig?.enabled ?? controlledShowSidebar ?? internalSidebarOpen;
+  // sidebarConfig.enabled controls whether sidebar feature is available (default: true)
+  // controlledShowSidebar or internalSidebarOpen controls whether it's currently visible
+  const sidebarFeatureEnabled = sidebarConfig?.enabled ?? true;
+  const sidebarVisible = controlledShowSidebar ?? internalSidebarOpen;
+  const sidebarEnabled = sidebarFeatureEnabled && sidebarVisible;
 
   const handleSidebarToggle = useCallback(() => {
-    const newValue = !sidebarEnabled;
+    if (!sidebarFeatureEnabled) return; // Don't toggle if sidebar feature is disabled
+    const newValue = !sidebarVisible;
     if (onSidebarToggle) {
       onSidebarToggle(newValue);
     } else {
       setInternalSidebarOpen(newValue);
     }
-  }, [sidebarEnabled, onSidebarToggle, setInternalSidebarOpen]);
+  }, [sidebarFeatureEnabled, sidebarVisible, onSidebarToggle, setInternalSidebarOpen]);
 
   // Sidebar section visibility (default: all visible)
   const showMiniCalendar = sidebarConfig?.showMiniCalendar ?? true;
