@@ -9,8 +9,6 @@ A professional, feature-rich React calendar component with drag-and-drop, recurr
 
 - **5 Views** - Month, Week, Day, Agenda, and Resource views
 - **Drag & Drop** - Move events with smooth animations and grid snapping
-- **Event Resize** - Drag event edges to adjust duration
-- **Recurring Events** - Daily, weekly, monthly, yearly with RRule support
 - **Timezone Support** - Full IANA timezone handling
 - **i18n Ready** - Built-in English/French, fully customizable
 - **Resource Scheduling** - Schedule across rooms, people, or equipment
@@ -62,12 +60,6 @@ function MyCalendar() {
       onEventCreate={(event) => {
         setEvents([...events, { ...event, id: crypto.randomUUID() } as CalendarEvent]);
       }}
-      onEventUpdate={(event) => {
-        setEvents(events.map(e => e.id === event.id ? event : e));
-      }}
-      onEventDelete={(id) => {
-        setEvents(events.filter(e => e.id !== id));
-      }}
     />
   );
 }
@@ -82,10 +74,6 @@ function MyCalendar() {
 | `date` | `Date` | Currently focused date |
 | `onViewChange` | `(view: ViewType) => void` | View change callback |
 | `onDateChange` | `(date: Date) => void` | Date change callback |
-| `onEventCreate` | `(event: Partial<CalendarEvent>) => void` | Event creation callback |
-| `onEventUpdate` | `(event: CalendarEvent) => void` | Event update callback |
-| `onEventDelete` | `(eventId: string) => void` | Event deletion callback |
-| `onEventResize` | `(event, start, end) => void` | Event resize callback |
 | `calendars` | `Calendar[]` | Multiple calendar support |
 | `resources` | `Resource[]` | Resources for resource view |
 | `eventTypes` | `EventType[]` | Pre-defined event types |
@@ -101,6 +89,21 @@ function MyCalendar() {
 | `isLoading` | `boolean` | Show loading skeletons |
 | `hideViewSwitcher` | `boolean` | Hide view switcher |
 | `renderEventForm` | `(props) => ReactNode` | Custom event form |
+| `hideLanguageSelector` | `boolean` | Hide language selector |
+| `hideDarkModeToggle` | `boolean` | Hide dark mode toggle |
+| `sidebarConfig` | `SidebarConfig` | Sidebar configuration |
+| `onCalendarToggle` | `(calendarId: string, active: boolean) => void` | Calendar toggle callback |
+
+### SidebarConfig
+
+```typescript
+interface SidebarConfig {
+  enabled?: boolean;
+  showMiniCalendar?: boolean;
+  showCalendarFilters?: boolean;
+  showTimezoneSelector?: boolean;
+}
+```
 
 ## Types
 
@@ -121,13 +124,6 @@ interface CalendarEvent {
   guests?: string[];
   attachments?: EventAttachment[];
   reminders?: EventReminder[];
-  recurrence?: {
-    freq: 'DAILY' | 'WEEKLY' | 'MONTHLY' | 'YEARLY';
-    interval?: number;
-    count?: number;
-    until?: Date;
-    byweekday?: number[];
-  };
 }
 ```
 
@@ -176,22 +172,6 @@ Chronological list of upcoming events for 30 days. Shows event details and metad
 
 ### Resource View
 Horizontal timeline for scheduling across resources (rooms, people, equipment).
-
-## Recurring Events
-
-```tsx
-const recurringEvent: CalendarEvent = {
-  id: '1',
-  title: 'Weekly Standup',
-  start: new Date(),
-  end: new Date(Date.now() + 3600000),
-  recurrence: {
-    freq: 'WEEKLY',
-    interval: 1,
-    count: 10, // or use 'until' for end date
-  },
-};
-```
 
 ## Timezone Support
 
@@ -261,8 +241,8 @@ const resources: Resource[] = [
 
 ```tsx
 const calendars = [
-  { id: 'work', label: 'Work', color: '#3b82f6', active: true },
-  { id: 'personal', label: 'Personal', color: '#10b981', active: true },
+  { id: 'by-type', title: 'By Type', items: [{ id: 'work', label: 'Work', color: '#3b82f6', active: true }, { id: 'personal', label: 'Personal', color: '#10b981', active: true }] },
+  { id: 'by-priority', title: 'By Priority', items: [{ id: 'high', label: 'High Priority', color: '#ef4444', active: true }, { id: 'medium', label: 'Medium Priority', color: '#f59e0b', active: true }, { id: 'low', label: 'Low Priority', color: '#6b7280', active: true }] },
 ];
 
 <Scheduler
@@ -270,22 +250,6 @@ const calendars = [
   onCalendarToggle={(id, active) => {
     // Toggle calendar visibility
   }}
-/>
-```
-
-## Custom Event Form
-
-```tsx
-<Scheduler
-  renderEventForm={({ isOpen, onClose, event, onSave, onDelete }) => (
-    <MyCustomForm
-      open={isOpen}
-      onClose={onClose}
-      event={event}
-      onSave={onSave}
-      onDelete={onDelete}
-    />
-  )}
 />
 ```
 
