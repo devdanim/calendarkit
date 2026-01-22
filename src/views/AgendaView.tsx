@@ -228,10 +228,6 @@ export const AgendaView: React.FC<AgendaViewProps> = ({
                             <span>
                               {format(event.start, locale?.code === 'fr' ? 'H:mm' : 'h:mm a', {
                                 locale,
-                              })}{' '}
-                              -{' '}
-                              {format(event.end, locale?.code === 'fr' ? 'H:mm' : 'h:mm a', {
-                                locale,
                               })}
                             </span>
                           </div>
