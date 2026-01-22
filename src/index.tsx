@@ -57,6 +57,7 @@ export const Scheduler: React.FC<CalendarProps> = ({
   date: controlledDate,
   onDateChange: controlledOnDateChange,
   onEventClick,
+  onEventDrop,
   timezone,
   onTimezoneChange,
   className,
@@ -106,6 +107,7 @@ export const Scheduler: React.FC<CalendarProps> = ({
     date: controlledDate,
     onDateChange: controlledOnDateChange,
     onEventClick,
+    onEventDrop,
     readOnly,
     timezone,
   });

@@ -19,6 +19,7 @@ interface UseCalendarLogicProps {
   date?: Date;
   onDateChange?: (date: Date) => void;
   onEventClick?: (event: CalendarEvent) => void;
+  onEventDrop?: (event: CalendarEvent, start: Date, end: Date) => void;
   readOnly?: boolean;
   timezone?: string;
 }
@@ -30,6 +31,7 @@ export const useCalendarLogic = ({
   date: controlledDate,
   onDateChange: controlledOnDateChange,
   onEventClick,
+  onEventDrop,
   readOnly,
   timezone,
 }: UseCalendarLogicProps) => {
@@ -210,6 +212,11 @@ export const useCalendarLogic = ({
       newResourceId === activeEvent.resourceId
     ) {
       return;
+    }
+
+    // Call the callback with the updated event info
+    if (onEventDrop) {
+      onEventDrop(activeEvent, newStart, newEnd);
     }
   };
 

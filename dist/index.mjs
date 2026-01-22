@@ -1551,6 +1551,7 @@ var useCalendarLogic = ({
   date: controlledDate,
   onDateChange: controlledOnDateChange,
   onEventClick,
+  onEventDrop,
   readOnly,
   timezone
 }) => {
@@ -1687,6 +1688,9 @@ var useCalendarLogic = ({
     if (newStart.getTime() === originalStart.getTime() && newEnd.getTime() === originalEnd.getTime() && newResourceId === activeEvent.resourceId) {
       return;
     }
+    if (onEventDrop) {
+      onEventDrop(activeEvent, newStart, newEnd);
+    }
   };
   return {
     view,
@@ -1795,6 +1799,7 @@ var Scheduler = ({
   date: controlledDate,
   onDateChange: controlledOnDateChange,
   onEventClick,
+  onEventDrop,
   timezone,
   onTimezoneChange,
   className,
@@ -1842,6 +1847,7 @@ var Scheduler = ({
     date: controlledDate,
     onDateChange: controlledOnDateChange,
     onEventClick,
+    onEventDrop,
     readOnly,
     timezone
   });
