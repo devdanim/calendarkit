@@ -889,7 +889,7 @@ var WeekView = ({
                   )
                 },
                 event.title
-              ), !isShortEvent && /* @__PURE__ */ React13__default.createElement(React13__default.Fragment, null, /* @__PURE__ */ React13__default.createElement("div", { className: "mt-0.5 truncate text-[10px] font-medium leading-tight text-muted-foreground" }, format(zonedEventStart, eventTimeFormat, { locale }), " -", " ", format(zonedEventEnd, eventTimeFormat, { locale })), event.description && height > 50 && /* @__PURE__ */ React13__default.createElement("div", { className: "mt-1 truncate text-[10px] leading-tight text-muted-foreground/80 opacity-80" }, event.description)), count > 1 && !isShortEvent && /* @__PURE__ */ React13__default.createElement("div", { className: "absolute right-1 top-1 flex h-4 w-4 items-center justify-center rounded-full border border-border bg-background/80 text-[9px] font-bold text-muted-foreground shadow-sm backdrop-blur-sm" }, count))
+              ), !isShortEvent && /* @__PURE__ */ React13__default.createElement(React13__default.Fragment, null, /* @__PURE__ */ React13__default.createElement("div", { className: "mt-0.5 truncate text-[10px] font-medium leading-tight text-muted-foreground" }, format(zonedEventStart, eventTimeFormat, { locale })), event.description && height > 50 && /* @__PURE__ */ React13__default.createElement("div", { className: "mt-1 truncate text-[10px] leading-tight text-muted-foreground/80 opacity-80" }, event.description)), count > 1 && !isShortEvent && /* @__PURE__ */ React13__default.createElement("div", { className: "absolute right-1 top-1 flex h-4 w-4 items-center justify-center rounded-full border border-border bg-background/80 text-[9px] font-bold text-muted-foreground shadow-sm backdrop-blur-sm" }, count))
             )
           );
         }),
@@ -1070,7 +1070,7 @@ var DayView = ({
             )
           },
           event.title
-        ), !isShortEvent && /* @__PURE__ */ React13__default.createElement(React13__default.Fragment, null, /* @__PURE__ */ React13__default.createElement("div", { className: "mt-0.5 text-xs font-medium text-muted-foreground" }, format(zonedStart, eventTimeFormat, { locale }), " -", " ", format(zonedEnd, eventTimeFormat, { locale })), event.description && height > 60 && /* @__PURE__ */ React13__default.createElement("div", { className: "mt-1 line-clamp-2 text-xs text-muted-foreground/80" }, event.description)), count > 1 && !isShortEvent && /* @__PURE__ */ React13__default.createElement("div", { className: "absolute right-1.5 top-1.5 flex h-5 w-5 items-center justify-center rounded-full border border-border bg-background/90 text-[10px] font-bold text-muted-foreground shadow-sm backdrop-blur-sm" }, count))
+        ), !isShortEvent && /* @__PURE__ */ React13__default.createElement(React13__default.Fragment, null, /* @__PURE__ */ React13__default.createElement("div", { className: "mt-0.5 text-xs font-medium text-muted-foreground" }, format(zonedStart, eventTimeFormat, { locale })), event.description && height > 60 && /* @__PURE__ */ React13__default.createElement("div", { className: "mt-1 line-clamp-2 text-xs text-muted-foreground/80" }, event.description)), count > 1 && !isShortEvent && /* @__PURE__ */ React13__default.createElement("div", { className: "absolute right-1.5 top-1.5 flex h-5 w-5 items-center justify-center rounded-full border border-border bg-background/90 text-[10px] font-bold text-muted-foreground shadow-sm backdrop-blur-sm" }, count))
       )
     );
   }), isToday(currentDate) && /* @__PURE__ */ React13__default.createElement(
@@ -1112,17 +1112,31 @@ var formatDuration = (start, end) => {
   if (remainingMinutes === 0) return `${hours}h`;
   return `${hours}h ${remainingMinutes}m`;
 };
-var getDateLabel = (date) => {
-  if (isToday(date)) return "Today";
-  if (isTomorrow(date)) return "Tomorrow";
-  return format(date, "EEEE");
-};
 var AgendaView = ({
   currentDate,
   events,
   onEventClick,
-  onCreateEvent
+  onCreateEvent,
+  locale,
+  translations
 }) => {
+  const getDateLabel = (date) => {
+    if (isToday(date)) return translations?.today || "Today";
+    if (isTomorrow(date)) return translations?.tomorrow || "Tomorrow";
+    return format(date, "EEEE", { locale });
+  };
+  const getEventCountLabel = (count) => {
+    if (count === 1) {
+      return `1 ${translations?.eventCount || "event"}`;
+    }
+    return `${count} ${translations?.eventsCount || "events"}`;
+  };
+  const getGuestCountLabel = (count) => {
+    if (count === 1) {
+      return `1 ${translations?.guestCount || "guest"}`;
+    }
+    return `${count} ${translations?.guestsCount || "guests"}`;
+  };
   const groupedEvents = useMemo(() => {
     const startDate = startOfDay(currentDate);
     const groups = [];
@@ -1165,15 +1179,15 @@ var AgendaView = ({
           isToday(group.date) ? "bg-primary text-primary-foreground shadow-lg shadow-primary/30" : "bg-muted/50 text-foreground"
         )
       },
-      /* @__PURE__ */ React13__default.createElement("span", { className: "text-2xl font-bold leading-none" }, format(group.date, "d")),
-      /* @__PURE__ */ React13__default.createElement("span", { className: "text-xs font-medium uppercase tracking-wide opacity-80" }, format(group.date, "MMM"))
+      /* @__PURE__ */ React13__default.createElement("span", { className: "text-2xl font-bold leading-none" }, format(group.date, "d", { locale })),
+      /* @__PURE__ */ React13__default.createElement("span", { className: "text-xs font-medium uppercase tracking-wide opacity-80" }, format(group.date, "MMM", { locale }))
     ), /* @__PURE__ */ React13__default.createElement("div", { className: "flex flex-col" }, /* @__PURE__ */ React13__default.createElement(
       "span",
       {
         className: cn("text-lg font-semibold", isToday(group.date) && "text-primary")
       },
       getDateLabel(group.date)
-    ), /* @__PURE__ */ React13__default.createElement("span", { className: "text-sm text-muted-foreground" }, group.events.length, " event", group.events.length !== 1 ? "s" : "")))), /* @__PURE__ */ React13__default.createElement("div", { className: "space-y-3 py-4" }, group.events.map((event) => /* @__PURE__ */ React13__default.createElement(
+    ), /* @__PURE__ */ React13__default.createElement("span", { className: "text-sm text-muted-foreground" }, getEventCountLabel(group.events.length))))), /* @__PURE__ */ React13__default.createElement("div", { className: "space-y-3 py-4" }, group.events.map((event) => /* @__PURE__ */ React13__default.createElement(
       motion.div,
       {
         key: event.id,
@@ -1194,14 +1208,20 @@ var AgendaView = ({
           style: { backgroundColor: event.color || "var(--primary)" }
         }
       ),
-      /* @__PURE__ */ React13__default.createElement("div", { className: "flex min-w-[70px] flex-col items-center pl-2" }, event.allDay ? /* @__PURE__ */ React13__default.createElement("div", { className: "flex flex-col items-center" }, /* @__PURE__ */ React13__default.createElement("span", { className: "rounded-full bg-muted/80 px-2.5 py-1 text-xs font-semibold text-muted-foreground" }, "All Day")) : /* @__PURE__ */ React13__default.createElement("div", { className: "flex flex-col items-center" }, /* @__PURE__ */ React13__default.createElement("span", { className: "text-base font-semibold text-foreground" }, format(event.start, "h:mm")), /* @__PURE__ */ React13__default.createElement("span", { className: "text-xs uppercase text-muted-foreground" }, format(event.start, "a")), /* @__PURE__ */ React13__default.createElement("div", { className: "my-1 h-3 w-px bg-border" }), /* @__PURE__ */ React13__default.createElement("span", { className: "text-xs font-medium text-muted-foreground/70" }, formatDuration(event.start, event.end)))),
+      /* @__PURE__ */ React13__default.createElement("div", { className: "flex min-w-[70px] flex-col items-center pl-2" }, event.allDay ? /* @__PURE__ */ React13__default.createElement("div", { className: "flex flex-col items-center" }, /* @__PURE__ */ React13__default.createElement("span", { className: "rounded-full bg-muted/80 px-2.5 py-1 text-xs font-semibold text-muted-foreground" }, translations?.allDay || "All Day")) : /* @__PURE__ */ React13__default.createElement("div", { className: "flex flex-col items-center" }, /* @__PURE__ */ React13__default.createElement("span", { className: "text-base font-semibold text-foreground" }, format(event.start, locale?.code === "fr" ? "H:mm" : "h:mm", {
+        locale
+      })), locale?.code !== "fr" && /* @__PURE__ */ React13__default.createElement("span", { className: "text-xs uppercase text-muted-foreground" }, format(event.start, "a", { locale })), /* @__PURE__ */ React13__default.createElement("div", { className: "my-1 h-3 w-px bg-border" }), /* @__PURE__ */ React13__default.createElement("span", { className: "text-xs font-medium text-muted-foreground/70" }, formatDuration(event.start, event.end)))),
       /* @__PURE__ */ React13__default.createElement("div", { className: "min-w-0 flex-1 space-y-2" }, /* @__PURE__ */ React13__default.createElement("div", { className: "flex items-start justify-between gap-2" }, /* @__PURE__ */ React13__default.createElement("h4", { className: "line-clamp-1 text-base font-semibold text-foreground transition-colors group-hover:text-primary" }, event.title), /* @__PURE__ */ React13__default.createElement(
         "div",
         {
           className: "mt-1.5 h-3 w-3 shrink-0 rounded-full",
           style: { backgroundColor: event.color || "var(--primary)" }
         }
-      )), event.description && /* @__PURE__ */ React13__default.createElement("p", { className: "line-clamp-2 text-sm leading-relaxed text-muted-foreground" }, event.description), /* @__PURE__ */ React13__default.createElement("div", { className: "flex flex-wrap items-center gap-3 pt-1" }, !event.allDay && /* @__PURE__ */ React13__default.createElement("div", { className: "flex items-center gap-1.5 text-xs text-muted-foreground" }, /* @__PURE__ */ React13__default.createElement(Clock, { className: "h-3.5 w-3.5" }), /* @__PURE__ */ React13__default.createElement("span", null, format(event.start, "h:mm a"), " - ", format(event.end, "h:mm a"))), event.guests && event.guests.length > 0 && /* @__PURE__ */ React13__default.createElement("div", { className: "flex items-center gap-1.5 text-xs text-muted-foreground" }, /* @__PURE__ */ React13__default.createElement(Users, { className: "h-3.5 w-3.5" }), /* @__PURE__ */ React13__default.createElement("span", null, event.guests.length, " guest", event.guests.length !== 1 ? "s" : "")), event.attachments && event.attachments.length > 0 && /* @__PURE__ */ React13__default.createElement("div", { className: "flex items-center gap-1.5 text-xs text-muted-foreground" }, /* @__PURE__ */ React13__default.createElement(Paperclip, { className: "h-3.5 w-3.5" }), /* @__PURE__ */ React13__default.createElement("span", null, event.attachments.length)), event.reminders && event.reminders.length > 0 && /* @__PURE__ */ React13__default.createElement("div", { className: "flex items-center gap-1.5 text-xs text-muted-foreground" }, /* @__PURE__ */ React13__default.createElement(Bell, { className: "h-3.5 w-3.5" }), /* @__PURE__ */ React13__default.createElement("span", null, event.reminders.length)))),
+      )), event.description && /* @__PURE__ */ React13__default.createElement("p", { className: "line-clamp-2 text-sm leading-relaxed text-muted-foreground" }, event.description), /* @__PURE__ */ React13__default.createElement("div", { className: "flex flex-wrap items-center gap-3 pt-1" }, !event.allDay && /* @__PURE__ */ React13__default.createElement("div", { className: "flex items-center gap-1.5 text-xs text-muted-foreground" }, /* @__PURE__ */ React13__default.createElement(Clock, { className: "h-3.5 w-3.5" }), /* @__PURE__ */ React13__default.createElement("span", null, format(event.start, locale?.code === "fr" ? "H:mm" : "h:mm a", {
+        locale
+      }), " ", "-", " ", format(event.end, locale?.code === "fr" ? "H:mm" : "h:mm a", {
+        locale
+      }))), event.guests && event.guests.length > 0 && /* @__PURE__ */ React13__default.createElement("div", { className: "flex items-center gap-1.5 text-xs text-muted-foreground" }, /* @__PURE__ */ React13__default.createElement(Users, { className: "h-3.5 w-3.5" }), /* @__PURE__ */ React13__default.createElement("span", null, getGuestCountLabel(event.guests.length))), event.attachments && event.attachments.length > 0 && /* @__PURE__ */ React13__default.createElement("div", { className: "flex items-center gap-1.5 text-xs text-muted-foreground" }, /* @__PURE__ */ React13__default.createElement(Paperclip, { className: "h-3.5 w-3.5" }), /* @__PURE__ */ React13__default.createElement("span", null, event.attachments.length)), event.reminders && event.reminders.length > 0 && /* @__PURE__ */ React13__default.createElement("div", { className: "flex items-center gap-1.5 text-xs text-muted-foreground" }, /* @__PURE__ */ React13__default.createElement(Bell, { className: "h-3.5 w-3.5" }), /* @__PURE__ */ React13__default.createElement("span", null, event.reminders.length)))),
       /* @__PURE__ */ React13__default.createElement("div", { className: "absolute right-4 top-1/2 -translate-y-1/2 opacity-0 transition-opacity group-hover:opacity-100" }, /* @__PURE__ */ React13__default.createElement(
         "svg",
         {
@@ -1885,6 +1905,7 @@ var Scheduler = ({
   const swipeRef = useViewSwipe(handlePrev, handleNext, true);
   const t = {
     today: "Today",
+    tomorrow: "Tomorrow",
     month: "Month",
     week: "Week",
     day: "Day",
@@ -1908,6 +1929,10 @@ var Scheduler = ({
     weekly: "Weekly",
     monthly: "Monthly",
     yearly: "Yearly",
+    eventCount: "event",
+    eventsCount: "events",
+    guestCount: "guest",
+    guestsCount: "guests",
     ...translations
   };
   const handleDragStart = (event) => {
@@ -2075,7 +2100,17 @@ var Scheduler = ({
             currentDate,
             events: filteredEvents,
             onEventClick: handleEventClickInternal,
-            onCreateEvent: handleCreateEvent
+            onCreateEvent: handleCreateEvent,
+            locale,
+            translations: {
+              today: t.today,
+              tomorrow: t.tomorrow,
+              allDay: t.allDay,
+              eventCount: t.eventCount,
+              eventsCount: t.eventsCount,
+              guestCount: t.guestCount,
+              guestsCount: t.guestsCount
+            }
           }
         ),
         view === "resource" && resources && /* @__PURE__ */ React13__default.createElement(

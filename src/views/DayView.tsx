@@ -235,8 +235,7 @@ export const DayView: React.FC<DayViewProps> = ({
                       {!isShortEvent && (
                         <>
                           <div className="mt-0.5 text-xs font-medium text-muted-foreground">
-                            {format(zonedStart, eventTimeFormat, { locale })} -{' '}
-                            {format(zonedEnd, eventTimeFormat, { locale })}
+                            {format(zonedStart, eventTimeFormat, { locale })}
                           </div>
                           {event.description && height > 60 && (
                             <div className="mt-1 line-clamp-2 text-xs text-muted-foreground/80">

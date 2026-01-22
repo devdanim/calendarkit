@@ -8,6 +8,7 @@ import {
   startOfDay,
   differenceInMinutes,
 } from 'date-fns';
+import { Locale } from 'date-fns';
 import { CalendarEvent } from '../types';
 import { cn } from '../utils';
 import { AgendaEmptyState } from '../components/EmptyState';
@@ -19,6 +20,16 @@ interface AgendaViewProps {
   events: CalendarEvent[];
   onEventClick?: (event: CalendarEvent) => void;
   onCreateEvent?: () => void;
+  locale?: Locale;
+  translations?: {
+    today?: string;
+    tomorrow?: string;
+    allDay?: string;
+    eventCount?: string;
+    eventsCount?: string;
+    guestCount?: string;
+    guestsCount?: string;
+  };
 }
 
 const formatDuration = (start: Date, end: Date): string => {
@@ -30,18 +41,33 @@ const formatDuration = (start: Date, end: Date): string => {
   return `${hours}h ${remainingMinutes}m`;
 };
 
-const getDateLabel = (date: Date): string => {
-  if (isToday(date)) return 'Today';
-  if (isTomorrow(date)) return 'Tomorrow';
-  return format(date, 'EEEE');
-};
-
 export const AgendaView: React.FC<AgendaViewProps> = ({
   currentDate,
   events,
   onEventClick,
   onCreateEvent,
+  locale,
+  translations,
 }) => {
+  const getDateLabel = (date: Date): string => {
+    if (isToday(date)) return translations?.today || 'Today';
+    if (isTomorrow(date)) return translations?.tomorrow || 'Tomorrow';
+    return format(date, 'EEEE', { locale });
+  };
+
+  const getEventCountLabel = (count: number): string => {
+    if (count === 1) {
+      return `1 ${translations?.eventCount || 'event'}`;
+    }
+    return `${count} ${translations?.eventsCount || 'events'}`;
+  };
+
+  const getGuestCountLabel = (count: number): string => {
+    if (count === 1) {
+      return `1 ${translations?.guestCount || 'guest'}`;
+    }
+    return `${count} ${translations?.guestsCount || 'guests'}`;
+  };
   // Group events by day for the next 30 days starting from currentDate
   const groupedEvents = useMemo(() => {
     const startDate = startOfDay(currentDate);
@@ -105,10 +131,10 @@ export const AgendaView: React.FC<AgendaViewProps> = ({
                     )}
                   >
                     <span className="text-2xl font-bold leading-none">
-                      {format(group.date, 'd')}
+                      {format(group.date, 'd', { locale })}
                     </span>
                     <span className="text-xs font-medium uppercase tracking-wide opacity-80">
-                      {format(group.date, 'MMM')}
+                      {format(group.date, 'MMM', { locale })}
                     </span>
                   </div>
 
@@ -120,7 +146,7 @@ export const AgendaView: React.FC<AgendaViewProps> = ({
                       {getDateLabel(group.date)}
                     </span>
                     <span className="text-sm text-muted-foreground">
-                      {group.events.length} event{group.events.length !== 1 ? 's' : ''}
+                      {getEventCountLabel(group.events.length)}
                     </span>
                   </div>
                 </div>
@@ -152,17 +178,21 @@ export const AgendaView: React.FC<AgendaViewProps> = ({
                       {event.allDay ? (
                         <div className="flex flex-col items-center">
                           <span className="rounded-full bg-muted/80 px-2.5 py-1 text-xs font-semibold text-muted-foreground">
-                            All Day
+                            {translations?.allDay || 'All Day'}
                           </span>
                         </div>
                       ) : (
                         <div className="flex flex-col items-center">
                           <span className="text-base font-semibold text-foreground">
-                            {format(event.start, 'h:mm')}
+                            {format(event.start, locale?.code === 'fr' ? 'H:mm' : 'h:mm', {
+                              locale,
+                            })}
                           </span>
-                          <span className="text-xs uppercase text-muted-foreground">
-                            {format(event.start, 'a')}
-                          </span>
+                          {locale?.code !== 'fr' && (
+                            <span className="text-xs uppercase text-muted-foreground">
+                              {format(event.start, 'a', { locale })}
+                            </span>
+                          )}
                           <div className="my-1 h-3 w-px bg-border" />
                           <span className="text-xs font-medium text-muted-foreground/70">
                             {formatDuration(event.start, event.end)}
@@ -196,7 +226,13 @@ export const AgendaView: React.FC<AgendaViewProps> = ({
                           <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
                             <Clock className="h-3.5 w-3.5" />
                             <span>
-                              {format(event.start, 'h:mm a')} - {format(event.end, 'h:mm a')}
+                              {format(event.start, locale?.code === 'fr' ? 'H:mm' : 'h:mm a', {
+                                locale,
+                              })}{' '}
+                              -{' '}
+                              {format(event.end, locale?.code === 'fr' ? 'H:mm' : 'h:mm a', {
+                                locale,
+                              })}
                             </span>
                           </div>
                         )}
@@ -204,9 +240,7 @@ export const AgendaView: React.FC<AgendaViewProps> = ({
                         {event.guests && event.guests.length > 0 && (
                           <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
                             <Users className="h-3.5 w-3.5" />
-                            <span>
-                              {event.guests.length} guest{event.guests.length !== 1 ? 's' : ''}
-                            </span>
+                            <span>{getGuestCountLabel(event.guests.length)}</span>
                           </div>
                         )}
 

@@ -107,6 +107,7 @@ const demoEventTypes: EventType[] = [
 const translations = {
   en: {
     today: 'Today',
+    tomorrow: 'Tomorrow',
     month: 'Month',
     week: 'Week',
     day: 'Day',
@@ -130,16 +131,21 @@ const translations = {
     weekly: 'Weekly',
     monthly: 'Monthly',
     yearly: 'Yearly',
+    eventCount: 'event',
+    eventsCount: 'events',
+    guestCount: 'guest',
+    guestsCount: 'guests',
   },
   fr: {
     today: "Aujourd'hui",
+    tomorrow: 'Demain',
     month: 'Mois',
     week: 'Semaine',
     day: 'Jour',
     agenda: 'Agenda',
     resource: 'Ressource',
-    createEvent: 'Créer un événement',
-    editEvent: "Modifier l'événement",
+    createEvent: 'Créer un évènement',
+    editEvent: "Modifier l'évènement",
     delete: 'Supprimer',
     save: 'Enregistrer',
     cancel: 'Annuler',
@@ -156,6 +162,10 @@ const translations = {
     weekly: 'Hebdomadaire',
     monthly: 'Mensuel',
     yearly: 'Annuel',
+    eventCount: 'évènement',
+    eventsCount: 'évènements',
+    guestCount: 'invité',
+    guestsCount: 'invités',
   },
 };
 
@@ -273,7 +283,6 @@ export default function Home() {
               showCalendarFilters: true,
               showTimezoneSelector: false,
             }}
-            hideLanguageSelector
             hideDarkModeToggle
             locale={language === 'fr' ? fr : enUS}
           />

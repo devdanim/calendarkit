@@ -164,6 +164,7 @@ export const Scheduler: React.FC<CalendarProps> = ({
   // Default Translations
   const t = {
     today: 'Today',
+    tomorrow: 'Tomorrow',
     month: 'Month',
     week: 'Week',
     day: 'Day',
@@ -187,6 +188,10 @@ export const Scheduler: React.FC<CalendarProps> = ({
     weekly: 'Weekly',
     monthly: 'Monthly',
     yearly: 'Yearly',
+    eventCount: 'event',
+    eventsCount: 'events',
+    guestCount: 'guest',
+    guestsCount: 'guests',
     ...translations,
   };
 
@@ -392,6 +397,16 @@ export const Scheduler: React.FC<CalendarProps> = ({
                           events={filteredEvents}
                           onEventClick={handleEventClickInternal}
                           onCreateEvent={handleCreateEvent}
+                          locale={locale}
+                          translations={{
+                            today: t.today,
+                            tomorrow: t.tomorrow,
+                            allDay: t.allDay,
+                            eventCount: t.eventCount,
+                            eventsCount: t.eventsCount,
+                            guestCount: t.guestCount,
+                            guestsCount: t.guestsCount,
+                          }}
                         />
                       )}
                       {view === 'resource' && resources && (

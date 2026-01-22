@@ -69,6 +69,7 @@ export interface CalendarTheme {
 
 export interface CalendarTranslations {
   today: string;
+  tomorrow: string;
   month: string;
   week: string;
   day: string;
@@ -93,6 +94,9 @@ export interface CalendarTranslations {
   monthly: string;
   yearly: string;
   event: string;
+  events: string;
+  eventCount: string;
+  eventsCount: string;
   task: string;
   appointmentSchedule: string;
   new: string;
@@ -106,6 +110,8 @@ export interface CalendarTranslations {
   descriptionAndAttachments: string;
   dragAndDrop: string;
   guests: string;
+  guestCount: string;
+  guestsCount: string;
   addAttachment: string;
   moreOptions: string;
   doesNotRepeat: string;
