@@ -61,7 +61,6 @@ export const Scheduler: React.FC<CalendarProps> = ({
   onTimezoneChange,
   className,
   theme,
-  renderEventForm,
   readOnly,
   calendars,
   resources,
@@ -90,10 +89,6 @@ export const Scheduler: React.FC<CalendarProps> = ({
     currentDate,
     isSidebarOpen: internalSidebarOpen,
     setIsSidebarOpen: setInternalSidebarOpen,
-    isModalOpen,
-    setIsModalOpen,
-    selectedEvent,
-    modalInitialDate,
     events: expandedEvents,
     handleViewChange,
     handleDateChange,
@@ -103,9 +98,6 @@ export const Scheduler: React.FC<CalendarProps> = ({
     handleDateClick,
     handleTimeSlotClick,
     handleEventClickInternal,
-    handleCreateEvent,
-    handleModalSave,
-    handleModalDelete,
     handleDragEnd,
   } = useCalendarLogic({
     events,
@@ -396,7 +388,6 @@ export const Scheduler: React.FC<CalendarProps> = ({
                           currentDate={currentDate}
                           events={filteredEvents}
                           onEventClick={handleEventClickInternal}
-                          onCreateEvent={handleCreateEvent}
                           locale={locale}
                           translations={{
                             today: t.today,
@@ -427,41 +418,8 @@ export const Scheduler: React.FC<CalendarProps> = ({
                 </div>
               </div>
             )}
-
-            {/* Mobile Create Button (FAB) */}
-            <div className="absolute bottom-6 right-6 z-50 md:hidden">
-              <button
-                onClick={handleCreateEvent}
-                className="flex h-14 w-14 items-center justify-center rounded-full bg-blue-600 text-white shadow-lg transition-transform active:scale-90"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M5 12h14" />
-                  <path d="M12 5v14" />
-                </svg>
-              </button>
-            </div>
           </div>
         </div>
-
-        {renderEventForm &&
-          renderEventForm({
-            isOpen: isModalOpen,
-            onClose: () => setIsModalOpen(false),
-            event: selectedEvent,
-            initialDate: modalInitialDate,
-            onSave: handleModalSave,
-            onDelete: handleModalDelete,
-          })}
 
         {/* Context Menu */}
         <EventContextMenu
@@ -527,8 +485,7 @@ export const Scheduler: React.FC<CalendarProps> = ({
                           <circle cx="12" cy="12" r="10" />
                           <path d="M12 6v6l4 2" />
                         </svg>
-                        {format(activeDragEvent.start, 'h:mm a')} -{' '}
-                        {format(activeDragEvent.end, 'h:mm a')}
+                        {format(activeDragEvent.start, 'h:mm a')}
                       </div>
                     )}
                 </div>
