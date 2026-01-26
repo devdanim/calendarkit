@@ -326,7 +326,7 @@ export const WeekView: React.FC<WeekViewProps> = ({
                                   {format(zonedEventStart, eventTimeFormat, { locale })}
                                 </div>
                                 {event.description && height > 50 && (
-                                  <div className="mt-1 truncate text-[10px] leading-tight text-muted-foreground/80 opacity-80">
+                                  <div className="mt-1 truncate text-[10px] font-normal text-[#4C4C56] opacity-80">
                                     {event.description}
                                   </div>
                                 )}
