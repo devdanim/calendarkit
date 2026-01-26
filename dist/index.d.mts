@@ -21,7 +21,7 @@ interface CalendarEvent {
     title: string;
     start: Date;
     end: Date;
-    description?: string;
+    description?: React.ReactNode;
     color?: string;
     allDay?: boolean;
     calendarId?: string;
