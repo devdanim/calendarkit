@@ -386,7 +386,7 @@ var Sidebar = ({
     "div",
     {
       className: cn(
-        "scrollbar-hide flex h-full min-w-[256px] flex-col overflow-y-auto overflow-x-hidden bg-gradient-to-b from-background via-background to-muted/10 pb-4 pt-4",
+        "scrollbar-hide border-1 flex h-full min-w-[256px] flex-col overflow-y-auto overflow-x-hidden rounded-2xl border-[#E4E4EB] bg-white pb-4 pt-4 shadow-md",
         className
       )
     },
