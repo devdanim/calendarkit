@@ -296,7 +296,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                         `}</style>
                         </div>
                         <div className="flex min-w-0 flex-1 items-center gap-2">
-                          {item.icon && <div className="h-4 w-4">{item.icon}</div>}
+                          {item?.icon}
                           <span className="truncate text-sm font-medium text-foreground/90">
                             {item.label}
                           </span>

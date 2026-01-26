@@ -491,7 +491,7 @@ var Sidebar = ({
                             --tw-ring-color: ${item.color}40 !important;
                           }
                         `)),
-          /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "flex min-w-0 flex-1 items-center gap-2" }, item.icon && /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "h-4 w-4" }, item.icon), /* @__PURE__ */ React12__namespace.default.createElement("span", { className: "truncate text-sm font-medium text-foreground/90" }, item.label))
+          /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "flex min-w-0 flex-1 items-center gap-2" }, item?.icon, /* @__PURE__ */ React12__namespace.default.createElement("span", { className: "truncate text-sm font-medium text-foreground/90" }, item.label))
         )))
       );
     })),
