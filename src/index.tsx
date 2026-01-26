@@ -79,6 +79,7 @@ export const Scheduler: React.FC<CalendarProps> = ({
   language,
   onLanguageChange,
   locale, // Date-fns locale
+  newEventButton,
 }) => {
   const [activeDragEvent, setActiveDragEvent] = useState<CalendarEvent | null>(null);
 
@@ -271,48 +272,51 @@ export const Scheduler: React.FC<CalendarProps> = ({
       modifiers={modifiers}
     >
       <div
-        className={cn('relative flex h-full flex-col bg-background text-foreground', className)}
+        className={cn('relative flex h-full bg-background text-foreground', className)}
         style={getThemeStyles(theme)}
       >
-        <CalendarHeader
-          currentDate={currentDate}
-          onPrev={handlePrev}
-          onNext={handleNext}
-          onToday={handleToday}
-          view={view}
-          onViewChange={handleViewChange}
-          onMenuClick={handleSidebarToggle}
-          isDarkMode={isDarkMode}
-          onThemeToggle={onThemeToggle}
-          translations={t} // Pass translations
-          hideViewSwitcher={hideViewSwitcher}
-          hideLanguageSelector={hideLanguageSelector}
-          hideDarkModeToggle={hideDarkModeToggle}
-          language={language}
-          onLanguageChange={onLanguageChange}
-          locale={locale} // Pass locale
-        />
+        {/* Sidebar à gauche sur toute la hauteur */}
+        {sidebarEnabled && (
+          <div className="flex w-64 flex-shrink-0 border-r border-border/30">
+            <Sidebar
+              currentDate={currentDate}
+              onDateChange={handleDateChange}
+              onViewChange={handleViewChange}
+              timezone={timezone}
+              onTimezoneChange={onTimezoneChange}
+              className="h-full w-full"
+              calendars={calendars}
+              onCalendarToggle={onCalendarToggle}
+              translations={t}
+              showMiniCalendar={showMiniCalendar}
+              showCalendarFilters={showCalendarFilters}
+              showTimezoneSelector={showTimezoneSelector}
+              locale={locale}
+            />
+          </div>
+        )}
 
-        <div className="flex flex-1 overflow-hidden">
-          {sidebarEnabled && (
-            <div className="flex w-64 flex-shrink-0 border-r border-border/30">
-              <Sidebar
-                currentDate={currentDate}
-                onDateChange={handleDateChange}
-                onViewChange={handleViewChange}
-                timezone={timezone}
-                onTimezoneChange={onTimezoneChange}
-                className="h-full w-full"
-                calendars={calendars}
-                onCalendarToggle={onCalendarToggle}
-                translations={t}
-                showMiniCalendar={showMiniCalendar}
-                showCalendarFilters={showCalendarFilters}
-                showTimezoneSelector={showTimezoneSelector}
-                locale={locale}
-              />
-            </div>
-          )}
+        {/* Bloc droit avec Header + Calendrier */}
+        <div className="flex flex-1 flex-col overflow-hidden">
+          <CalendarHeader
+            currentDate={currentDate}
+            onPrev={handlePrev}
+            onNext={handleNext}
+            onToday={handleToday}
+            view={view}
+            onViewChange={handleViewChange}
+            onMenuClick={handleSidebarToggle}
+            isDarkMode={isDarkMode}
+            onThemeToggle={onThemeToggle}
+            translations={t}
+            hideViewSwitcher={hideViewSwitcher}
+            hideLanguageSelector={hideLanguageSelector}
+            hideDarkModeToggle={hideDarkModeToggle}
+            language={language}
+            onLanguageChange={onLanguageChange}
+            locale={locale}
+            newEventButton={newEventButton}
+          />
 
           <div className="relative flex flex-1 flex-col overflow-hidden">
             {isLoading ? (

@@ -149,7 +149,7 @@ export const WeekView: React.FC<WeekViewProps> = ({
                 </div>
                 <div
                   className={cn(
-                    'mx-auto flex h-9 w-9 items-center justify-center rounded-xl text-sm font-semibold transition-all duration-200',
+                    'mx-auto flex h-9 w-9 items-center justify-center rounded-full text-sm font-semibold transition-all duration-200',
                     isToday(day)
                       ? 'scale-110 bg-primary text-primary-foreground shadow-lg shadow-primary/30'
                       : 'text-foreground hover:bg-accent/80'

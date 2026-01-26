@@ -32,6 +32,11 @@ interface CalendarHeaderProps {
   language?: 'en' | 'fr';
   onLanguageChange?: (lang: 'en' | 'fr') => void;
   locale?: Locale;
+  newEventButton?: {
+    label?: string;
+    icon?: React.ReactNode;
+    onClick?: () => void;
+  };
 }
 
 export const CalendarHeader: React.FC<CalendarHeaderProps> = ({
@@ -51,6 +56,7 @@ export const CalendarHeader: React.FC<CalendarHeaderProps> = ({
   language,
   onLanguageChange,
   locale,
+  newEventButton,
 }) => {
   const viewConfig = [
     {
@@ -86,11 +92,18 @@ export const CalendarHeader: React.FC<CalendarHeaderProps> = ({
             <Menu className="h-5 w-5" />
           </Button>
 
+          {/* Current Date Display */}
+          <div className="ml-2 md:ml-4">
+            <h2 className="whitespace-nowrap text-lg font-semibold capitalize tracking-tight text-foreground md:text-xl">
+              {format(currentDate, 'MMMM yyyy', { locale })}
+            </h2>
+          </div>
+
           {/* Today Button */}
           <Button
             variant="outline"
             onClick={onToday}
-            className="hidden h-9 rounded-xl border-[0.5px] border-border/60 px-5 text-sm font-medium transition-all duration-200 hover:border-primary/40 hover:bg-primary/5 hover:text-primary sm:inline-flex"
+            className="hidden h-9 rounded-xl border-[0.5px] border-border/60 bg-[#EEEFF5] px-5 text-sm font-medium transition-all duration-200 hover:border-primary/40 hover:bg-primary/5 hover:text-primary sm:inline-flex"
           >
             {translations.today}
           </Button>
@@ -113,13 +126,6 @@ export const CalendarHeader: React.FC<CalendarHeaderProps> = ({
             >
               <ChevronRight className="h-4 w-4 text-muted-foreground" />
             </Button>
-          </div>
-
-          {/* Current Date Display */}
-          <div className="ml-2 md:ml-4">
-            <h2 className="whitespace-nowrap text-lg font-semibold capitalize tracking-tight text-foreground md:text-xl">
-              {format(currentDate, 'MMMM yyyy', { locale })}
-            </h2>
           </div>
         </div>
       </div>
@@ -156,7 +162,7 @@ export const CalendarHeader: React.FC<CalendarHeaderProps> = ({
 
         {/* View Switcher */}
         {!hideViewSwitcher && (
-          <div className="flex items-center rounded-xl bg-muted/50 p-1 backdrop-blur-sm">
+          <div className="flex items-center rounded-xl bg-[#EEEFF5] p-1 backdrop-blur-sm">
             {viewConfig.map(({ key, icon: Icon }) => (
               <Button
                 key={key}
@@ -175,6 +181,19 @@ export const CalendarHeader: React.FC<CalendarHeaderProps> = ({
               </Button>
             ))}
           </div>
+        )}
+
+        {/* New Event Button */}
+        {newEventButton && (
+          <Button
+            variant="outline"
+            size="sm"
+            className="h-9 rounded-xl border-none bg-[#7FDDF0] px-5 text-sm font-medium transition-all duration-200 hover:border-primary/40 hover:bg-primary/5 hover:text-primary sm:inline-flex"
+            onClick={newEventButton.onClick}
+          >
+            {newEventButton.icon}
+            {newEventButton.label}
+          </Button>
         )}
       </div>
     </div>

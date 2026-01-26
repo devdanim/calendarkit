@@ -11,6 +11,7 @@ import {
 } from '@/index';
 import { addDays, startOfWeek, addHours } from 'date-fns';
 import { fr, enUS } from 'date-fns/locale';
+import { PlusIcon } from 'lucide-react';
 
 // Generate demo events
 const generateDemoEvents = (): CalendarEvent[] => {
@@ -285,6 +286,11 @@ export default function Home() {
             }}
             hideDarkModeToggle
             locale={language === 'fr' ? fr : enUS}
+            newEventButton={{
+              label: 'New Event',
+              icon: <PlusIcon className="h-4 w-4" />,
+              onClick: () => console.log('New Event'),
+            }}
           />
         </div>
       </div>

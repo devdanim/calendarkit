@@ -236,19 +236,20 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 key={section.id}
                 className="rounded-2xl border-[0px] border-border/30 bg-muted/20 p-3"
               >
-                <div
-                  className="-m-1 mb-2 flex cursor-pointer items-center justify-between rounded-xl p-2 transition-all duration-200 hover:bg-accent/50"
-                  onClick={() => toggleSection(section.id)}
-                >
-                  <span className="text-sm font-semibold text-foreground">{section.title}</span>
-                  <ChevronDown
-                    className={cn(
-                      'h-4 w-4 text-muted-foreground transition-transform duration-200',
-                      !isCollapsed && 'rotate-180'
-                    )}
-                  />
-                </div>
-
+                {section.title && (
+                  <div
+                    className="-m-1 mb-2 flex cursor-pointer items-center justify-between rounded-xl p-2 transition-all duration-200 hover:bg-accent/50"
+                    onClick={() => toggleSection(section.id)}
+                  >
+                    <span className="text-sm font-semibold text-foreground">{section.title}</span>
+                    <ChevronDown
+                      className={cn(
+                        'h-4 w-4 text-muted-foreground transition-transform duration-200',
+                        !isCollapsed && 'rotate-180'
+                      )}
+                    />
+                  </div>
+                )}
                 {!isCollapsed && (
                   <div className="space-y-1">
                     {section.items.map((item) => (
@@ -295,14 +296,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
                         `}</style>
                         </div>
                         <div className="flex min-w-0 flex-1 items-center gap-2">
+                          {item.icon && <div className="h-4 w-4">{item.icon}</div>}
                           <span className="truncate text-sm font-medium text-foreground/90">
                             {item.label}
                           </span>
                         </div>
-                        <div
-                          className="h-2 w-2 rounded-full opacity-60 transition-opacity group-hover:opacity-100"
-                          style={{ backgroundColor: item.color }}
-                        />
                       </div>
                     ))}
                   </div>

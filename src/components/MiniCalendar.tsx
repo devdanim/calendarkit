@@ -126,7 +126,7 @@ export const MiniCalendar: React.FC<MiniCalendarProps> = ({
               key={day.toISOString()}
               onClick={() => handleDateClick(day)}
               className={cn(
-                'mx-auto flex h-8 w-8 items-center justify-center rounded-xl text-xs font-medium transition-all duration-200',
+                'mx-auto flex h-8 w-8 items-center justify-center rounded-full text-xs font-medium transition-all duration-200',
                 !isCurrentMonth && 'text-muted-foreground/30',
                 isCurrentMonth &&
                   !isSelected &&

@@ -125,12 +125,13 @@ interface CalendarFilterItem {
     id: string;
     label: string;
     color?: string;
+    icon?: React.ReactNode;
     active?: boolean;
 }
 /** A section of filters with a title (e.g., "By Type", "By Category") */
 interface CalendarFilterSection {
     id: string;
-    title: string;
+    title?: string;
     items: CalendarFilterItem[];
     /** Whether the section is collapsed (default: false) */
     collapsed?: boolean;
@@ -182,6 +183,11 @@ interface CalendarProps {
         onSave: (event: Partial<CalendarEvent>) => void;
         onDelete?: (eventId: string) => void;
     }) => React.ReactNode;
+    newEventButton?: {
+        label?: string;
+        icon?: React.ReactNode;
+        onClick?: () => void;
+    };
 }
 
 declare function cn(...inputs: ClassValue[]): string;

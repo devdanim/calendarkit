@@ -7,7 +7,7 @@ import { format, differenceInMinutes, startOfWeek, endOfWeek, eachDayOfInterval,
 import { cva } from 'class-variance-authority';
 import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
-import { Menu, ChevronLeft, ChevronRight, Sun, Moon, CalendarDays, CalendarRange, Calendar, ListTodo, ChevronDown, Globe, Clock, Users, Paperclip, Bell, Edit3, Copy, Trash2 } from 'lucide-react';
+import { ChevronDown, Globe, Menu, ChevronLeft, ChevronRight, Sun, Moon, CalendarDays, CalendarRange, Calendar, ListTodo, Clock, Users, Paperclip, Bell, Edit3, Copy, Trash2 } from 'lucide-react';
 import { toZonedTime, fromZonedTime } from 'date-fns-tz';
 import { CSS } from '@dnd-kit/utilities';
 
@@ -63,7 +63,8 @@ var CalendarHeader = ({
   hideDarkModeToggle,
   language,
   onLanguageChange,
-  locale
+  locale,
+  newEventButton
 }) => {
   const viewConfig = [
     {
@@ -92,12 +93,12 @@ var CalendarHeader = ({
       onClick: onMenuClick
     },
     /* @__PURE__ */ React12__default.createElement(Menu, { className: "h-5 w-5" })
-  ), /* @__PURE__ */ React12__default.createElement(
+  ), /* @__PURE__ */ React12__default.createElement("div", { className: "ml-2 md:ml-4" }, /* @__PURE__ */ React12__default.createElement("h2", { className: "whitespace-nowrap text-lg font-semibold capitalize tracking-tight text-foreground md:text-xl" }, format(currentDate, "MMMM yyyy", { locale }))), /* @__PURE__ */ React12__default.createElement(
     Button,
     {
       variant: "outline",
       onClick: onToday,
-      className: "hidden h-9 rounded-xl border-[0.5px] border-border/60 px-5 text-sm font-medium transition-all duration-200 hover:border-primary/40 hover:bg-primary/5 hover:text-primary sm:inline-flex"
+      className: "hidden h-9 rounded-xl border-[0.5px] border-border/60 bg-[#EEEFF5] px-5 text-sm font-medium transition-all duration-200 hover:border-primary/40 hover:bg-primary/5 hover:text-primary sm:inline-flex"
     },
     translations.today
   ), /* @__PURE__ */ React12__default.createElement("div", { className: "flex items-center rounded-xl bg-muted/40 p-0.5" }, /* @__PURE__ */ React12__default.createElement(
@@ -118,7 +119,7 @@ var CalendarHeader = ({
       className: "h-8 w-8 rounded-lg transition-all duration-200 hover:bg-background/80"
     },
     /* @__PURE__ */ React12__default.createElement(ChevronRight, { className: "h-4 w-4 text-muted-foreground" })
-  )), /* @__PURE__ */ React12__default.createElement("div", { className: "ml-2 md:ml-4" }, /* @__PURE__ */ React12__default.createElement("h2", { className: "whitespace-nowrap text-lg font-semibold capitalize tracking-tight text-foreground md:text-xl" }, format(currentDate, "MMMM yyyy", { locale }))))), /* @__PURE__ */ React12__default.createElement("div", { className: "flex w-full items-center justify-end gap-2 md:w-auto md:gap-3" }, !hideLanguageSelector && onLanguageChange && language && /* @__PURE__ */ React12__default.createElement(
+  )))), /* @__PURE__ */ React12__default.createElement("div", { className: "flex w-full items-center justify-end gap-2 md:w-auto md:gap-3" }, !hideLanguageSelector && onLanguageChange && language && /* @__PURE__ */ React12__default.createElement(
     Button,
     {
       variant: "ghost",
@@ -136,7 +137,7 @@ var CalendarHeader = ({
       onClick: onThemeToggle
     },
     isDarkMode ? /* @__PURE__ */ React12__default.createElement(Sun, { className: "h-4 w-4 text-amber-500" }) : /* @__PURE__ */ React12__default.createElement(Moon, { className: "h-4 w-4 text-muted-foreground" })
-  ), !hideViewSwitcher && /* @__PURE__ */ React12__default.createElement("div", { className: "flex items-center rounded-xl bg-muted/50 p-1 backdrop-blur-sm" }, viewConfig.map(({ key, icon: Icon }) => /* @__PURE__ */ React12__default.createElement(
+  ), !hideViewSwitcher && /* @__PURE__ */ React12__default.createElement("div", { className: "flex items-center rounded-xl bg-[#EEEFF5] p-1 backdrop-blur-sm" }, viewConfig.map(({ key, icon: Icon }) => /* @__PURE__ */ React12__default.createElement(
     Button,
     {
       key,
@@ -150,7 +151,17 @@ var CalendarHeader = ({
     },
     /* @__PURE__ */ React12__default.createElement(Icon, { className: "h-3.5 w-3.5" }),
     /* @__PURE__ */ React12__default.createElement("span", { className: "hidden sm:inline" }, translations[key])
-  )))));
+  ))), newEventButton && /* @__PURE__ */ React12__default.createElement(
+    Button,
+    {
+      variant: "outline",
+      size: "sm",
+      className: "h-9 rounded-xl border-none bg-[#7FDDF0] px-5 text-sm font-medium transition-all duration-200 hover:border-primary/40 hover:bg-primary/5 hover:text-primary sm:inline-flex",
+      onClick: newEventButton.onClick
+    },
+    newEventButton.icon,
+    newEventButton.label
+  )));
 };
 var getMonthGrid = (date, weekStartOn = 0) => {
   const monthStart = startOfMonth(date);
@@ -236,7 +247,7 @@ var MiniCalendar = ({
         key: day.toISOString(),
         onClick: () => handleDateClick(day),
         className: cn(
-          "mx-auto flex h-8 w-8 items-center justify-center rounded-xl text-xs font-medium transition-all duration-200",
+          "mx-auto flex h-8 w-8 items-center justify-center rounded-full text-xs font-medium transition-all duration-200",
           !isCurrentMonth && "text-muted-foreground/30",
           isCurrentMonth && !isSelected && !isTodayDate && "text-foreground hover:bg-accent/80",
           isSelected && "scale-105 bg-primary text-primary-foreground shadow-md shadow-primary/30",
@@ -396,7 +407,7 @@ var Sidebar = ({
           key: section.id,
           className: "rounded-2xl border-[0px] border-border/30 bg-muted/20 p-3"
         },
-        /* @__PURE__ */ React12__default.createElement(
+        section.title && /* @__PURE__ */ React12__default.createElement(
           "div",
           {
             className: "-m-1 mb-2 flex cursor-pointer items-center justify-between rounded-xl p-2 transition-all duration-200 hover:bg-accent/50",
@@ -459,14 +470,7 @@ var Sidebar = ({
                             --tw-ring-color: ${item.color}40 !important;
                           }
                         `)),
-          /* @__PURE__ */ React12__default.createElement("div", { className: "flex min-w-0 flex-1 items-center gap-2" }, /* @__PURE__ */ React12__default.createElement("span", { className: "truncate text-sm font-medium text-foreground/90" }, item.label)),
-          /* @__PURE__ */ React12__default.createElement(
-            "div",
-            {
-              className: "h-2 w-2 rounded-full opacity-60 transition-opacity group-hover:opacity-100",
-              style: { backgroundColor: item.color }
-            }
-          )
+          /* @__PURE__ */ React12__default.createElement("div", { className: "flex min-w-0 flex-1 items-center gap-2" }, item.icon && /* @__PURE__ */ React12__default.createElement("div", { className: "h-4 w-4" }, item.icon), /* @__PURE__ */ React12__default.createElement("span", { className: "truncate text-sm font-medium text-foreground/90" }, item.label))
         )))
       );
     })),
@@ -752,7 +756,7 @@ var WeekView = ({
         "div",
         {
           className: cn(
-            "mx-auto flex h-9 w-9 items-center justify-center rounded-xl text-sm font-semibold transition-all duration-200",
+            "mx-auto flex h-9 w-9 items-center justify-center rounded-full text-sm font-semibold transition-all duration-200",
             isToday(day) ? "scale-110 bg-primary text-primary-foreground shadow-lg shadow-primary/30" : "text-foreground hover:bg-accent/80"
           )
         },
@@ -1820,8 +1824,9 @@ var Scheduler = ({
   hideDarkModeToggle,
   language,
   onLanguageChange,
-  locale
+  locale,
   // Date-fns locale
+  newEventButton
 }) => {
   const [activeDragEvent, setActiveDragEvent] = useState(null);
   const { contextMenuEvent, contextMenuPosition, closeContextMenu } = useEventContextMenu();
@@ -1968,10 +1973,28 @@ var Scheduler = ({
     /* @__PURE__ */ React12__default.createElement(
       "div",
       {
-        className: cn("relative flex h-full flex-col bg-background text-foreground", className),
+        className: cn("relative flex h-full bg-background text-foreground", className),
         style: getThemeStyles(theme)
       },
-      /* @__PURE__ */ React12__default.createElement(
+      sidebarEnabled && /* @__PURE__ */ React12__default.createElement("div", { className: "flex w-64 flex-shrink-0 border-r border-border/30" }, /* @__PURE__ */ React12__default.createElement(
+        Sidebar,
+        {
+          currentDate,
+          onDateChange: handleDateChange,
+          onViewChange: handleViewChange,
+          timezone,
+          onTimezoneChange,
+          className: "h-full w-full",
+          calendars,
+          onCalendarToggle,
+          translations: t,
+          showMiniCalendar,
+          showCalendarFilters,
+          showTimezoneSelector,
+          locale
+        }
+      )),
+      /* @__PURE__ */ React12__default.createElement("div", { className: "flex flex-1 flex-col overflow-hidden" }, /* @__PURE__ */ React12__default.createElement(
         CalendarHeader,
         {
           currentDate,
@@ -1989,27 +2012,10 @@ var Scheduler = ({
           hideDarkModeToggle,
           language,
           onLanguageChange,
-          locale
+          locale,
+          newEventButton
         }
-      ),
-      /* @__PURE__ */ React12__default.createElement("div", { className: "flex flex-1 overflow-hidden" }, sidebarEnabled && /* @__PURE__ */ React12__default.createElement("div", { className: "flex w-64 flex-shrink-0 border-r border-border/30" }, /* @__PURE__ */ React12__default.createElement(
-        Sidebar,
-        {
-          currentDate,
-          onDateChange: handleDateChange,
-          onViewChange: handleViewChange,
-          timezone,
-          onTimezoneChange,
-          className: "h-full w-full",
-          calendars,
-          onCalendarToggle,
-          translations: t,
-          showMiniCalendar,
-          showCalendarFilters,
-          showTimezoneSelector,
-          locale
-        }
-      )), /* @__PURE__ */ React12__default.createElement("div", { className: "relative flex flex-1 flex-col overflow-hidden" }, isLoading ? /* @__PURE__ */ React12__default.createElement("div", { className: "flex-1 overflow-auto p-0 md:p-4" }, /* @__PURE__ */ React12__default.createElement("div", { className: "h-full min-w-full" }, view === "month" && /* @__PURE__ */ React12__default.createElement(MonthViewSkeleton, null), view === "week" && /* @__PURE__ */ React12__default.createElement(WeekViewSkeleton, null), view === "day" && /* @__PURE__ */ React12__default.createElement(DayViewSkeleton, null), view === "agenda" && /* @__PURE__ */ React12__default.createElement(AgendaViewSkeleton, null), view === "resource" && /* @__PURE__ */ React12__default.createElement(WeekViewSkeleton, null))) : /* @__PURE__ */ React12__default.createElement("div", { ref: swipeRef, className: "flex-1 touch-pan-y overflow-auto p-0 md:p-4" }, /* @__PURE__ */ React12__default.createElement("div", { className: "h-full min-w-full" }, /* @__PURE__ */ React12__default.createElement(AnimatePresence, { mode: "wait", initial: false }, /* @__PURE__ */ React12__default.createElement(
+      ), /* @__PURE__ */ React12__default.createElement("div", { className: "relative flex flex-1 flex-col overflow-hidden" }, isLoading ? /* @__PURE__ */ React12__default.createElement("div", { className: "flex-1 overflow-auto p-0 md:p-4" }, /* @__PURE__ */ React12__default.createElement("div", { className: "h-full min-w-full" }, view === "month" && /* @__PURE__ */ React12__default.createElement(MonthViewSkeleton, null), view === "week" && /* @__PURE__ */ React12__default.createElement(WeekViewSkeleton, null), view === "day" && /* @__PURE__ */ React12__default.createElement(DayViewSkeleton, null), view === "agenda" && /* @__PURE__ */ React12__default.createElement(AgendaViewSkeleton, null), view === "resource" && /* @__PURE__ */ React12__default.createElement(WeekViewSkeleton, null))) : /* @__PURE__ */ React12__default.createElement("div", { ref: swipeRef, className: "flex-1 touch-pan-y overflow-auto p-0 md:p-4" }, /* @__PURE__ */ React12__default.createElement("div", { className: "h-full min-w-full" }, /* @__PURE__ */ React12__default.createElement(AnimatePresence, { mode: "wait", initial: false }, /* @__PURE__ */ React12__default.createElement(
         motion.div,
         {
           key: `${view}-${currentDate.toISOString()}-${timezone || "local"}`,
