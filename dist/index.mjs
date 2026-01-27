@@ -250,8 +250,8 @@ var MiniCalendar = ({
           "mx-auto flex h-8 w-8 items-center justify-center rounded-full text-xs font-medium transition-all duration-200",
           !isCurrentMonth && "text-muted-foreground/30",
           isCurrentMonth && !isSelected && !isTodayDate && "text-foreground hover:bg-accent/80",
-          isSelected && "scale-105 bg-primary text-primary-foreground shadow-md shadow-primary/30",
-          !isSelected && isTodayDate && "bg-primary/10 text-primary ring-1 ring-primary/30"
+          isSelected && "scale-105 bg-[#DAF9FF] text-black",
+          !isSelected && isTodayDate && "bg-[#141417] text-white"
         )
       },
       format(day, "d", { locale })
@@ -581,7 +581,7 @@ var EventItem = React12__default.memo(
       className: cn(
         "cursor-pointer truncate rounded-lg px-2.5 py-1.5 text-xs shadow-sm transition-all duration-200",
         "hover:z-10 hover:scale-[1.02] hover:shadow-md",
-        !event.color && "border-[0.5px] border-primary/20 bg-primary/10 text-primary hover:bg-primary/15"
+        !event.color && "border-[0.5px] border-[#141417]/20 bg-[#141417]/10 text-[#141417] hover:bg-[#141417]/15"
       ),
       style: event.color ? {
         backgroundColor: `${event.color}20`,
@@ -650,7 +650,7 @@ var MonthView = ({
         className: cn(
           "group relative flex h-[130px] flex-col gap-1.5 overflow-hidden border-b-[0.5px] border-r-[0.5px] border-border/30 p-2 transition-all duration-200 last:border-r-0",
           !isCurrentMonth && "bg-muted/5 text-muted-foreground/60",
-          isToday(day) && "bg-primary/5 ring-1 ring-inset ring-primary/20"
+          isToday(day) && "bg-[#141417]/5 ring-1 ring-inset ring-[#141417]/20"
         ),
         onClick: () => onDateClick?.(day)
       },
@@ -659,7 +659,7 @@ var MonthView = ({
         {
           className: cn(
             "flex h-7 w-7 items-center justify-center rounded-full text-sm font-semibold transition-all duration-200",
-            isToday(day) && "bg-primary text-primary-foreground shadow-md shadow-primary/30"
+            isToday(day) && "bg-[#141417] text-white shadow-md shadow-[#141417]/30"
           )
         },
         format(day, "d", { locale })
@@ -671,7 +671,7 @@ var MonthView = ({
           event,
           onEventClick
         }
-      )), dayEvents.length > 4 && /* @__PURE__ */ React12__default.createElement("div", { className: "cursor-pointer rounded-md bg-primary/5 px-2 py-1 text-center text-[10px] font-semibold text-primary transition-colors hover:bg-primary/10" }, "+", dayEvents.length - 4, " more"))
+      )), dayEvents.length > 4 && /* @__PURE__ */ React12__default.createElement("div", { className: "cursor-pointer rounded-md bg-[#141417]/5 px-2 py-1 text-center text-[10px] font-semibold text-[#141417] transition-colors hover:bg-[#141417]/10" }, "+", dayEvents.length - 4, " more"))
     );
   }))));
 };
@@ -757,7 +757,7 @@ var WeekView = ({
         {
           className: cn(
             "mx-auto flex h-9 w-9 items-center justify-center rounded-full bg-[#14141705] text-sm font-semibold transition-all duration-200",
-            isToday(day) ? "scale-110 bg-primary text-primary-foreground shadow-lg shadow-primary/30" : "text-foreground hover:bg-accent/80"
+            isToday(day) ? "scale-110 bg-[#141417] text-white shadow-lg shadow-[#141417]/30" : "text-foreground hover:bg-accent/80"
           )
         },
         format(day, "d", { locale })
@@ -866,17 +866,17 @@ var WeekView = ({
                   "group relative overflow-hidden rounded-md border shadow-sm transition-all hover:shadow-md",
                   "glass",
                   readonly ? "cursor-default" : "cursor-grab active:cursor-grabbing",
-                  !event.color && "border-primary/20 bg-primary/10",
+                  !event.color && "border-[#141417]/20 bg-[#141417]/10",
                   isShortEvent ? "flex items-center justify-center px-1" : "p-2",
                   // Add active border for overlapped events to distinguish them
-                  count > 1 && "border-l-4 border-l-primary/50"
+                  count > 1 && "border-l-4 border-l-[#141417]/50"
                 ),
                 style: {
                   height: "100%",
                   backgroundColor: event.color ? `${event.color}15` : void 0,
                   borderColor: event.color ? `${event.color}40` : void 0,
                   borderLeftWidth: "3px",
-                  borderLeftColor: event.color || "var(--primary)"
+                  borderLeftColor: event.color || "#141417"
                 },
                 onClick: (e) => {
                   e.stopPropagation();
@@ -905,8 +905,8 @@ var WeekView = ({
               top: `${(zonedNow.getHours() * 60 + zonedNow.getMinutes()) / 60 * hourHeight}px`
             }
           },
-          /* @__PURE__ */ React12__default.createElement("div", { className: "h-[2px] w-full bg-gradient-to-r from-primary via-primary to-primary/50" }),
-          /* @__PURE__ */ React12__default.createElement("div", { className: "absolute -left-1.5 h-3 w-3 animate-pulse rounded-full bg-primary shadow-lg shadow-primary/40 ring-2 ring-background" })
+          /* @__PURE__ */ React12__default.createElement("div", { className: "h-[2px] w-full bg-gradient-to-r from-[#141417] via-[#141417] to-[#141417]/50" }),
+          /* @__PURE__ */ React12__default.createElement("div", { className: "absolute -left-1.5 h-3 w-3 animate-pulse rounded-full bg-[#141417] shadow-lg shadow-[#141417]/40 ring-2 ring-background" })
         )
       );
     }))),
@@ -918,7 +918,7 @@ var WeekView = ({
           top: `${(zonedNow.getHours() * 60 + zonedNow.getMinutes()) / 60 * hourHeight + 80}px`
         }
       },
-      /* @__PURE__ */ React12__default.createElement("span", { className: "-translate-y-1/2 rounded-md bg-primary px-1.5 py-0.5 text-[10px] font-bold text-primary-foreground shadow-md backdrop-blur-none" }, format(zonedNow, nowFormat, { locale }))
+      /* @__PURE__ */ React12__default.createElement("span", { className: "-translate-y-1/2 rounded-md bg-[#141417] px-1.5 py-0.5 text-[10px] font-bold text-white shadow-md backdrop-blur-none" }, format(zonedNow, nowFormat, { locale }))
     )
   ));
 };
@@ -961,7 +961,7 @@ var DayView = ({
   const timeFormat = locale?.code === "fr" ? "H:mm" : "h a";
   const eventTimeFormat = locale?.code === "fr" ? "H:mm" : "h:mm a";
   const nowFormat = locale?.code === "fr" ? "H:mm" : "h:mm a";
-  return /* @__PURE__ */ React12__default.createElement("div", { className: "flex h-full flex-col overflow-hidden rounded-2xl border-[0.5px] border-border/50 bg-[#14141705] shadow-sm" }, /* @__PURE__ */ React12__default.createElement("div", { className: "shrink-0 border-b-[0.5px] border-border/50 bg-[#14141705] px-6 py-4 text-center" }, /* @__PURE__ */ React12__default.createElement("div", { className: "flex items-center justify-center gap-3" }, /* @__PURE__ */ React12__default.createElement("h2", { className: "text-xl font-semibold capitalize text-foreground" }, format(currentDate, "EEEE, MMMM d, yyyy", { locale })), isToday(currentDate) && /* @__PURE__ */ React12__default.createElement("span", { className: "rounded-full bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground shadow-md shadow-primary/20" }, translations?.today || "Today"))), /* @__PURE__ */ React12__default.createElement("div", { ref: scrollContainerRef, className: "relative flex-1 overflow-y-auto bg-[#14141705]" }, /* @__PURE__ */ React12__default.createElement("div", { className: "relative flex", style: { height: hours.length * hourHeight } }, /* @__PURE__ */ React12__default.createElement("div", { className: "relative w-20 border-r-[0.5px] border-border/30 bg-[#14141705]" }, hours.map((hour) => /* @__PURE__ */ React12__default.createElement("div", { key: hour, className: "relative w-full", style: { height: hourHeight } }, hour !== 0 && /* @__PURE__ */ React12__default.createElement("span", { className: "absolute -top-3 left-1/2 w-full -translate-x-1/2 rounded-md px-1.5 py-0.5 text-center text-[11px] font-medium tabular-nums text-muted-foreground/80" }, format((/* @__PURE__ */ new Date()).setHours(hour, 0, 0, 0), timeFormat, { locale })))), isToday(currentDate) && /* @__PURE__ */ React12__default.createElement(
+  return /* @__PURE__ */ React12__default.createElement("div", { className: "flex h-full flex-col overflow-hidden rounded-2xl border-[0.5px] border-border/50 bg-[#14141705] shadow-sm" }, /* @__PURE__ */ React12__default.createElement("div", { className: "shrink-0 border-b-[0.5px] border-border/50 bg-[#14141705] px-6 py-4 text-center" }, /* @__PURE__ */ React12__default.createElement("div", { className: "flex items-center justify-center gap-3" }, /* @__PURE__ */ React12__default.createElement("h2", { className: "text-xl font-semibold capitalize text-foreground" }, format(currentDate, "EEEE, MMMM d, yyyy", { locale })), isToday(currentDate) && /* @__PURE__ */ React12__default.createElement("span", { className: "rounded-full bg-[#141417] px-3 py-1 text-xs font-semibold text-white shadow-md" }, translations?.today || "Today"))), /* @__PURE__ */ React12__default.createElement("div", { ref: scrollContainerRef, className: "relative flex-1 overflow-y-auto bg-[#14141705]" }, /* @__PURE__ */ React12__default.createElement("div", { className: "relative flex", style: { height: hours.length * hourHeight } }, /* @__PURE__ */ React12__default.createElement("div", { className: "relative w-20 border-r-[0.5px] border-border/30 bg-[#14141705]" }, hours.map((hour) => /* @__PURE__ */ React12__default.createElement("div", { key: hour, className: "relative w-full", style: { height: hourHeight } }, hour !== 0 && /* @__PURE__ */ React12__default.createElement("span", { className: "absolute -top-3 left-1/2 w-full -translate-x-1/2 rounded-md px-1.5 py-0.5 text-center text-[11px] font-medium tabular-nums text-muted-foreground/80" }, format((/* @__PURE__ */ new Date()).setHours(hour, 0, 0, 0), timeFormat, { locale })))), isToday(currentDate) && /* @__PURE__ */ React12__default.createElement(
     "div",
     {
       className: "pointer-events-none absolute left-0 z-30 flex w-full justify-end pr-2",
@@ -969,7 +969,7 @@ var DayView = ({
         top: `${(zonedNow.getHours() * 60 + zonedNow.getMinutes()) / 60 * hourHeight}px`
       }
     },
-    /* @__PURE__ */ React12__default.createElement("span", { className: "-translate-y-1/2 rounded-lg bg-primary px-2 py-1 text-[10px] font-bold text-white shadow-md shadow-primary/30" }, format(zonedNow, nowFormat, { locale }))
+    /* @__PURE__ */ React12__default.createElement("span", { className: "-translate-y-1/2 rounded-lg bg-[#141417] px-2 py-1 text-[10px] font-bold text-white shadow-md" }, format(zonedNow, nowFormat, { locale }))
   )), /* @__PURE__ */ React12__default.createElement("div", { className: "relative flex-1" }, hours.map((hour) => {
     return /* @__PURE__ */ React12__default.createElement(
       "div",
@@ -1048,14 +1048,14 @@ var DayView = ({
             "group h-full overflow-hidden rounded-lg border-[0.5px] shadow-sm transition-all hover:z-20 hover:shadow-lg",
             "glass backdrop-blur-sm",
             readonly ? "cursor-default" : "cursor-grab active:cursor-grabbing",
-            !event.color && "border-primary/20 bg-primary/10",
+            !event.color && "border-[#141417]/20 bg-[#141417]/10",
             isShortEvent ? "flex items-center px-2" : "px-3 py-2",
             count > 1 && "border-l-4"
           ),
           style: {
             backgroundColor: event.color ? `${event.color}15` : void 0,
             borderColor: event.color ? `${event.color}30` : void 0,
-            borderLeftColor: event.color || "var(--primary)",
+            borderLeftColor: event.color || "#141417",
             borderLeftWidth: count > 1 ? "4px" : "3px"
           },
           onClick: (e) => {
@@ -1085,8 +1085,8 @@ var DayView = ({
         top: `${(zonedNow.getHours() * 60 + zonedNow.getMinutes()) / 60 * hourHeight}px`
       }
     },
-    /* @__PURE__ */ React12__default.createElement("div", { className: "h-[2px] w-full bg-gradient-to-r from-primary via-primary to-primary/50" }),
-    /* @__PURE__ */ React12__default.createElement("div", { className: "absolute -left-1.5 h-3 w-3 animate-pulse rounded-full bg-primary shadow-lg shadow-primary/40 ring-2 ring-background" })
+    /* @__PURE__ */ React12__default.createElement("div", { className: "h-[2px] w-full bg-gradient-to-r from-[#141417] via-[#141417] to-[#141417]/50" }),
+    /* @__PURE__ */ React12__default.createElement("div", { className: "absolute -left-1.5 h-3 w-3 animate-pulse rounded-full bg-[#141417] shadow-lg shadow-[#141417]/40 ring-2 ring-background" })
   )))));
 };
 var formatDuration = (start, end) => {
@@ -1160,7 +1160,7 @@ var AgendaView = ({
       {
         className: cn(
           "flex h-16 w-16 flex-col items-center justify-center rounded-2xl transition-all",
-          isToday(group.date) ? "bg-primary text-primary-foreground shadow-lg shadow-primary/30" : "bg-muted/50 text-foreground"
+          isToday(group.date) ? "bg-[#141417] text-white shadow-lg" : "bg-muted/50 text-foreground"
         )
       },
       /* @__PURE__ */ React12__default.createElement("span", { className: "text-2xl font-bold leading-none" }, format(group.date, "d", { locale })),

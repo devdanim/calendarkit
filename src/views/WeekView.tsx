@@ -151,7 +151,7 @@ export const WeekView: React.FC<WeekViewProps> = ({
                   className={cn(
                     'mx-auto flex h-9 w-9 items-center justify-center rounded-full bg-[#14141705] text-sm font-semibold transition-all duration-200',
                     isToday(day)
-                      ? 'scale-110 bg-primary text-primary-foreground shadow-lg shadow-primary/30'
+                      ? 'scale-110 bg-[#141417] text-white shadow-lg shadow-[#141417]/30'
                       : 'text-foreground hover:bg-accent/80'
                   )}
                 >
@@ -293,17 +293,17 @@ export const WeekView: React.FC<WeekViewProps> = ({
                             'group relative overflow-hidden rounded-md border shadow-sm transition-all hover:shadow-md',
                             'glass',
                             readonly ? 'cursor-default' : 'cursor-grab active:cursor-grabbing',
-                            !event.color && 'border-primary/20 bg-primary/10',
+                            !event.color && 'border-[#141417]/20 bg-[#141417]/10',
                             isShortEvent ? 'flex items-center justify-center px-1' : 'p-2',
                             // Add active border for overlapped events to distinguish them
-                            count > 1 && 'border-l-4 border-l-primary/50'
+                            count > 1 && 'border-l-4 border-l-[#141417]/50'
                           )}
                           style={{
                             height: '100%',
                             backgroundColor: event.color ? `${event.color}15` : undefined,
                             borderColor: event.color ? `${event.color}40` : undefined,
                             borderLeftWidth: '3px',
-                            borderLeftColor: event.color || 'var(--primary)',
+                            borderLeftColor: event.color || '#141417',
                           }}
                           onClick={(e) => {
                             e.stopPropagation();
@@ -352,8 +352,8 @@ export const WeekView: React.FC<WeekViewProps> = ({
                         top: `${((zonedNow.getHours() * 60 + zonedNow.getMinutes()) / 60) * hourHeight}px`,
                       }}
                     >
-                      <div className="h-[2px] w-full bg-gradient-to-r from-primary via-primary to-primary/50" />
-                      <div className="absolute -left-1.5 h-3 w-3 animate-pulse rounded-full bg-primary shadow-lg shadow-primary/40 ring-2 ring-background" />
+                      <div className="h-[2px] w-full bg-gradient-to-r from-[#141417] via-[#141417] to-[#141417]/50" />
+                      <div className="absolute -left-1.5 h-3 w-3 animate-pulse rounded-full bg-[#141417] shadow-lg shadow-[#141417]/40 ring-2 ring-background" />
                     </div>
                   )}
                 </div>
@@ -369,7 +369,7 @@ export const WeekView: React.FC<WeekViewProps> = ({
             top: `${((zonedNow.getHours() * 60 + zonedNow.getMinutes()) / 60) * hourHeight + 80}px`,
           }}
         >
-          <span className="-translate-y-1/2 rounded-md bg-primary px-1.5 py-0.5 text-[10px] font-bold text-primary-foreground shadow-md backdrop-blur-none">
+          <span className="-translate-y-1/2 rounded-md bg-[#141417] px-1.5 py-0.5 text-[10px] font-bold text-white shadow-md backdrop-blur-none">
             {format(zonedNow, nowFormat, { locale })}
           </span>
         </div>
