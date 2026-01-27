@@ -1,5 +1,11 @@
 import type { Metadata } from 'next';
+import { Lexend } from 'next/font/google';
 import './globals.css';
+
+const lexend = Lexend({
+  subsets: ['latin'],
+  variable: '--font-lexend',
+});
 
 export const metadata: Metadata = {
   title: 'ProScheduler Demo',
@@ -12,7 +18,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className={lexend.variable}>
       <body className="antialiased">{children}</body>
     </html>
   );
