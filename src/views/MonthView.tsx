@@ -101,7 +101,7 @@ export const MonthView: React.FC<MonthViewProps> = ({
   }, [events, getZonedDate]);
 
   return (
-    <div className="scrollbar-hide flex h-full min-w-[800px] flex-col overflow-hidden rounded-2xl border-[0.5px] border-border/50 bg-background shadow-sm md:min-w-0">
+    <div className="scrollbar-hide flex h-full min-w-[800px] flex-col overflow-hidden rounded-2xl border-[0.5px] border-border/50 bg-[#F9F9FB] shadow-sm md:min-w-0">
       <div className="relative flex-1 overflow-y-auto">
         {/* Sticky Header */}
         <div className="sticky top-0 z-20 grid grid-cols-7 border-b-[0.5px] border-border/50 bg-gradient-to-r from-muted/30 via-muted/40 to-muted/30 backdrop-blur-sm">

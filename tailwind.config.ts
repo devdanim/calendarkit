@@ -11,6 +11,9 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      borderWidth: {
+        '1': '1px',
+      },
       colors: {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",

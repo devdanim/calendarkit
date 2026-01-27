@@ -272,12 +272,12 @@ export const Scheduler: React.FC<CalendarProps> = ({
       modifiers={modifiers}
     >
       <div
-        className={cn('relative flex h-full bg-background text-foreground', className)}
+        className={cn('relative flex h-full space-x-4 bg-[#F9F9FB] text-foreground', className)}
         style={getThemeStyles(theme)}
       >
         {/* Sidebar à gauche sur toute la hauteur */}
         {sidebarEnabled && (
-          <div className="flex w-64 flex-shrink-0 border-r border-border/30">
+          <div className="flex w-64 flex-shrink-0 px-4 py-4">
             <Sidebar
               currentDate={currentDate}
               onDateChange={handleDateChange}

@@ -131,8 +131,8 @@ export const WeekView: React.FC<WeekViewProps> = ({
         style={{ scrollbarGutter: 'stable' }}
       >
         {/* Header - sticky inside scroll container */}
-        <div className="sticky top-0 z-20 flex border-b-[0.5px] border-border/50 bg-gradient-to-r from-muted/20 via-background to-muted/20 backdrop-blur-sm">
-          <div className="flex w-16 flex-none items-center justify-center border-r-[0.5px] border-border/30 bg-muted/10 p-3 text-center text-xs font-semibold text-muted-foreground">
+        <div className="sticky top-0 z-20 flex border-b-[0.5px] border-border/50 bg-[#14141705] backdrop-blur-sm">
+          <div className="flex w-16 flex-none items-center justify-center border-r-[0.5px] border-border/30 bg-[#14141705] p-3 text-center text-xs font-semibold text-muted-foreground">
             {getTimezoneDisplay(timezone)}
           </div>
           <div className="grid flex-1 grid-cols-7">
@@ -140,8 +140,8 @@ export const WeekView: React.FC<WeekViewProps> = ({
               <div
                 key={day.toISOString()}
                 className={cn(
-                  'px-2 py-3 text-center',
-                  index > 0 && 'border-l-[0.5px] border-border/30'
+                  'bg-[#14141705] px-2 py-3 text-center',
+                  index > 0 && 'border-l-[0.5px] border-border/30 bg-[#14141705]'
                 )}
               >
                 <div className="mb-1.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
@@ -149,7 +149,7 @@ export const WeekView: React.FC<WeekViewProps> = ({
                 </div>
                 <div
                   className={cn(
-                    'mx-auto flex h-9 w-9 items-center justify-center rounded-full text-sm font-semibold transition-all duration-200',
+                    'mx-auto flex h-9 w-9 items-center justify-center rounded-full bg-[#14141705] text-sm font-semibold transition-all duration-200',
                     isToday(day)
                       ? 'scale-110 bg-primary text-primary-foreground shadow-lg shadow-primary/30'
                       : 'text-foreground hover:bg-accent/80'
@@ -165,11 +165,11 @@ export const WeekView: React.FC<WeekViewProps> = ({
         {/* Grid Content */}
         <div className="relative flex min-w-full" style={{ height: hours.length * hourHeight }}>
           {/* Time Labels Column */}
-          <div className="relative w-16 flex-none border-r-[0.5px] border-border/30 bg-muted/5">
+          <div className="relative w-16 flex-none border-r-[0.5px] border-border/30 bg-[#14141705]">
             {hours.map((hour) => (
               <div
                 key={hour}
-                className="relative box-border w-full pr-3 text-right text-[11px] font-medium tabular-nums text-muted-foreground/80"
+                className="relative box-border w-full bg-[#14141705] pr-3 text-right text-[11px] font-medium tabular-nums text-muted-foreground/80"
                 style={{ height: hourHeight }}
               >
                 <span className="block -translate-y-1/2">
@@ -192,7 +192,7 @@ export const WeekView: React.FC<WeekViewProps> = ({
                 <div
                   key={day.toISOString()}
                   className={cn(
-                    'relative h-full',
+                    'relative h-full bg-[#F9F9FB]',
                     dayIndex > 0 && 'border-l-[0.5px] border-border/30'
                   )}
                 >

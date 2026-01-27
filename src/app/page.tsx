@@ -251,49 +251,38 @@ export default function Home() {
   }, [events, filterSections]);
 
   return (
-    <main className={`min-h-screen p-4 md:p-8 ${isDarkMode ? 'dark' : ''}`}>
-      <div className="mx-auto max-w-7xl">
-        <div className="mb-8">
-          <h1 className="mb-2 text-3xl font-bold">ProScheduler</h1>
-          <p className="text-muted-foreground">
-            Professional React calendar with drag-drop, timezone support, i18n, and resources.
-          </p>
-        </div>
-
-        <div className="h-[800px] overflow-hidden rounded-lg border">
-          <Scheduler
-            events={filteredEvents}
-            view={view}
-            onViewChange={setView}
-            date={date}
-            onDateChange={setDate}
-            calendars={filterSections}
-            onCalendarToggle={handleCalendarToggle}
-            resources={demoResources}
-            eventTypes={demoEventTypes}
-            isDarkMode={isDarkMode}
-            onThemeToggle={() => setIsDarkMode(!isDarkMode)}
-            timezone={timezone}
-            onTimezoneChange={setTimezone}
-            language={language}
-            onLanguageChange={(lang) => setLanguage(lang as 'en' | 'fr')}
-            translations={translations[language]}
-            sidebarConfig={{
-              enabled: true,
-              showMiniCalendar: true,
-              showCalendarFilters: true,
-              showTimezoneSelector: false,
-            }}
-            hideDarkModeToggle
-            locale={language === 'fr' ? fr : enUS}
-            newEventButton={{
-              label: 'New Event',
-              icon: <PlusIcon className="h-4 w-4" />,
-              onClick: () => console.log('New Event'),
-            }}
-          />
-        </div>
-      </div>
-    </main>
+    <div>
+      <Scheduler
+        events={filteredEvents}
+        view={view}
+        onViewChange={setView}
+        date={date}
+        onDateChange={setDate}
+        calendars={filterSections}
+        onCalendarToggle={handleCalendarToggle}
+        resources={demoResources}
+        eventTypes={demoEventTypes}
+        isDarkMode={isDarkMode}
+        onThemeToggle={() => setIsDarkMode(!isDarkMode)}
+        timezone={timezone}
+        onTimezoneChange={setTimezone}
+        language={language}
+        onLanguageChange={(lang) => setLanguage(lang as 'en' | 'fr')}
+        translations={translations[language]}
+        sidebarConfig={{
+          enabled: true,
+          showMiniCalendar: true,
+          showCalendarFilters: true,
+          showTimezoneSelector: false,
+        }}
+        hideDarkModeToggle
+        locale={language === 'fr' ? fr : enUS}
+        newEventButton={{
+          label: 'New Event',
+          icon: <PlusIcon className="h-4 w-4" />,
+          onClick: () => console.log('New Event'),
+        }}
+      />
+    </div>
   );
 }

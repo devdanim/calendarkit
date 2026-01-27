@@ -104,7 +104,7 @@ export const AgendaView: React.FC<AgendaViewProps> = ({
   };
 
   return (
-    <div className="flex h-full flex-col overflow-y-auto bg-background">
+    <div className="flex h-full flex-col overflow-y-auto bg-[#F9F9FB]">
       <motion.div
         className="mx-auto w-full max-w-3xl px-4 pb-10 md:px-6"
         variants={container}
@@ -114,7 +114,7 @@ export const AgendaView: React.FC<AgendaViewProps> = ({
         {groupedEvents.map((group) => (
           <motion.div key={group.date.toISOString()} className="relative" variants={item}>
             {/* Date Header */}
-            <div className="sticky top-0 z-10 border-b border-border/50 bg-background/95 py-4 backdrop-blur-md">
+            <div className="sticky top-0 z-10 border-b border-border/50 bg-[#F9F9FB] py-4 backdrop-blur-md">
               <div className="flex items-center gap-4">
                 {/* Date box */}
                 <div

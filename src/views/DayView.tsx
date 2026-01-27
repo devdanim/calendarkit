@@ -72,9 +72,9 @@ export const DayView: React.FC<DayViewProps> = ({
   const nowFormat = locale?.code === 'fr' ? 'H:mm' : 'h:mm a';
 
   return (
-    <div className="flex h-full flex-col overflow-hidden rounded-2xl border-[0.5px] border-border/50 bg-background shadow-sm">
+    <div className="flex h-full flex-col overflow-hidden rounded-2xl border-[0.5px] border-border/50 bg-[#14141705] shadow-sm">
       {/* Header */}
-      <div className="shrink-0 border-b-[0.5px] border-border/50 bg-gradient-to-r from-muted/20 via-background to-muted/20 px-6 py-4 text-center">
+      <div className="shrink-0 border-b-[0.5px] border-border/50 bg-[#14141705] px-6 py-4 text-center">
         <div className="flex items-center justify-center gap-3">
           <h2 className="text-xl font-semibold capitalize text-foreground">
             {format(currentDate, 'EEEE, MMMM d, yyyy', { locale })}
@@ -88,14 +88,14 @@ export const DayView: React.FC<DayViewProps> = ({
       </div>
 
       {/* Grid */}
-      <div ref={scrollContainerRef} className="relative flex-1 overflow-y-auto">
+      <div ref={scrollContainerRef} className="relative flex-1 overflow-y-auto bg-[#14141705]">
         <div className="relative flex" style={{ height: hours.length * hourHeight }}>
           {/* Time Labels */}
-          <div className="relative w-20 border-r-[0.5px] border-border/30 bg-muted/5">
+          <div className="relative w-20 border-r-[0.5px] border-border/30 bg-[#14141705]">
             {hours.map((hour) => (
               <div key={hour} className="relative w-full" style={{ height: hourHeight }}>
                 {hour !== 0 && (
-                  <span className="absolute -top-3 left-1/2 w-full -translate-x-1/2 rounded-md bg-background px-1.5 py-0.5 text-center text-[11px] font-medium tabular-nums text-muted-foreground/80">
+                  <span className="absolute -top-3 left-1/2 w-full -translate-x-1/2 rounded-md px-1.5 py-0.5 text-center text-[11px] font-medium tabular-nums text-muted-foreground/80">
                     {format(new Date().setHours(hour, 0, 0, 0), timeFormat, { locale })}
                   </span>
                 )}
@@ -123,7 +123,7 @@ export const DayView: React.FC<DayViewProps> = ({
               return (
                 <div
                   key={hour}
-                  className="relative box-border border-b-[0.5px] border-dashed border-border/20"
+                  className="relative box-border border-b-[0.5px] border-dashed border-border/20 bg-[#F9F9FB]"
                   style={{ height: hourHeight }}
                 >
                   {/* 4 x 15-minute intervals */}

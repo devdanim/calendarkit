@@ -212,7 +212,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   return (
     <div
       className={cn(
-        'scrollbar-hide border-1 flex h-full min-w-[256px] flex-col overflow-y-auto overflow-x-hidden rounded-2xl border-[#E4E4EB] bg-white pb-4 pt-4 shadow-md',
+        'scrollbar-hide flex h-full min-w-[256px] flex-col overflow-y-auto overflow-x-hidden rounded-2xl border-1 border-[#E4E4EB] bg-white pb-4 pt-4 shadow-md',
         className
       )}
     >

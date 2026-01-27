@@ -78,7 +78,7 @@ export const CalendarHeader: React.FC<CalendarHeaderProps> = ({
   ] as const;
 
   return (
-    <div className="flex min-h-[64px] flex-col items-center justify-between gap-3 border-b-[0px] border-border/50 bg-gradient-to-r from-background via-background to-muted/20 px-3 py-3 md:flex-row md:gap-0 md:px-5">
+    <div className="flex min-h-[64px] flex-col items-center justify-between gap-3 border-b-[0px] border-border/50 bg-[#F9F9FB] px-3 py-3 md:flex-row md:gap-0 md:px-5">
       {/* Left Section: Menu, Navigation, Title */}
       <div className="flex w-full items-center justify-between gap-2 md:w-auto md:justify-start">
         <div className="flex items-center gap-2 md:gap-3">
