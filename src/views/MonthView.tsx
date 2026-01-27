@@ -32,7 +32,7 @@ const EventItem = React.memo(
           'cursor-pointer truncate rounded-lg px-2.5 py-1.5 text-xs shadow-sm transition-all duration-200',
           'hover:z-10 hover:scale-[1.02] hover:shadow-md',
           !event.color &&
-            'border-[0.5px] border-[#141417]/20 bg-[#141417]/10 text-[#141417] hover:bg-[#141417]/15'
+            'border-[0.5px] border-primary/20 bg-primary/10 text-primary hover:bg-primary/15'
         )}
         style={
           event.color
@@ -130,7 +130,7 @@ export const MonthView: React.FC<MonthViewProps> = ({
                 className={cn(
                   'group relative flex h-[130px] flex-col gap-1.5 overflow-hidden border-b-[0.5px] border-r-[0.5px] border-border/30 p-2 transition-all duration-200 last:border-r-0',
                   !isCurrentMonth && 'bg-muted/5 text-muted-foreground/60',
-                  isToday(day) && 'bg-[#141417]/5 ring-1 ring-inset ring-[#141417]/20'
+                  isToday(day) && 'bg-primary/5 ring-1 ring-inset ring-primary/20'
                 )}
                 onClick={() => onDateClick?.(day)}
               >
@@ -138,7 +138,7 @@ export const MonthView: React.FC<MonthViewProps> = ({
                   <div
                     className={cn(
                       'flex h-7 w-7 items-center justify-center rounded-full text-sm font-semibold transition-all duration-200',
-                      isToday(day) && 'bg-[#141417] text-white shadow-md shadow-[#141417]/30'
+                      isToday(day) && 'bg-primary text-white shadow-md shadow-primary/30'
                     )}
                   >
                     {format(day, 'd', { locale })}
@@ -159,7 +159,7 @@ export const MonthView: React.FC<MonthViewProps> = ({
                     />
                   ))}
                   {dayEvents.length > 4 && (
-                    <div className="cursor-pointer rounded-md bg-[#141417]/5 px-2 py-1 text-center text-[10px] font-semibold text-[#141417] transition-colors hover:bg-[#141417]/10">
+                    <div className="cursor-pointer rounded-md bg-primary/5 px-2 py-1 text-center text-[10px] font-semibold text-primary transition-colors hover:bg-primary/10">
                       +{dayEvents.length - 4} more
                     </div>
                   )}

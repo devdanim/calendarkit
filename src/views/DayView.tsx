@@ -80,7 +80,7 @@ export const DayView: React.FC<DayViewProps> = ({
             {format(currentDate, 'EEEE, MMMM d, yyyy', { locale })}
           </h2>
           {isToday(currentDate) && (
-            <span className="rounded-full bg-[#141417] px-3 py-1 text-xs font-semibold text-white shadow-md">
+            <span className="rounded-full bg-primary px-3 py-1 text-xs font-semibold text-white shadow-md">
               {translations?.today || 'Today'}
             </span>
           )}
@@ -110,7 +110,7 @@ export const DayView: React.FC<DayViewProps> = ({
                   top: `${((zonedNow.getHours() * 60 + zonedNow.getMinutes()) / 60) * hourHeight}px`,
                 }}
               >
-                <span className="-translate-y-1/2 rounded-lg bg-[#141417] px-2 py-1 text-[10px] font-bold text-white shadow-md">
+                <span className="-translate-y-1/2 rounded-lg bg-primary px-2 py-1 text-[10px] font-bold text-white shadow-md">
                   {format(zonedNow, nowFormat, { locale })}
                 </span>
               </div>
@@ -206,7 +206,7 @@ export const DayView: React.FC<DayViewProps> = ({
                       'group h-full overflow-hidden rounded-lg border-[0.5px] shadow-sm transition-all hover:z-20 hover:shadow-lg',
                       'glass backdrop-blur-sm',
                       readonly ? 'cursor-default' : 'cursor-grab active:cursor-grabbing',
-                      !event.color && 'border-[#141417]/20 bg-[#141417]/10',
+                      !event.color && 'border-primary/20 bg-primary/10',
                       isShortEvent ? 'flex items-center px-2' : 'px-3 py-2',
                       count > 1 && 'border-l-4'
                     )}
@@ -265,9 +265,9 @@ export const DayView: React.FC<DayViewProps> = ({
                 }}
               >
                 {/* Line */}
-                <div className="h-[2px] w-full bg-gradient-to-r from-[#141417] via-[#141417] to-[#141417]/50" />
+                <div className="h-[2px] w-full bg-gradient-to-r from-primary via-primary to-primary/50" />
                 {/* Dot */}
-                <div className="absolute -left-1.5 h-3 w-3 animate-pulse rounded-full bg-[#141417] shadow-lg shadow-[#141417]/40 ring-2 ring-background" />
+                <div className="absolute -left-1.5 h-3 w-3 animate-pulse rounded-full bg-primary shadow-lg shadow-primary/40 ring-2 ring-background" />
               </div>
             )}
           </div>

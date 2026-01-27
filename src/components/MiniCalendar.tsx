@@ -132,8 +132,8 @@ export const MiniCalendar: React.FC<MiniCalendarProps> = ({
                   !isSelected &&
                   !isTodayDate &&
                   'text-foreground hover:bg-accent/80',
-                isSelected && 'scale-105 bg-[#DAF9FF] text-black',
-                !isSelected && isTodayDate && 'bg-[#141417] text-white'
+                isSelected && 'scale-105 bg-[#DAF9FF] text-primary',
+                !isSelected && isTodayDate && 'bg-primary text-white'
               )}
             >
               {format(day, 'd', { locale })}

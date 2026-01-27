@@ -121,7 +121,7 @@ export const AgendaView: React.FC<AgendaViewProps> = ({
                   className={cn(
                     'flex h-16 w-16 flex-col items-center justify-center rounded-2xl transition-all',
                     isToday(group.date)
-                      ? 'bg-[#141417] text-white shadow-lg'
+                      ? 'bg-primary text-white shadow-lg'
                       : 'bg-muted/50 text-foreground'
                   )}
                 >

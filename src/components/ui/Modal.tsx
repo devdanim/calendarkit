@@ -42,7 +42,7 @@ export const Modal: React.FC<ModalProps> = ({
 
   // Render inside parent container (absolute positioning) instead of portal to document.body
   return (
-    <div className="animate-in fade-in absolute inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-md duration-300">
+    <div className="animate-in fade-in absolute inset-0 z-50 flex items-center justify-center bg-primary/40 p-4 backdrop-blur-md duration-300">
       <div ref={overlayRef} className="absolute inset-0" onClick={onClose} />
       <div
         className={cn(
