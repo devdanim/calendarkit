@@ -172,7 +172,7 @@ export const CalendarHeader: React.FC<CalendarHeaderProps> = ({
                 className={cn(
                   'h-8 gap-1.5 rounded-lg px-3 text-xs transition-all duration-200',
                   view === key
-                    ? 'border-[0.5px] border-border/50 bg-[#EEEFF5] font-medium text-black shadow-sm'
+                    ? 'bg-white font-medium text-black shadow-sm'
                     : 'text-[#4C4C56] hover:bg-[#EEEFF5] hover:text-foreground'
                 )}
               >

@@ -146,7 +146,7 @@ var CalendarHeader = ({
       onClick: () => onViewChange(key),
       className: cn(
         "h-8 gap-1.5 rounded-lg px-3 text-xs transition-all duration-200",
-        view === key ? "border-[0.5px] border-border/50 bg-[#EEEFF5] font-medium text-black shadow-sm" : "text-[#4C4C56] hover:bg-[#EEEFF5] hover:text-foreground"
+        view === key ? "bg-white font-medium text-black shadow-sm" : "text-[#4C4C56] hover:bg-[#EEEFF5] hover:text-foreground"
       )
     },
     /* @__PURE__ */ React12__default.createElement(Icon, { className: "h-3.5 w-3.5" }),
