@@ -210,9 +210,9 @@ export const AgendaView: React.FC<AgendaViewProps> = ({
                     </div>
 
                     {event.description && (
-                      <p className="line-clamp-2 text-sm leading-relaxed text-muted-foreground">
+                      <div className="line-clamp-2 text-sm leading-relaxed text-muted-foreground">
                         {event.description}
-                      </p>
+                      </div>
                     )}
 
                     {/* Meta info row */}
