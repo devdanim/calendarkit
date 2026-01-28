@@ -2138,49 +2138,62 @@ var Scheduler = ({
         const eventTimeFormat = locale?.code === "fr" ? "H:mm" : "h:mm a";
         const zonedStart = timezone ? toZonedTime(activeDragEvent.start, timezone) : activeDragEvent.start;
         const showDescription = activeDragEvent.description && !isShortEvent && dragHeight && dragHeight > 50;
+        const isMonthView = view === "month";
+        const padding = isShortEvent ? isMonthView ? "px-2.5 py-1.5" : "px-1" : view === "day" ? "px-3 py-2" : "p-2";
+        const borderRadius = view === "day" ? "rounded-lg" : "rounded-md";
+        const borderStyle = view === "day" ? "border-[0.5px]" : "border";
         return /* @__PURE__ */ React12__default.createElement(
           "div",
           {
             className: cn(
-              "cursor-grabbing overflow-hidden rounded-lg border-2 shadow-2xl transition-transform",
-              "backdrop-blur-sm",
-              !activeDragEvent.color && "border-primary/60 bg-primary/90 text-primary-foreground"
+              "cursor-grabbing overflow-hidden shadow-lg transition-transform",
+              "glass backdrop-blur-sm",
+              borderStyle,
+              !activeDragEvent.color && "border-primary/20 bg-primary/10",
+              padding,
+              borderRadius
             ),
             style: {
-              backgroundColor: activeDragEvent.color ? `${activeDragEvent.color}e0` : void 0,
-              borderColor: activeDragEvent.color ? `${activeDragEvent.color}80` : void 0,
-              color: activeDragEvent.color ? "#fff" : void 0,
+              backgroundColor: activeDragEvent.color ? `${activeDragEvent.color}15` : void 0,
+              borderColor: activeDragEvent.color ? view === "day" ? `${activeDragEvent.color}30` : `${activeDragEvent.color}40` : void 0,
+              borderLeftWidth: "3px",
+              borderLeftColor: activeDragEvent.color || "#141417",
               width: getDragWidth(),
               height: dragHeight ? `${dragHeight}px` : void 0,
-              boxShadow: `0 20px 40px -15px ${activeDragEvent.color || "var(--primary)"}40, 0 10px 20px -10px rgba(0,0,0,0.2)`,
-              transform: "rotate(-2deg) scale(1.02)"
+              boxShadow: `0 10px 20px -5px ${activeDragEvent.color || "var(--primary)"}20, 0 4px 8px -2px rgba(0,0,0,0.1)`,
+              transform: "rotate(-1deg) scale(1.01)"
             }
           },
-          /* @__PURE__ */ React12__default.createElement("div", { className: "flex h-full flex-col p-2.5" }, /* @__PURE__ */ React12__default.createElement(
-            "div",
-            {
-              className: "absolute bottom-0 left-0 top-0 w-1 rounded-l-lg",
-              style: { backgroundColor: activeDragEvent.color || "var(--primary)" }
-            }
-          ), /* @__PURE__ */ React12__default.createElement("div", { className: "flex h-full flex-col overflow-hidden pl-2" }, /* @__PURE__ */ React12__default.createElement(
+          /* @__PURE__ */ React12__default.createElement("div", { className: "flex h-full w-full flex-col overflow-hidden" }, /* @__PURE__ */ React12__default.createElement(
             "div",
             {
               className: cn(
                 "truncate font-semibold leading-tight",
-                isShortEvent ? "text-xs" : "text-sm"
+                isShortEvent ? isMonthView ? "text-xs" : "text-center text-xs" : view === "day" ? "text-sm" : "text-xs",
+                activeDragEvent.color ? "text-foreground" : "text-foreground/90"
               )
             },
             activeDragEvent.title
-          ), !isShortEvent && (view === "week" || view === "day" || view === "resource") && /* @__PURE__ */ React12__default.createElement("div", { className: "mt-0.5 truncate text-xs font-medium opacity-80" }, format(zonedStart, eventTimeFormat, { locale })), showDescription && /* @__PURE__ */ React12__default.createElement(
+          ), !isShortEvent && (view === "week" || view === "day" || view === "resource") && /* @__PURE__ */ React12__default.createElement(
             "div",
             {
               className: cn(
-                "mt-1 text-xs font-normal opacity-80",
-                dragHeight && dragHeight > 60 ? "line-clamp-2" : "truncate"
+                "mt-0.5 truncate font-medium leading-tight text-muted-foreground",
+                view === "week" ? "text-[10px]" : "text-xs"
+              )
+            },
+            format(zonedStart, eventTimeFormat, { locale })
+          ), showDescription && /* @__PURE__ */ React12__default.createElement(
+            "div",
+            {
+              className: cn(
+                "mt-1 font-normal text-muted-foreground/80",
+                view === "week" ? "truncate text-[10px]" : dragHeight && dragHeight > 60 ? "line-clamp-2 text-xs" : "truncate text-xs"
               )
             },
             activeDragEvent.description
-          )), /* @__PURE__ */ React12__default.createElement("div", { className: "absolute bottom-1.5 right-1.5 opacity-60" }, /* @__PURE__ */ React12__default.createElement("svg", { className: "h-4 w-4", viewBox: "0 0 24 24", fill: "currentColor" }, /* @__PURE__ */ React12__default.createElement("circle", { cx: "9", cy: "5", r: "1.5" }), /* @__PURE__ */ React12__default.createElement("circle", { cx: "15", cy: "5", r: "1.5" }), /* @__PURE__ */ React12__default.createElement("circle", { cx: "9", cy: "12", r: "1.5" }), /* @__PURE__ */ React12__default.createElement("circle", { cx: "15", cy: "12", r: "1.5" }), /* @__PURE__ */ React12__default.createElement("circle", { cx: "9", cy: "19", r: "1.5" }), /* @__PURE__ */ React12__default.createElement("circle", { cx: "15", cy: "19", r: "1.5" }))))
+          )),
+          /* @__PURE__ */ React12__default.createElement("div", { className: "absolute bottom-1.5 right-1.5 opacity-40" }, /* @__PURE__ */ React12__default.createElement("svg", { className: "h-3.5 w-3.5", viewBox: "0 0 24 24", fill: "currentColor" }, /* @__PURE__ */ React12__default.createElement("circle", { cx: "9", cy: "5", r: "1.5" }), /* @__PURE__ */ React12__default.createElement("circle", { cx: "15", cy: "5", r: "1.5" }), /* @__PURE__ */ React12__default.createElement("circle", { cx: "9", cy: "12", r: "1.5" }), /* @__PURE__ */ React12__default.createElement("circle", { cx: "15", cy: "12", r: "1.5" }), /* @__PURE__ */ React12__default.createElement("circle", { cx: "9", cy: "19", r: "1.5" }), /* @__PURE__ */ React12__default.createElement("circle", { cx: "15", cy: "19", r: "1.5" })))
         );
       })() : null)
     )
