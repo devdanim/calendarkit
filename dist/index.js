@@ -2153,43 +2153,57 @@ var Scheduler = ({
           }
         }
       ),
-      /* @__PURE__ */ React12__namespace.default.createElement(core.DragOverlay, { dropAnimation: null }, activeDragEvent ? /* @__PURE__ */ React12__namespace.default.createElement(
-        "div",
-        {
-          className: cn(
-            "cursor-grabbing overflow-hidden rounded-lg border-2 shadow-2xl transition-transform",
-            "backdrop-blur-sm",
-            !activeDragEvent.color && "border-primary/60 bg-primary/90 text-primary-foreground"
-          ),
-          style: {
-            backgroundColor: activeDragEvent.color ? `${activeDragEvent.color}e0` : void 0,
-            borderColor: activeDragEvent.color ? `${activeDragEvent.color}80` : void 0,
-            color: activeDragEvent.color ? "#fff" : void 0,
-            width: getDragWidth(),
-            height: getDragHeight() ? `${getDragHeight()}px` : void 0,
-            boxShadow: `0 20px 40px -15px ${activeDragEvent.color || "var(--primary)"}40, 0 10px 20px -10px rgba(0,0,0,0.2)`,
-            transform: "rotate(-2deg) scale(1.02)"
-          }
-        },
-        /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "flex h-full flex-col p-2.5" }, /* @__PURE__ */ React12__namespace.default.createElement(
+      /* @__PURE__ */ React12__namespace.default.createElement(core.DragOverlay, { dropAnimation: null }, activeDragEvent ? (() => {
+        const dragHeight = getDragHeight();
+        const isShortEvent = dragHeight ? dragHeight <= 40 : false;
+        const eventTimeFormat = locale?.code === "fr" ? "H:mm" : "h:mm a";
+        const zonedStart = timezone ? dateFnsTz.toZonedTime(activeDragEvent.start, timezone) : activeDragEvent.start;
+        const showDescription = activeDragEvent.description && !isShortEvent && dragHeight && dragHeight > 50;
+        return /* @__PURE__ */ React12__namespace.default.createElement(
           "div",
           {
-            className: "absolute bottom-0 left-0 top-0 w-1 rounded-l-lg",
-            style: { backgroundColor: activeDragEvent.color || "var(--primary)" }
-          }
-        ), /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "pl-2" }, /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "truncate text-sm font-semibold" }, activeDragEvent.title), (view === "week" || view === "day") && getDragHeight() && getDragHeight() > 40 && /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "mt-0.5 flex items-center gap-1 text-xs opacity-80" }, /* @__PURE__ */ React12__namespace.default.createElement(
-          "svg",
-          {
-            className: "h-3 w-3",
-            viewBox: "0 0 24 24",
-            fill: "none",
-            stroke: "currentColor",
-            strokeWidth: "2"
+            className: cn(
+              "cursor-grabbing overflow-hidden rounded-lg border-2 shadow-2xl transition-transform",
+              "backdrop-blur-sm",
+              !activeDragEvent.color && "border-primary/60 bg-primary/90 text-primary-foreground"
+            ),
+            style: {
+              backgroundColor: activeDragEvent.color ? `${activeDragEvent.color}e0` : void 0,
+              borderColor: activeDragEvent.color ? `${activeDragEvent.color}80` : void 0,
+              color: activeDragEvent.color ? "#fff" : void 0,
+              width: getDragWidth(),
+              height: dragHeight ? `${dragHeight}px` : void 0,
+              boxShadow: `0 20px 40px -15px ${activeDragEvent.color || "var(--primary)"}40, 0 10px 20px -10px rgba(0,0,0,0.2)`,
+              transform: "rotate(-2deg) scale(1.02)"
+            }
           },
-          /* @__PURE__ */ React12__namespace.default.createElement("circle", { cx: "12", cy: "12", r: "10" }),
-          /* @__PURE__ */ React12__namespace.default.createElement("path", { d: "M12 6v6l4 2" })
-        ), dateFns.format(activeDragEvent.start, "h:mm a"))), /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "absolute bottom-1.5 right-1.5 opacity-60" }, /* @__PURE__ */ React12__namespace.default.createElement("svg", { className: "h-4 w-4", viewBox: "0 0 24 24", fill: "currentColor" }, /* @__PURE__ */ React12__namespace.default.createElement("circle", { cx: "9", cy: "5", r: "1.5" }), /* @__PURE__ */ React12__namespace.default.createElement("circle", { cx: "15", cy: "5", r: "1.5" }), /* @__PURE__ */ React12__namespace.default.createElement("circle", { cx: "9", cy: "12", r: "1.5" }), /* @__PURE__ */ React12__namespace.default.createElement("circle", { cx: "15", cy: "12", r: "1.5" }), /* @__PURE__ */ React12__namespace.default.createElement("circle", { cx: "9", cy: "19", r: "1.5" }), /* @__PURE__ */ React12__namespace.default.createElement("circle", { cx: "15", cy: "19", r: "1.5" }))))
-      ) : null)
+          /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "flex h-full flex-col p-2.5" }, /* @__PURE__ */ React12__namespace.default.createElement(
+            "div",
+            {
+              className: "absolute bottom-0 left-0 top-0 w-1 rounded-l-lg",
+              style: { backgroundColor: activeDragEvent.color || "var(--primary)" }
+            }
+          ), /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "flex h-full flex-col overflow-hidden pl-2" }, /* @__PURE__ */ React12__namespace.default.createElement(
+            "div",
+            {
+              className: cn(
+                "truncate font-semibold leading-tight",
+                isShortEvent ? "text-xs" : "text-sm"
+              )
+            },
+            activeDragEvent.title
+          ), !isShortEvent && (view === "week" || view === "day" || view === "resource") && /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "mt-0.5 truncate text-xs font-medium opacity-80" }, dateFns.format(zonedStart, eventTimeFormat, { locale })), showDescription && /* @__PURE__ */ React12__namespace.default.createElement(
+            "div",
+            {
+              className: cn(
+                "mt-1 text-xs font-normal opacity-80",
+                dragHeight && dragHeight > 60 ? "line-clamp-2" : "truncate"
+              )
+            },
+            activeDragEvent.description
+          )), /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "absolute bottom-1.5 right-1.5 opacity-60" }, /* @__PURE__ */ React12__namespace.default.createElement("svg", { className: "h-4 w-4", viewBox: "0 0 24 24", fill: "currentColor" }, /* @__PURE__ */ React12__namespace.default.createElement("circle", { cx: "9", cy: "5", r: "1.5" }), /* @__PURE__ */ React12__namespace.default.createElement("circle", { cx: "15", cy: "5", r: "1.5" }), /* @__PURE__ */ React12__namespace.default.createElement("circle", { cx: "9", cy: "12", r: "1.5" }), /* @__PURE__ */ React12__namespace.default.createElement("circle", { cx: "15", cy: "12", r: "1.5" }), /* @__PURE__ */ React12__namespace.default.createElement("circle", { cx: "9", cy: "19", r: "1.5" }), /* @__PURE__ */ React12__namespace.default.createElement("circle", { cx: "15", cy: "19", r: "1.5" }))))
+        );
+      })() : null)
     )
   );
 };

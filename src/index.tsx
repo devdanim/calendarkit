@@ -28,6 +28,7 @@ import { cn } from './utils';
 import { getThemeStyles } from './lib/theme';
 import { useCalendarLogic } from './hooks/useCalendarLogic';
 import { differenceInMinutes, format } from 'date-fns';
+import { toZonedTime } from 'date-fns-tz';
 import { useViewSwipe } from './hooks/useSwipeGesture';
 
 // Re-export types for consumers
@@ -450,66 +451,88 @@ export const Scheduler: React.FC<CalendarProps> = ({
         />
 
         <DragOverlay dropAnimation={null}>
-          {activeDragEvent ? (
-            <div
-              className={cn(
-                'cursor-grabbing overflow-hidden rounded-lg border-2 shadow-2xl transition-transform',
-                'backdrop-blur-sm',
-                !activeDragEvent.color && 'border-primary/60 bg-primary/90 text-primary-foreground'
-              )}
-              style={{
-                backgroundColor: activeDragEvent.color ? `${activeDragEvent.color}e0` : undefined,
-                borderColor: activeDragEvent.color ? `${activeDragEvent.color}80` : undefined,
-                color: activeDragEvent.color ? '#fff' : undefined,
-                width: getDragWidth(),
-                height: getDragHeight() ? `${getDragHeight()}px` : undefined,
-                boxShadow: `0 20px 40px -15px ${activeDragEvent.color || 'var(--primary)'}40, 0 10px 20px -10px rgba(0,0,0,0.2)`,
-                transform: 'rotate(-2deg) scale(1.02)',
-              }}
-            >
-              <div className="flex h-full flex-col p-2.5">
-                {/* Event color accent bar */}
-                <div
-                  className="absolute bottom-0 left-0 top-0 w-1 rounded-l-lg"
-                  style={{ backgroundColor: activeDragEvent.color || 'var(--primary)' }}
-                />
+          {activeDragEvent
+            ? (() => {
+                const dragHeight = getDragHeight();
+                const isShortEvent = dragHeight ? dragHeight <= 40 : false;
+                const eventTimeFormat = locale?.code === 'fr' ? 'H:mm' : 'h:mm a';
+                const zonedStart = timezone
+                  ? toZonedTime(activeDragEvent.start, timezone)
+                  : activeDragEvent.start;
+                const showDescription =
+                  activeDragEvent.description && !isShortEvent && dragHeight && dragHeight > 50;
 
-                {/* Content */}
-                <div className="pl-2">
-                  <div className="truncate text-sm font-semibold">{activeDragEvent.title}</div>
-                  {(view === 'week' || view === 'day') &&
-                    getDragHeight() &&
-                    getDragHeight()! > 40 && (
-                      <div className="mt-0.5 flex items-center gap-1 text-xs opacity-80">
-                        <svg
-                          className="h-3 w-3"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                        >
-                          <circle cx="12" cy="12" r="10" />
-                          <path d="M12 6v6l4 2" />
-                        </svg>
-                        {format(activeDragEvent.start, 'h:mm a')}
-                      </div>
+                return (
+                  <div
+                    className={cn(
+                      'cursor-grabbing overflow-hidden rounded-lg border-2 shadow-2xl transition-transform',
+                      'backdrop-blur-sm',
+                      !activeDragEvent.color &&
+                        'border-primary/60 bg-primary/90 text-primary-foreground'
                     )}
-                </div>
+                    style={{
+                      backgroundColor: activeDragEvent.color
+                        ? `${activeDragEvent.color}e0`
+                        : undefined,
+                      borderColor: activeDragEvent.color ? `${activeDragEvent.color}80` : undefined,
+                      color: activeDragEvent.color ? '#fff' : undefined,
+                      width: getDragWidth(),
+                      height: dragHeight ? `${dragHeight}px` : undefined,
+                      boxShadow: `0 20px 40px -15px ${activeDragEvent.color || 'var(--primary)'}40, 0 10px 20px -10px rgba(0,0,0,0.2)`,
+                      transform: 'rotate(-2deg) scale(1.02)',
+                    }}
+                  >
+                    <div className="flex h-full flex-col p-2.5">
+                      {/* Event color accent bar */}
+                      <div
+                        className="absolute bottom-0 left-0 top-0 w-1 rounded-l-lg"
+                        style={{ backgroundColor: activeDragEvent.color || 'var(--primary)' }}
+                      />
 
-                {/* Drag indicator */}
-                <div className="absolute bottom-1.5 right-1.5 opacity-60">
-                  <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
-                    <circle cx="9" cy="5" r="1.5" />
-                    <circle cx="15" cy="5" r="1.5" />
-                    <circle cx="9" cy="12" r="1.5" />
-                    <circle cx="15" cy="12" r="1.5" />
-                    <circle cx="9" cy="19" r="1.5" />
-                    <circle cx="15" cy="19" r="1.5" />
-                  </svg>
-                </div>
-              </div>
-            </div>
-          ) : null}
+                      {/* Content */}
+                      <div className="flex h-full flex-col overflow-hidden pl-2">
+                        <div
+                          className={cn(
+                            'truncate font-semibold leading-tight',
+                            isShortEvent ? 'text-xs' : 'text-sm'
+                          )}
+                        >
+                          {activeDragEvent.title}
+                        </div>
+                        {!isShortEvent &&
+                          (view === 'week' || view === 'day' || view === 'resource') && (
+                            <div className="mt-0.5 truncate text-xs font-medium opacity-80">
+                              {format(zonedStart, eventTimeFormat, { locale })}
+                            </div>
+                          )}
+                        {showDescription && (
+                          <div
+                            className={cn(
+                              'mt-1 text-xs font-normal opacity-80',
+                              dragHeight && dragHeight > 60 ? 'line-clamp-2' : 'truncate'
+                            )}
+                          >
+                            {activeDragEvent.description}
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Drag indicator */}
+                      <div className="absolute bottom-1.5 right-1.5 opacity-60">
+                        <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
+                          <circle cx="9" cy="5" r="1.5" />
+                          <circle cx="15" cy="5" r="1.5" />
+                          <circle cx="9" cy="12" r="1.5" />
+                          <circle cx="15" cy="12" r="1.5" />
+                          <circle cx="9" cy="19" r="1.5" />
+                          <circle cx="15" cy="19" r="1.5" />
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })()
+            : null}
         </DragOverlay>
       </div>
     </DndContext>
