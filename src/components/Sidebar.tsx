@@ -297,7 +297,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                         </div>
                         <div className="flex min-w-0 flex-1 items-center gap-2">
                           {item?.icon}
-                          <span className="truncate text-sm font-medium text-foreground/90">
+                          <span className="break-words text-sm font-medium text-foreground/90">
                             {item.label}
                           </span>
                         </div>
