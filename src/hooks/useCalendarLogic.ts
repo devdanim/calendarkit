@@ -11,6 +11,7 @@ import {
 import { toZonedTime, fromZonedTime } from 'date-fns-tz';
 import { DragEndEvent } from '@dnd-kit/core';
 import { ViewType, CalendarEvent } from '../types';
+import { isPastDate } from '../lib/date';
 
 interface UseCalendarLogicProps {
   events: CalendarEvent[];
@@ -151,6 +152,9 @@ export const useCalendarLogic = ({
     const overDate = over.data.current?.date as Date;
 
     if (!activeEvent || !overDate) return;
+
+    // Interdire le drop dans la zone passée (avant la date/heure actuelle)
+    if (isPastDate(overDate)) return;
 
     const originalStart = new Date(activeEvent.start);
     const originalEnd = new Date(activeEvent.end);

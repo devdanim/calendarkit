@@ -1,6 +1,7 @@
 import React from 'react';
 import { useDroppable } from '@dnd-kit/core';
 import { cn } from '../../utils';
+import { isPastDate } from '../../lib/date';
 
 interface DroppableCellProps {
   id: string; // usually ISO date string
@@ -21,9 +22,12 @@ export const DroppableCell: React.FC<DroppableCellProps> = ({
   style,
   onClick,
 }) => {
+  const isPast = isPastDate(date);
+
   const { isOver, setNodeRef } = useDroppable({
-    id: id,
+    id,
     data: { date, resourceId },
+    disabled: isPast,
   });
 
   // Determine quarter based on minutes for graduated coloring (active drag state only)
@@ -40,9 +44,14 @@ export const DroppableCell: React.FC<DroppableCellProps> = ({
   return (
     <div
       ref={setNodeRef}
-      className={cn(className, isOver && activeQuarterClass)}
+      className={cn(
+        className,
+        isOver && !isPast && activeQuarterClass,
+        isPast &&
+          'cursor-not-allowed !bg-gray-100 dark:!bg-gray-700/90 text-muted-foreground/80 pointer-events-auto [&_*]:pointer-events-none'
+      )}
       style={style}
-      onClick={onClick}
+      onClick={isPast ? undefined : onClick}
     >
       {children}
     </div>
