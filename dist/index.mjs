@@ -163,6 +163,16 @@ var CalendarHeader = ({
     newEventButton.label
   )));
 };
+function isDayCell(date) {
+  return date.getHours() === 0 && date.getMinutes() === 0;
+}
+function isPastDate(date) {
+  const now = /* @__PURE__ */ new Date();
+  if (isDayCell(date)) {
+    return startOfDay(date) < startOfDay(now);
+  }
+  return date.getTime() < now.getTime();
+}
 var getMonthGrid = (date, weekStartOn = 0) => {
   const monthStart = startOfMonth(date);
   const monthEnd = endOfMonth(monthStart);
@@ -470,7 +480,7 @@ var Sidebar = ({
                             --tw-ring-color: ${item.color}40 !important;
                           }
                         `)),
-          /* @__PURE__ */ React12__default.createElement("div", { className: "flex min-w-0 flex-1 items-center gap-2" }, item?.icon, /* @__PURE__ */ React12__default.createElement("span", { className: "truncate text-sm font-medium text-foreground/90" }, item.label))
+          /* @__PURE__ */ React12__default.createElement("div", { className: "flex min-w-0 flex-1 items-center gap-2" }, item?.icon, /* @__PURE__ */ React12__default.createElement("span", { className: "break-words text-sm font-medium text-foreground/90" }, item.label))
         )))
       );
     })),
@@ -552,9 +562,11 @@ var DroppableCell = ({
   style,
   onClick
 }) => {
+  const isPast = isPastDate(date);
   const { isOver, setNodeRef } = useDroppable({
     id,
-    data: { date, resourceId }
+    data: { date, resourceId },
+    disabled: isPast
   });
   const minutes = date.getMinutes();
   const activeQuarterClass = minutes === 0 ? "bg-blue-50/50 dark:bg-blue-900/10 ring-2 ring-primary ring-inset" : minutes === 15 ? "bg-blue-50/80 dark:bg-blue-900/20 ring-2 ring-primary ring-inset" : minutes === 30 ? "bg-blue-100/50 dark:bg-blue-900/30 ring-2 ring-primary ring-inset" : "bg-blue-100/80 dark:bg-blue-900/40 ring-2 ring-primary ring-inset";
@@ -562,9 +574,13 @@ var DroppableCell = ({
     "div",
     {
       ref: setNodeRef,
-      className: cn(className, isOver && activeQuarterClass),
+      className: cn(
+        className,
+        isOver && !isPast && activeQuarterClass,
+        isPast && "pointer-events-auto cursor-not-allowed !bg-gray-100 text-muted-foreground/80 dark:!bg-gray-700/90 [&_*]:pointer-events-none"
+      ),
       style,
-      onClick
+      onClick: isPast ? void 0 : onClick
     },
     children
   );
@@ -1654,6 +1670,7 @@ var useCalendarLogic = ({
     const activeEvent = active.data.current?.event;
     const overDate = over.data.current?.date;
     if (!activeEvent || !overDate) return;
+    if (isPastDate(overDate)) return;
     const originalStart = new Date(activeEvent.start);
     const originalEnd = new Date(activeEvent.end);
     const duration = differenceInMilliseconds(originalEnd, originalStart);

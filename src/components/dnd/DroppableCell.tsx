@@ -48,7 +48,7 @@ export const DroppableCell: React.FC<DroppableCellProps> = ({
         className,
         isOver && !isPast && activeQuarterClass,
         isPast &&
-          'cursor-not-allowed !bg-gray-100 dark:!bg-gray-700/90 text-muted-foreground/80 pointer-events-auto [&_*]:pointer-events-none'
+          'pointer-events-auto cursor-not-allowed !bg-gray-100 text-muted-foreground/80 dark:!bg-gray-700/90 [&_*]:pointer-events-none'
       )}
       style={style}
       onClick={isPast ? undefined : onClick}
