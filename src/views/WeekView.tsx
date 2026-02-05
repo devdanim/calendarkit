@@ -123,7 +123,7 @@ export const WeekView: React.FC<WeekViewProps> = ({
   const nowFormat = locale?.code === 'fr' ? 'H:mm' : 'h:mm';
 
   return (
-    <div className="flex h-full min-w-[800px] flex-col overflow-hidden rounded-2xl border-[0.5px] border-border/50 bg-background shadow-sm md:min-w-0">
+    <div className="flex h-full min-w-[800px] flex-col overflow-hidden rounded-2xl border-[0.5px] border-border/50 bg-background shadow-sm">
       {/* Scrollable Container - includes header for proper alignment */}
       <div
         ref={scrollContainerRef}

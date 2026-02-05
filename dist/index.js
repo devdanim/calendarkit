@@ -666,7 +666,7 @@ var MonthView = ({
     });
     return map;
   }, [events, getZonedDate]);
-  return /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "scrollbar-hide flex h-full min-w-[800px] flex-col overflow-hidden rounded-2xl border-[0.5px] border-border/50 bg-[#F9F9FB] shadow-sm md:min-w-0" }, /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "relative flex-1 overflow-y-auto" }, /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "sticky top-0 z-20 grid grid-cols-7 border-b-[0.5px] border-border/50 bg-gradient-to-r from-muted/30 via-muted/40 to-muted/30 backdrop-blur-sm" }, weekDays.map((day) => /* @__PURE__ */ React12__namespace.default.createElement(
+  return /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "scrollbar-hide flex h-full min-w-[800px] flex-col overflow-hidden rounded-2xl border-[0.5px] border-border/50 bg-[#F9F9FB] shadow-sm" }, /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "relative flex-1 overflow-x-auto overflow-y-auto" }, /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "sticky top-0 z-20 grid grid-cols-7 border-b-[0.5px] border-border/50 bg-gradient-to-r from-muted/30 via-muted/40 to-muted/30 backdrop-blur-sm" }, weekDays.map((day) => /* @__PURE__ */ React12__namespace.default.createElement(
     "div",
     {
       key: day.toISOString(),
@@ -701,7 +701,7 @@ var MonthView = ({
         },
         dateFns.format(day, "d", { locale })
       ), dayEvents.length > 0 && /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "rounded-full bg-muted/50 px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground/60" }, dayEvents.length)),
-      /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "scrollbar-hide flex flex-1 flex-col gap-1 overflow-y-auto overflow-x-hidden" }, dayEvents.slice(0, 4).map((event) => /* @__PURE__ */ React12__namespace.default.createElement(
+      /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "scrollbar-hide flex flex-1 flex-col gap-1 overflow-x-auto overflow-y-auto" }, dayEvents.slice(0, 4).map((event) => /* @__PURE__ */ React12__namespace.default.createElement(
         EventItem,
         {
           key: `${event.id}-${dayKey}`,
@@ -772,7 +772,7 @@ var WeekView = ({
   const timeFormat = locale?.code === "fr" ? "H:mm" : "h a";
   const eventTimeFormat = locale?.code === "fr" ? "H:mm" : "h:mm a";
   const nowFormat = locale?.code === "fr" ? "H:mm" : "h:mm";
-  return /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "flex h-full min-w-[800px] flex-col overflow-hidden rounded-2xl border-[0.5px] border-border/50 bg-background shadow-sm md:min-w-0" }, /* @__PURE__ */ React12__namespace.default.createElement(
+  return /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "flex h-full min-w-[800px] flex-col overflow-hidden rounded-2xl border-[0.5px] border-border/50 bg-background shadow-sm" }, /* @__PURE__ */ React12__namespace.default.createElement(
     "div",
     {
       ref: scrollContainerRef,
@@ -2053,7 +2053,7 @@ var Scheduler = ({
           locale,
           newEventButton
         }
-      ), /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "relative flex flex-1 flex-col overflow-hidden" }, isLoading ? /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "flex-1 overflow-auto p-0 md:p-4" }, /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "h-full min-w-full" }, view === "month" && /* @__PURE__ */ React12__namespace.default.createElement(MonthViewSkeleton, null), view === "week" && /* @__PURE__ */ React12__namespace.default.createElement(WeekViewSkeleton, null), view === "day" && /* @__PURE__ */ React12__namespace.default.createElement(DayViewSkeleton, null), view === "agenda" && /* @__PURE__ */ React12__namespace.default.createElement(AgendaViewSkeleton, null), view === "resource" && /* @__PURE__ */ React12__namespace.default.createElement(WeekViewSkeleton, null))) : /* @__PURE__ */ React12__namespace.default.createElement("div", { ref: swipeRef, className: "flex-1 touch-pan-y overflow-auto p-0 md:p-4" }, /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "h-full min-w-full" }, /* @__PURE__ */ React12__namespace.default.createElement(framerMotion.AnimatePresence, { mode: "wait", initial: false }, /* @__PURE__ */ React12__namespace.default.createElement(
+      ), /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "relative flex flex-1 flex-col overflow-hidden" }, isLoading ? /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "flex-1 overflow-auto p-0 md:p-4" }, /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "h-full min-w-[max(100%,800px)]" }, view === "month" && /* @__PURE__ */ React12__namespace.default.createElement(MonthViewSkeleton, null), view === "week" && /* @__PURE__ */ React12__namespace.default.createElement(WeekViewSkeleton, null), view === "day" && /* @__PURE__ */ React12__namespace.default.createElement(DayViewSkeleton, null), view === "agenda" && /* @__PURE__ */ React12__namespace.default.createElement(AgendaViewSkeleton, null), view === "resource" && /* @__PURE__ */ React12__namespace.default.createElement(WeekViewSkeleton, null))) : /* @__PURE__ */ React12__namespace.default.createElement("div", { ref: swipeRef, className: "flex-1 touch-pan-y overflow-auto p-0 md:p-4" }, /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "h-full min-w-[max(100%,800px)]" }, /* @__PURE__ */ React12__namespace.default.createElement(framerMotion.AnimatePresence, { mode: "wait", initial: false }, /* @__PURE__ */ React12__namespace.default.createElement(
         framerMotion.motion.div,
         {
           key: `${view}-${currentDate.toISOString()}-${timezone || "local"}`,
