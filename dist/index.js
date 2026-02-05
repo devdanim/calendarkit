@@ -679,7 +679,8 @@ var MonthView = ({
   onEventClick,
   onDateClick,
   timezone,
-  locale
+  locale,
+  translations
 }) => {
   const days = React12.useMemo(() => getMonthGrid(currentDate), [currentDate]);
   const weekDays = React12.useMemo(() => {
@@ -747,7 +748,7 @@ var MonthView = ({
           event,
           onEventClick
         }
-      )), dayEvents.length > 4 && /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "cursor-pointer rounded-md bg-primary/5 px-2 py-1 text-center text-[10px] font-semibold text-primary transition-colors hover:bg-primary/10" }, "+", dayEvents.length - 4, " more"))
+      )), dayEvents.length > 4 && /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "cursor-pointer rounded-md bg-primary/5 px-2 py-1 text-center text-[10px] font-semibold text-primary transition-colors hover:bg-primary/10" }, "+", dayEvents.length - 4, " ", translations?.more ?? "more"))
     );
   }))));
 };
@@ -1997,6 +1998,7 @@ var Scheduler = ({
     yearly: "Yearly",
     eventCount: "event",
     eventsCount: "events",
+    more: "more",
     guestCount: "guest",
     guestsCount: "guests",
     ...translations
@@ -2133,7 +2135,8 @@ var Scheduler = ({
             onEventClick: handleEventClickInternal,
             onDateClick: handleDateClick,
             timezone,
-            locale
+            locale,
+            translations: { more: t.more }
           }
         ),
         view === "week" && /* @__PURE__ */ React12__namespace.default.createElement(

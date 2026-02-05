@@ -15,6 +15,8 @@ interface MonthViewProps {
   onDateClick?: (date: Date) => void;
   timezone?: string;
   locale?: Locale;
+  /** Translations for month view (e.g. more for "+N more") */
+  translations?: { more?: string };
 }
 
 // Memoized Event Item Component for performance
@@ -63,6 +65,7 @@ export const MonthView: React.FC<MonthViewProps> = ({
   onDateClick,
   timezone,
   locale,
+  translations,
 }) => {
   const days = useMemo(() => getMonthGrid(currentDate), [currentDate]);
 
@@ -160,7 +163,7 @@ export const MonthView: React.FC<MonthViewProps> = ({
                   ))}
                   {dayEvents.length > 4 && (
                     <div className="cursor-pointer rounded-md bg-primary/5 px-2 py-1 text-center text-[10px] font-semibold text-primary transition-colors hover:bg-primary/10">
-                      +{dayEvents.length - 4} more
+                      +{dayEvents.length - 4} {translations?.more ?? 'more'}
                     </div>
                   )}
                 </div>

@@ -97,6 +97,8 @@ export interface CalendarTranslations {
   events: string;
   eventCount: string;
   eventsCount: string;
+  /** Used in month view for "+N more" (e.g. "more", "de plus") */
+  more: string;
   task: string;
   appointmentSchedule: string;
   new: string;

@@ -186,6 +186,7 @@ export const Scheduler: React.FC<CalendarProps> = ({
     yearly: 'Yearly',
     eventCount: 'event',
     eventsCount: 'events',
+    more: 'more',
     guestCount: 'guest',
     guestsCount: 'guests',
     ...translations,
@@ -365,6 +366,7 @@ export const Scheduler: React.FC<CalendarProps> = ({
                           onDateClick={handleDateClick}
                           timezone={timezone}
                           locale={locale}
+                          translations={{ more: t.more }}
                         />
                       )}
                       {view === 'week' && (
