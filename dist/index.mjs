@@ -47,18 +47,19 @@ var Button = React12.forwardRef(
   }
 );
 Button.displayName = "Button";
-var COMPACT_VIEWPORT_MAX = 767;
-function useIsWideViewport() {
-  const [isWide, setIsWide] = useState(true);
+var WIDE_HEADER_MIN_WIDTH = 768;
+function useIsWideHeader(containerRef) {
+  const [isWide, setIsWide] = useState(false);
   useEffect(() => {
-    if (typeof window === "undefined") return;
-    const update = () => setIsWide(window.innerWidth > COMPACT_VIEWPORT_MAX);
-    update();
-    const mql = window.matchMedia(`(min-width: ${COMPACT_VIEWPORT_MAX + 1}px)`);
-    const listener = () => setIsWide(mql.matches);
-    mql.addEventListener("change", listener);
-    return () => mql.removeEventListener("change", listener);
-  }, []);
+    const el = containerRef.current;
+    if (!el || typeof ResizeObserver === "undefined") return;
+    const ro = new ResizeObserver(() => {
+      setIsWide(el.getBoundingClientRect().width >= WIDE_HEADER_MIN_WIDTH);
+    });
+    ro.observe(el);
+    setIsWide(el.getBoundingClientRect().width >= WIDE_HEADER_MIN_WIDTH);
+    return () => ro.disconnect();
+  }, [containerRef]);
   return isWide;
 }
 
@@ -82,7 +83,8 @@ var CalendarHeader = ({
   locale,
   newEventButton
 }) => {
-  const isWide = useIsWideViewport();
+  const headerRef = useRef(null);
+  const isWide = useIsWideHeader(headerRef);
   const viewConfig = [
     {
       key: "month",
@@ -101,96 +103,104 @@ var CalendarHeader = ({
       icon: ListTodo
     }
   ];
-  return /* @__PURE__ */ React12__default.createElement("div", { className: "flex min-h-[64px] flex-col items-center justify-between gap-3 border-b-[0px] border-border/50 bg-[#F9F9FB] px-3 py-3 md:flex-row md:gap-0 md:px-5" }, /* @__PURE__ */ React12__default.createElement("div", { className: "flex w-full items-center justify-between gap-2 md:w-auto md:justify-start" }, /* @__PURE__ */ React12__default.createElement("div", { className: "flex items-center gap-2 md:gap-3" }, isWide && /* @__PURE__ */ React12__default.createElement(
-    Button,
+  return /* @__PURE__ */ React12__default.createElement(
+    "div",
     {
-      variant: "ghost",
-      size: "icon",
-      className: "h-10 w-10 rounded-xl text-muted-foreground transition-all duration-200 hover:bg-accent/80 hover:text-foreground",
-      onClick: onMenuClick
+      ref: headerRef,
+      className: "flex min-h-[64px] flex-col items-center justify-between gap-3 border-b-[0px] border-border/50 bg-[#F9F9FB] px-3 py-3 md:flex-row md:gap-0 md:px-5"
     },
-    /* @__PURE__ */ React12__default.createElement(Menu, { className: "h-5 w-5" })
-  ), /* @__PURE__ */ React12__default.createElement("div", { className: "ml-2 md:ml-4" }, /* @__PURE__ */ React12__default.createElement("h2", { className: "whitespace-nowrap text-lg font-semibold capitalize tracking-tight text-foreground md:text-xl" }, format(currentDate, "MMMM yyyy", { locale }))), /* @__PURE__ */ React12__default.createElement(
-    Button,
-    {
-      variant: "outline",
-      size: "icon",
-      onClick: onToday,
-      title: translations.today,
-      className: cn(
-        "h-9 w-9 shrink-0 rounded-xl border-[0.5px] border-border/60 bg-[#EEEFF5] text-sm font-medium transition-all duration-200 hover:border-primary/40 hover:bg-primary/5 hover:text-primary",
-        isWide && "w-auto px-4 pl-3 [&>svg]:mr-2"
-      )
-    },
-    /* @__PURE__ */ React12__default.createElement(CalendarCheck, { className: "h-4 w-4" }),
-    isWide && /* @__PURE__ */ React12__default.createElement("span", null, translations.today)
-  ), /* @__PURE__ */ React12__default.createElement("div", { className: "flex items-center rounded-xl bg-muted/40 p-0.5" }, /* @__PURE__ */ React12__default.createElement(
-    Button,
-    {
-      variant: "ghost",
-      size: "icon",
-      onClick: onPrev,
-      className: "h-8 w-8 rounded-lg transition-all duration-200 hover:bg-background/80"
-    },
-    /* @__PURE__ */ React12__default.createElement(ChevronLeft, { className: "h-4 w-4 text-muted-foreground" })
-  ), /* @__PURE__ */ React12__default.createElement(
-    Button,
-    {
-      variant: "ghost",
-      size: "icon",
-      onClick: onNext,
-      className: "h-8 w-8 rounded-lg transition-all duration-200 hover:bg-background/80"
-    },
-    /* @__PURE__ */ React12__default.createElement(ChevronRight, { className: "h-4 w-4 text-muted-foreground" })
-  )))), /* @__PURE__ */ React12__default.createElement("div", { className: "flex w-full items-center justify-end gap-2 md:w-auto md:gap-3" }, !hideLanguageSelector && onLanguageChange && language && /* @__PURE__ */ React12__default.createElement(
-    Button,
-    {
-      variant: "ghost",
-      size: "sm",
-      onClick: () => onLanguageChange(language === "en" ? "fr" : "en"),
-      className: "h-9 rounded-xl px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground transition-all duration-200 hover:bg-accent/80 hover:text-foreground"
-    },
-    language
-  ), !hideDarkModeToggle && onThemeToggle && /* @__PURE__ */ React12__default.createElement(
-    Button,
-    {
-      variant: "ghost",
-      size: "icon",
-      className: "h-9 w-9 rounded-xl transition-all duration-200 hover:bg-accent/80",
-      onClick: onThemeToggle
-    },
-    isDarkMode ? /* @__PURE__ */ React12__default.createElement(Sun, { className: "h-4 w-4 text-amber-500" }) : /* @__PURE__ */ React12__default.createElement(Moon, { className: "h-4 w-4 text-muted-foreground" })
-  ), !hideViewSwitcher && /* @__PURE__ */ React12__default.createElement("div", { className: "flex items-center rounded-xl bg-[#EEEFF5] p-1 backdrop-blur-sm" }, viewConfig.map(({ key, icon: Icon }) => /* @__PURE__ */ React12__default.createElement(
-    Button,
-    {
-      key,
-      variant: "ghost",
-      size: "sm",
-      onClick: () => onViewChange(key),
-      title: translations[key],
-      className: cn(
-        "h-8 gap-1.5 rounded-lg px-2 text-xs transition-all duration-200",
-        isWide && "px-3",
-        view === key ? "bg-white font-medium text-black shadow-sm" : "text-[#4C4C56] hover:bg-[#EEEFF5] hover:text-foreground"
-      )
-    },
-    /* @__PURE__ */ React12__default.createElement(Icon, { className: "h-3.5 w-3.5 shrink-0" }),
-    isWide && /* @__PURE__ */ React12__default.createElement("span", null, translations[key])
-  ))), newEventButton && /* @__PURE__ */ React12__default.createElement(
-    Button,
-    {
-      variant: "outline",
-      size: "icon",
-      title: newEventButton.label,
-      className: cn(
-        "h-9 w-9 shrink-0 rounded-xl border-none bg-[#7FDDF0] text-sm font-medium transition-all duration-200 hover:bg-primary/5 hover:text-primary",
-        isWide && "w-auto px-5 [&>svg]:mr-2"
-      ),
-      onClick: newEventButton.onClick
-    },
-    newEventButton.icon,
-    isWide && /* @__PURE__ */ React12__default.createElement("span", null, newEventButton.label)
-  )));
+    /* @__PURE__ */ React12__default.createElement("div", { className: "flex w-full items-center justify-between gap-2 md:w-auto md:justify-start" }, /* @__PURE__ */ React12__default.createElement("div", { className: "flex items-center gap-2 md:gap-3" }, isWide && /* @__PURE__ */ React12__default.createElement(
+      Button,
+      {
+        variant: "ghost",
+        size: "icon",
+        className: "h-10 w-10 rounded-xl text-muted-foreground transition-all duration-200 hover:bg-accent/80 hover:text-foreground",
+        onClick: onMenuClick
+      },
+      /* @__PURE__ */ React12__default.createElement(Menu, { className: "h-5 w-5" })
+    ), /* @__PURE__ */ React12__default.createElement("div", { className: "ml-2 md:ml-4" }, /* @__PURE__ */ React12__default.createElement("h2", { className: "whitespace-nowrap text-lg font-semibold capitalize tracking-tight text-foreground md:text-xl" }, format(currentDate, "MMMM yyyy", { locale }))), /* @__PURE__ */ React12__default.createElement(
+      Button,
+      {
+        variant: "outline",
+        size: "icon",
+        onClick: onToday,
+        title: translations.today,
+        className: cn(
+          "h-9 w-9 shrink-0 rounded-xl border-[0.5px] border-border/60 bg-[#EEEFF5] text-sm font-medium transition-all duration-200 hover:border-primary/40 hover:bg-primary/5 hover:text-primary",
+          isWide && "w-auto px-4 pl-3 [&>svg]:mr-2"
+        )
+      },
+      /* @__PURE__ */ React12__default.createElement(CalendarCheck, { className: "h-4 w-4" }),
+      isWide && /* @__PURE__ */ React12__default.createElement("span", null, translations.today)
+    ), /* @__PURE__ */ React12__default.createElement("div", { className: "flex items-center rounded-xl bg-muted/40 p-0.5" }, /* @__PURE__ */ React12__default.createElement(
+      Button,
+      {
+        variant: "ghost",
+        size: "icon",
+        onClick: onPrev,
+        className: "h-8 w-8 rounded-lg transition-all duration-200 hover:bg-background/80"
+      },
+      /* @__PURE__ */ React12__default.createElement(ChevronLeft, { className: "h-4 w-4 text-muted-foreground" })
+    ), /* @__PURE__ */ React12__default.createElement(
+      Button,
+      {
+        variant: "ghost",
+        size: "icon",
+        onClick: onNext,
+        className: "h-8 w-8 rounded-lg transition-all duration-200 hover:bg-background/80"
+      },
+      /* @__PURE__ */ React12__default.createElement(ChevronRight, { className: "h-4 w-4 text-muted-foreground" })
+    )))),
+    /* @__PURE__ */ React12__default.createElement("div", { className: "flex w-full items-center justify-end gap-2 md:w-auto md:gap-3" }, !hideLanguageSelector && onLanguageChange && language && /* @__PURE__ */ React12__default.createElement(
+      Button,
+      {
+        variant: "ghost",
+        size: "sm",
+        onClick: () => onLanguageChange(language === "en" ? "fr" : "en"),
+        className: "h-9 rounded-xl px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground transition-all duration-200 hover:bg-accent/80 hover:text-foreground"
+      },
+      language
+    ), !hideDarkModeToggle && onThemeToggle && /* @__PURE__ */ React12__default.createElement(
+      Button,
+      {
+        variant: "ghost",
+        size: "icon",
+        className: "h-9 w-9 rounded-xl transition-all duration-200 hover:bg-accent/80",
+        onClick: onThemeToggle
+      },
+      isDarkMode ? /* @__PURE__ */ React12__default.createElement(Sun, { className: "h-4 w-4 text-amber-500" }) : /* @__PURE__ */ React12__default.createElement(Moon, { className: "h-4 w-4 text-muted-foreground" })
+    ), !hideViewSwitcher && /* @__PURE__ */ React12__default.createElement("div", { className: "flex items-center rounded-xl bg-[#EEEFF5] p-1 backdrop-blur-sm" }, viewConfig.map(({ key, icon: Icon }) => /* @__PURE__ */ React12__default.createElement(
+      Button,
+      {
+        key,
+        variant: "ghost",
+        size: "sm",
+        onClick: () => onViewChange(key),
+        title: translations[key],
+        className: cn(
+          "h-8 gap-1.5 rounded-lg px-2 text-xs transition-all duration-200",
+          isWide && "px-3",
+          view === key ? "bg-white font-medium text-black shadow-sm" : "text-[#4C4C56] hover:bg-[#EEEFF5] hover:text-foreground"
+        )
+      },
+      /* @__PURE__ */ React12__default.createElement(Icon, { className: "h-3.5 w-3.5 shrink-0" }),
+      isWide && /* @__PURE__ */ React12__default.createElement("span", null, translations[key])
+    ))), newEventButton && /* @__PURE__ */ React12__default.createElement(
+      Button,
+      {
+        variant: "outline",
+        size: "icon",
+        title: newEventButton.label,
+        className: cn(
+          "h-9 w-9 shrink-0 rounded-xl border-none bg-[#7FDDF0] text-sm font-medium transition-all duration-200 hover:bg-primary/5 hover:text-primary",
+          isWide && "w-auto px-5 [&>svg]:mr-2"
+        ),
+        onClick: newEventButton.onClick
+      },
+      newEventButton.icon,
+      isWide && /* @__PURE__ */ React12__default.createElement("span", null, newEventButton.label)
+    ))
+  );
 };
 function isDayCell(date) {
   return date.getHours() === 0 && date.getMinutes() === 0;

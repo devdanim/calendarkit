@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { format, Locale } from 'date-fns';
 import { Button } from './ui/button';
 import {
@@ -15,7 +15,7 @@ import {
 } from 'lucide-react';
 import { ViewType } from '../types';
 import { cn } from '../utils';
-import { useIsWideViewport } from '../hooks/useMediaQuery';
+import { useIsWideHeader } from '../hooks/useMediaQuery';
 
 interface CalendarHeaderProps {
   currentDate: Date;
@@ -60,7 +60,8 @@ export const CalendarHeader: React.FC<CalendarHeaderProps> = ({
   locale,
   newEventButton,
 }) => {
-  const isWide = useIsWideViewport();
+  const headerRef = useRef<HTMLDivElement>(null);
+  const isWide = useIsWideHeader(headerRef);
 
   const viewConfig = [
     {
@@ -82,7 +83,10 @@ export const CalendarHeader: React.FC<CalendarHeaderProps> = ({
   ] as const;
 
   return (
-    <div className="flex min-h-[64px] flex-col items-center justify-between gap-3 border-b-[0px] border-border/50 bg-[#F9F9FB] px-3 py-3 md:flex-row md:gap-0 md:px-5">
+    <div
+      ref={headerRef}
+      className="flex min-h-[64px] flex-col items-center justify-between gap-3 border-b-[0px] border-border/50 bg-[#F9F9FB] px-3 py-3 md:flex-row md:gap-0 md:px-5"
+    >
       {/* Left Section: Menu, Navigation, Title */}
       <div className="flex w-full items-center justify-between gap-2 md:w-auto md:justify-start">
         <div className="flex items-center gap-2 md:gap-3">
