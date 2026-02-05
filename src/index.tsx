@@ -322,7 +322,7 @@ export const Scheduler: React.FC<CalendarProps> = ({
           <div className="relative flex flex-1 flex-col overflow-hidden">
             {isLoading ? (
               <div className="flex-1 overflow-auto p-0 md:p-4">
-                <div className="h-full min-w-[max(100%,800px)]">
+                <div className={cn('h-full', view !== 'agenda' && 'min-w-[max(100%,800px)]')}>
                   {view === 'month' && <MonthViewSkeleton />}
                   {view === 'week' && <WeekViewSkeleton />}
                   {view === 'day' && <DayViewSkeleton />}
@@ -332,7 +332,7 @@ export const Scheduler: React.FC<CalendarProps> = ({
               </div>
             ) : (
               <div ref={swipeRef} className="flex-1 touch-pan-y overflow-auto p-0 md:p-4">
-                <div className="h-full min-w-[max(100%,800px)]">
+                <div className={cn('h-full', view !== 'agenda' && 'min-w-[max(100%,800px)]')}>
                   <AnimatePresence mode="wait" initial={false}>
                     <motion.div
                       key={`${view}-${currentDate.toISOString()}-${timezone || 'local'}`}

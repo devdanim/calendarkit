@@ -1202,37 +1202,40 @@ var AgendaView = ({
     hidden: { opacity: 0, x: -20 },
     show: { opacity: 1, x: 0 }
   };
-  return /* @__PURE__ */ React12__default.createElement("div", { className: "flex h-full flex-col overflow-y-auto bg-[#F9F9FB]" }, /* @__PURE__ */ React12__default.createElement(
+  return /* @__PURE__ */ React12__default.createElement("div", { className: "flex h-full min-w-0 flex-col overflow-y-auto overflow-x-hidden bg-[#F9F9FB]" }, /* @__PURE__ */ React12__default.createElement(
     motion.div,
     {
-      className: "mx-auto w-full max-w-3xl px-4 pb-10 md:px-6",
+      className: "mx-auto w-full min-w-0 max-w-3xl px-4 pb-10 md:px-6",
       variants: container,
       initial: "hidden",
       animate: "show"
     },
-    groupedEvents.map((group) => /* @__PURE__ */ React12__default.createElement(motion.div, { key: group.date.toISOString(), className: "relative", variants: item }, /* @__PURE__ */ React12__default.createElement("div", { className: "sticky top-0 z-10 border-b border-border/50 bg-[#F9F9FB] py-4 backdrop-blur-md" }, /* @__PURE__ */ React12__default.createElement("div", { className: "flex items-center gap-4" }, /* @__PURE__ */ React12__default.createElement(
+    groupedEvents.map((group) => /* @__PURE__ */ React12__default.createElement(motion.div, { key: group.date.toISOString(), className: "relative", variants: item }, /* @__PURE__ */ React12__default.createElement("div", { className: "sticky top-0 z-10 min-w-0 border-b border-border/50 bg-[#F9F9FB] py-4 backdrop-blur-md" }, /* @__PURE__ */ React12__default.createElement("div", { className: "flex min-w-0 items-center gap-2 sm:gap-4" }, /* @__PURE__ */ React12__default.createElement(
       "div",
       {
         className: cn(
-          "flex h-16 w-16 flex-col items-center justify-center rounded-2xl transition-all",
+          "flex h-14 w-14 shrink-0 flex-col items-center justify-center rounded-xl transition-all sm:h-16 sm:w-16 sm:rounded-2xl",
           isToday(group.date) ? "bg-primary text-white shadow-lg" : "bg-muted/50 text-foreground"
         )
       },
       /* @__PURE__ */ React12__default.createElement("span", { className: "text-2xl font-bold leading-none" }, format(group.date, "d", { locale })),
       /* @__PURE__ */ React12__default.createElement("span", { className: "text-xs font-medium uppercase tracking-wide opacity-80" }, format(group.date, "MMM", { locale }))
-    ), /* @__PURE__ */ React12__default.createElement("div", { className: "flex flex-col" }, /* @__PURE__ */ React12__default.createElement(
+    ), /* @__PURE__ */ React12__default.createElement("div", { className: "min-w-0 flex-1" }, /* @__PURE__ */ React12__default.createElement(
       "span",
       {
-        className: cn("text-lg font-semibold", isToday(group.date) && "text-primary")
+        className: cn(
+          "block truncate text-base font-semibold sm:text-lg",
+          isToday(group.date) && "text-primary"
+        )
       },
       getDateLabel(group.date)
-    ), /* @__PURE__ */ React12__default.createElement("span", { className: "text-sm text-muted-foreground" }, getEventCountLabel(group.events.length))))), /* @__PURE__ */ React12__default.createElement("div", { className: "space-y-3 py-4" }, group.events.map((event) => /* @__PURE__ */ React12__default.createElement(
+    ), /* @__PURE__ */ React12__default.createElement("span", { className: "block text-xs text-muted-foreground sm:text-sm" }, getEventCountLabel(group.events.length))))), /* @__PURE__ */ React12__default.createElement("div", { className: "space-y-3 py-4" }, group.events.map((event) => /* @__PURE__ */ React12__default.createElement(
       motion.div,
       {
         key: event.id,
         onClick: () => onEventClick?.(event),
         className: cn(
-          "group relative flex gap-4 rounded-2xl border border-border/40 p-4",
+          "group relative flex min-w-0 gap-2 rounded-xl border border-border/40 p-3 sm:gap-4 sm:rounded-2xl sm:p-4",
           "hover:border-primary/40 hover:shadow-lg hover:shadow-primary/5",
           "cursor-pointer transition-all duration-200",
           "from-card via-card to-card/80 bg-gradient-to-br"
@@ -1247,19 +1250,19 @@ var AgendaView = ({
           style: { backgroundColor: event.color || "var(--primary)" }
         }
       ),
-      /* @__PURE__ */ React12__default.createElement("div", { className: "flex min-w-[70px] flex-col items-center pl-2" }, event.allDay ? /* @__PURE__ */ React12__default.createElement("div", { className: "flex flex-col items-center" }, /* @__PURE__ */ React12__default.createElement("span", { className: "rounded-full bg-muted/80 px-2.5 py-1 text-xs font-semibold text-muted-foreground" }, translations?.allDay || "All Day")) : /* @__PURE__ */ React12__default.createElement("div", { className: "flex flex-col items-center" }, /* @__PURE__ */ React12__default.createElement("span", { className: "text-base font-semibold text-foreground" }, format(event.start, locale?.code === "fr" ? "H:mm" : "h:mm", {
+      /* @__PURE__ */ React12__default.createElement("div", { className: "flex w-14 shrink-0 flex-col items-center pl-2 sm:min-w-[70px]" }, event.allDay ? /* @__PURE__ */ React12__default.createElement("div", { className: "flex flex-col items-center" }, /* @__PURE__ */ React12__default.createElement("span", { className: "rounded-full bg-muted/80 px-2.5 py-1 text-xs font-semibold text-muted-foreground" }, translations?.allDay || "All Day")) : /* @__PURE__ */ React12__default.createElement("div", { className: "flex flex-col items-center" }, /* @__PURE__ */ React12__default.createElement("span", { className: "text-base font-semibold text-foreground" }, format(event.start, locale?.code === "fr" ? "H:mm" : "h:mm", {
         locale
       })), locale?.code !== "fr" && /* @__PURE__ */ React12__default.createElement("span", { className: "text-xs uppercase text-muted-foreground" }, format(event.start, "a", { locale })), /* @__PURE__ */ React12__default.createElement("div", { className: "my-1 h-3 w-px bg-border" }), /* @__PURE__ */ React12__default.createElement("span", { className: "text-xs font-medium text-muted-foreground/70" }, formatDuration(event.start, event.end)))),
-      /* @__PURE__ */ React12__default.createElement("div", { className: "min-w-0 flex-1 space-y-2" }, /* @__PURE__ */ React12__default.createElement("div", { className: "flex items-start justify-between gap-2" }, /* @__PURE__ */ React12__default.createElement("h4", { className: "line-clamp-1 text-base font-semibold text-foreground transition-colors group-hover:text-primary" }, event.title), /* @__PURE__ */ React12__default.createElement(
+      /* @__PURE__ */ React12__default.createElement("div", { className: "min-w-0 flex-1 space-y-2 overflow-hidden" }, /* @__PURE__ */ React12__default.createElement("div", { className: "flex min-w-0 items-start justify-between gap-2" }, /* @__PURE__ */ React12__default.createElement("h4", { className: "min-w-0 flex-1 truncate text-sm font-semibold text-foreground transition-colors group-hover:text-primary sm:text-base" }, event.title), /* @__PURE__ */ React12__default.createElement(
         "div",
         {
           className: "mt-1.5 h-3 w-3 shrink-0 rounded-full",
           style: { backgroundColor: event.color || "var(--primary)" }
         }
-      )), event.description && /* @__PURE__ */ React12__default.createElement("div", { className: "line-clamp-2 text-sm leading-relaxed text-muted-foreground" }, event.description), /* @__PURE__ */ React12__default.createElement("div", { className: "flex flex-wrap items-center gap-3 pt-1" }, !event.allDay && /* @__PURE__ */ React12__default.createElement("div", { className: "flex items-center gap-1.5 text-xs text-muted-foreground" }, /* @__PURE__ */ React12__default.createElement(Clock, { className: "h-3.5 w-3.5" }), /* @__PURE__ */ React12__default.createElement("span", null, format(event.start, locale?.code === "fr" ? "H:mm" : "h:mm a", {
+      )), event.description && /* @__PURE__ */ React12__default.createElement("div", { className: "line-clamp-2 text-sm leading-relaxed text-muted-foreground" }, event.description), /* @__PURE__ */ React12__default.createElement("div", { className: "flex min-w-0 flex-wrap items-center gap-2 pt-1 sm:gap-3" }, !event.allDay && /* @__PURE__ */ React12__default.createElement("div", { className: "flex items-center gap-1.5 text-xs text-muted-foreground" }, /* @__PURE__ */ React12__default.createElement(Clock, { className: "h-3.5 w-3.5" }), /* @__PURE__ */ React12__default.createElement("span", null, format(event.start, locale?.code === "fr" ? "H:mm" : "h:mm a", {
         locale
       }))), event.guests && event.guests.length > 0 && /* @__PURE__ */ React12__default.createElement("div", { className: "flex items-center gap-1.5 text-xs text-muted-foreground" }, /* @__PURE__ */ React12__default.createElement(Users, { className: "h-3.5 w-3.5" }), /* @__PURE__ */ React12__default.createElement("span", null, getGuestCountLabel(event.guests.length))), event.attachments && event.attachments.length > 0 && /* @__PURE__ */ React12__default.createElement("div", { className: "flex items-center gap-1.5 text-xs text-muted-foreground" }, /* @__PURE__ */ React12__default.createElement(Paperclip, { className: "h-3.5 w-3.5" }), /* @__PURE__ */ React12__default.createElement("span", null, event.attachments.length)), event.reminders && event.reminders.length > 0 && /* @__PURE__ */ React12__default.createElement("div", { className: "flex items-center gap-1.5 text-xs text-muted-foreground" }, /* @__PURE__ */ React12__default.createElement(Bell, { className: "h-3.5 w-3.5" }), /* @__PURE__ */ React12__default.createElement("span", null, event.reminders.length)))),
-      /* @__PURE__ */ React12__default.createElement("div", { className: "absolute right-4 top-1/2 -translate-y-1/2 opacity-0 transition-opacity group-hover:opacity-100" }, /* @__PURE__ */ React12__default.createElement(
+      /* @__PURE__ */ React12__default.createElement("div", { className: "absolute right-2 top-1/2 hidden shrink-0 -translate-y-1/2 opacity-0 transition-opacity group-hover:opacity-100 sm:right-4 sm:block" }, /* @__PURE__ */ React12__default.createElement(
         "svg",
         {
           className: "h-5 w-5 text-muted-foreground",
@@ -2071,7 +2074,7 @@ var Scheduler = ({
           locale,
           newEventButton
         }
-      ), /* @__PURE__ */ React12__default.createElement("div", { className: "relative flex flex-1 flex-col overflow-hidden" }, isLoading ? /* @__PURE__ */ React12__default.createElement("div", { className: "flex-1 overflow-auto p-0 md:p-4" }, /* @__PURE__ */ React12__default.createElement("div", { className: "h-full min-w-[max(100%,800px)]" }, view === "month" && /* @__PURE__ */ React12__default.createElement(MonthViewSkeleton, null), view === "week" && /* @__PURE__ */ React12__default.createElement(WeekViewSkeleton, null), view === "day" && /* @__PURE__ */ React12__default.createElement(DayViewSkeleton, null), view === "agenda" && /* @__PURE__ */ React12__default.createElement(AgendaViewSkeleton, null), view === "resource" && /* @__PURE__ */ React12__default.createElement(WeekViewSkeleton, null))) : /* @__PURE__ */ React12__default.createElement("div", { ref: swipeRef, className: "flex-1 touch-pan-y overflow-auto p-0 md:p-4" }, /* @__PURE__ */ React12__default.createElement("div", { className: "h-full min-w-[max(100%,800px)]" }, /* @__PURE__ */ React12__default.createElement(AnimatePresence, { mode: "wait", initial: false }, /* @__PURE__ */ React12__default.createElement(
+      ), /* @__PURE__ */ React12__default.createElement("div", { className: "relative flex flex-1 flex-col overflow-hidden" }, isLoading ? /* @__PURE__ */ React12__default.createElement("div", { className: "flex-1 overflow-auto p-0 md:p-4" }, /* @__PURE__ */ React12__default.createElement("div", { className: cn("h-full", view !== "agenda" && "min-w-[max(100%,800px)]") }, view === "month" && /* @__PURE__ */ React12__default.createElement(MonthViewSkeleton, null), view === "week" && /* @__PURE__ */ React12__default.createElement(WeekViewSkeleton, null), view === "day" && /* @__PURE__ */ React12__default.createElement(DayViewSkeleton, null), view === "agenda" && /* @__PURE__ */ React12__default.createElement(AgendaViewSkeleton, null), view === "resource" && /* @__PURE__ */ React12__default.createElement(WeekViewSkeleton, null))) : /* @__PURE__ */ React12__default.createElement("div", { ref: swipeRef, className: "flex-1 touch-pan-y overflow-auto p-0 md:p-4" }, /* @__PURE__ */ React12__default.createElement("div", { className: cn("h-full", view !== "agenda" && "min-w-[max(100%,800px)]") }, /* @__PURE__ */ React12__default.createElement(AnimatePresence, { mode: "wait", initial: false }, /* @__PURE__ */ React12__default.createElement(
         motion.div,
         {
           key: `${view}-${currentDate.toISOString()}-${timezone || "local"}`,

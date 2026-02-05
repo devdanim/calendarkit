@@ -104,9 +104,9 @@ export const AgendaView: React.FC<AgendaViewProps> = ({
   };
 
   return (
-    <div className="flex h-full flex-col overflow-y-auto bg-[#F9F9FB]">
+    <div className="flex h-full min-w-0 flex-col overflow-y-auto overflow-x-hidden bg-[#F9F9FB]">
       <motion.div
-        className="mx-auto w-full max-w-3xl px-4 pb-10 md:px-6"
+        className="mx-auto w-full min-w-0 max-w-3xl px-4 pb-10 md:px-6"
         variants={container}
         initial="hidden"
         animate="show"
@@ -114,12 +114,12 @@ export const AgendaView: React.FC<AgendaViewProps> = ({
         {groupedEvents.map((group) => (
           <motion.div key={group.date.toISOString()} className="relative" variants={item}>
             {/* Date Header */}
-            <div className="sticky top-0 z-10 border-b border-border/50 bg-[#F9F9FB] py-4 backdrop-blur-md">
-              <div className="flex items-center gap-4">
+            <div className="sticky top-0 z-10 min-w-0 border-b border-border/50 bg-[#F9F9FB] py-4 backdrop-blur-md">
+              <div className="flex min-w-0 items-center gap-2 sm:gap-4">
                 {/* Date box */}
                 <div
                   className={cn(
-                    'flex h-16 w-16 flex-col items-center justify-center rounded-2xl transition-all',
+                    'flex h-14 w-14 shrink-0 flex-col items-center justify-center rounded-xl transition-all sm:h-16 sm:w-16 sm:rounded-2xl',
                     isToday(group.date)
                       ? 'bg-primary text-white shadow-lg'
                       : 'bg-muted/50 text-foreground'
@@ -134,13 +134,16 @@ export const AgendaView: React.FC<AgendaViewProps> = ({
                 </div>
 
                 {/* Day info */}
-                <div className="flex flex-col">
+                <div className="min-w-0 flex-1">
                   <span
-                    className={cn('text-lg font-semibold', isToday(group.date) && 'text-primary')}
+                    className={cn(
+                      'block truncate text-base font-semibold sm:text-lg',
+                      isToday(group.date) && 'text-primary'
+                    )}
                   >
                     {getDateLabel(group.date)}
                   </span>
-                  <span className="text-sm text-muted-foreground">
+                  <span className="block text-xs text-muted-foreground sm:text-sm">
                     {getEventCountLabel(group.events.length)}
                   </span>
                 </div>
@@ -154,7 +157,7 @@ export const AgendaView: React.FC<AgendaViewProps> = ({
                   key={event.id}
                   onClick={() => onEventClick?.(event)}
                   className={cn(
-                    'group relative flex gap-4 rounded-2xl border border-border/40 p-4',
+                    'group relative flex min-w-0 gap-2 rounded-xl border border-border/40 p-3 sm:gap-4 sm:rounded-2xl sm:p-4',
                     'hover:border-primary/40 hover:shadow-lg hover:shadow-primary/5',
                     'cursor-pointer transition-all duration-200',
                     'from-card via-card to-card/80 bg-gradient-to-br'
@@ -169,7 +172,7 @@ export const AgendaView: React.FC<AgendaViewProps> = ({
                   />
 
                   {/* Time Column */}
-                  <div className="flex min-w-[70px] flex-col items-center pl-2">
+                  <div className="flex w-14 shrink-0 flex-col items-center pl-2 sm:min-w-[70px]">
                     {event.allDay ? (
                       <div className="flex flex-col items-center">
                         <span className="rounded-full bg-muted/80 px-2.5 py-1 text-xs font-semibold text-muted-foreground">
@@ -197,9 +200,9 @@ export const AgendaView: React.FC<AgendaViewProps> = ({
                   </div>
 
                   {/* Event Details */}
-                  <div className="min-w-0 flex-1 space-y-2">
-                    <div className="flex items-start justify-between gap-2">
-                      <h4 className="line-clamp-1 text-base font-semibold text-foreground transition-colors group-hover:text-primary">
+                  <div className="min-w-0 flex-1 space-y-2 overflow-hidden">
+                    <div className="flex min-w-0 items-start justify-between gap-2">
+                      <h4 className="min-w-0 flex-1 truncate text-sm font-semibold text-foreground transition-colors group-hover:text-primary sm:text-base">
                         {event.title}
                       </h4>
                       {/* Color dot */}
@@ -216,7 +219,7 @@ export const AgendaView: React.FC<AgendaViewProps> = ({
                     )}
 
                     {/* Meta info row */}
-                    <div className="flex flex-wrap items-center gap-3 pt-1">
+                    <div className="flex min-w-0 flex-wrap items-center gap-2 pt-1 sm:gap-3">
                       {!event.allDay && (
                         <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
                           <Clock className="h-3.5 w-3.5" />
@@ -252,7 +255,7 @@ export const AgendaView: React.FC<AgendaViewProps> = ({
                   </div>
 
                   {/* Hover arrow indicator */}
-                  <div className="absolute right-4 top-1/2 -translate-y-1/2 opacity-0 transition-opacity group-hover:opacity-100">
+                  <div className="absolute right-2 top-1/2 hidden shrink-0 -translate-y-1/2 opacity-0 transition-opacity group-hover:opacity-100 sm:right-4 sm:block">
                     <svg
                       className="h-5 w-5 text-muted-foreground"
                       viewBox="0 0 24 24"
