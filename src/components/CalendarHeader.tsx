@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { ViewType } from '../types';
 import { cn } from '../utils';
+import { useIsWideViewport } from '../hooks/useMediaQuery';
 
 interface CalendarHeaderProps {
   currentDate: Date;
@@ -59,6 +60,8 @@ export const CalendarHeader: React.FC<CalendarHeaderProps> = ({
   locale,
   newEventButton,
 }) => {
+  const isWide = useIsWideViewport();
+
   const viewConfig = [
     {
       key: 'month',
@@ -83,15 +86,17 @@ export const CalendarHeader: React.FC<CalendarHeaderProps> = ({
       {/* Left Section: Menu, Navigation, Title */}
       <div className="flex w-full items-center justify-between gap-2 md:w-auto md:justify-start">
         <div className="flex items-center gap-2 md:gap-3">
-          {/* Menu Button - hidden on small (sidebar hidden in reduced view), visible from md */}
-          <Button
-            variant="ghost"
-            size="icon"
-            className="hidden h-10 w-10 rounded-xl text-muted-foreground transition-all duration-200 hover:bg-accent/80 hover:text-foreground md:inline-flex"
-            onClick={onMenuClick}
-          >
-            <Menu className="h-5 w-5" />
-          </Button>
+          {/* Menu Button - hidden in reduced view (sidebar hidden), visible when wide */}
+          {isWide && (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-10 w-10 rounded-xl text-muted-foreground transition-all duration-200 hover:bg-accent/80 hover:text-foreground"
+              onClick={onMenuClick}
+            >
+              <Menu className="h-5 w-5" />
+            </Button>
+          )}
 
           {/* Current Date Display */}
           <div className="ml-2 md:ml-4">
@@ -100,16 +105,19 @@ export const CalendarHeader: React.FC<CalendarHeaderProps> = ({
             </h2>
           </div>
 
-          {/* Today Button - icon only in reduced view, label from md */}
+          {/* Today Button - icon only in reduced view, label when wide */}
           <Button
             variant="outline"
             size="icon"
             onClick={onToday}
             title={translations.today}
-            className="h-9 w-9 shrink-0 rounded-xl border-[0.5px] border-border/60 bg-[#EEEFF5] text-sm font-medium transition-all duration-200 hover:border-primary/40 hover:bg-primary/5 hover:text-primary md:w-auto md:px-4 md:pl-3 [&>svg]:md:mr-2"
+            className={cn(
+              'h-9 w-9 shrink-0 rounded-xl border-[0.5px] border-border/60 bg-[#EEEFF5] text-sm font-medium transition-all duration-200 hover:border-primary/40 hover:bg-primary/5 hover:text-primary',
+              isWide && 'w-auto px-4 pl-3 [&>svg]:mr-2'
+            )}
           >
             <CalendarCheck className="h-4 w-4" />
-            <span className="hidden md:inline">{translations.today}</span>
+            {isWide && <span>{translations.today}</span>}
           </Button>
 
           {/* Navigation Arrows */}
@@ -175,30 +183,34 @@ export const CalendarHeader: React.FC<CalendarHeaderProps> = ({
                 onClick={() => onViewChange(key)}
                 title={translations[key]}
                 className={cn(
-                  'h-8 gap-1.5 rounded-lg px-2 text-xs transition-all duration-200 md:px-3',
+                  'h-8 gap-1.5 rounded-lg px-2 text-xs transition-all duration-200',
+                  isWide && 'px-3',
                   view === key
                     ? 'bg-white font-medium text-black shadow-sm'
                     : 'text-[#4C4C56] hover:bg-[#EEEFF5] hover:text-foreground'
                 )}
               >
                 <Icon className="h-3.5 w-3.5 shrink-0" />
-                <span className="hidden md:inline">{translations[key]}</span>
+                {isWide && <span>{translations[key]}</span>}
               </Button>
             ))}
           </div>
         )}
 
-        {/* New Event Button - icon only in reduced view, label from md */}
+        {/* New Event Button - icon only in reduced view, label when wide */}
         {newEventButton && (
           <Button
             variant="outline"
             size="icon"
             title={newEventButton.label}
-            className="h-9 w-9 shrink-0 rounded-xl border-none bg-[#7FDDF0] text-sm font-medium transition-all duration-200 hover:bg-primary/5 hover:text-primary md:w-auto md:px-5 [&>svg]:md:mr-2"
+            className={cn(
+              'h-9 w-9 shrink-0 rounded-xl border-none bg-[#7FDDF0] text-sm font-medium transition-all duration-200 hover:bg-primary/5 hover:text-primary',
+              isWide && 'w-auto px-5 [&>svg]:mr-2'
+            )}
             onClick={newEventButton.onClick}
           >
             {newEventButton.icon}
-            <span className="hidden md:inline">{newEventButton.label}</span>
+            {isWide && <span>{newEventButton.label}</span>}
           </Button>
         )}
       </div>
