@@ -113,28 +113,33 @@ export const AgendaView: React.FC<AgendaViewProps> = ({
       >
         {groupedEvents.map((group) => (
           <motion.div key={group.date.toISOString()} className="relative" variants={item}>
-            {/* Date Header */}
+            {/* Date Header - min dimensions so the date box is never crushed by parent CSS */}
             <div className="sticky top-0 z-10 min-w-0 border-b border-border/50 bg-[#F9F9FB] py-4 backdrop-blur-md">
-              <div className="flex min-w-0 items-center gap-2 sm:gap-4">
-                {/* Date box */}
+              <div className="flex min-w-0 flex-nowrap items-center gap-2 sm:gap-4">
+                {/* Date box (carré) - flex-none + min dimensions so it never gets squashed in consuming apps */}
                 <div
                   className={cn(
-                    'flex h-14 w-14 shrink-0 flex-col items-center justify-center rounded-xl transition-all sm:h-16 sm:w-16 sm:rounded-2xl',
+                    'flex flex-none flex-col items-center justify-center overflow-hidden rounded-xl transition-all',
+                    'h-14 min-h-14 w-14 min-w-14 sm:h-16 sm:min-h-16 sm:w-16 sm:min-w-16 sm:rounded-2xl',
                     isToday(group.date)
                       ? 'bg-primary text-white shadow-lg'
                       : 'bg-muted/50 text-foreground'
                   )}
+                  style={
+                    // Fallback so the date box never shrinks below readable size (e.g. if Tailwind is purged in consuming app)
+                    { minWidth: 56, minHeight: 56 } as React.CSSProperties
+                  }
                 >
-                  <span className="text-2xl font-bold leading-none">
+                  <span className="truncate text-center text-2xl font-bold leading-none">
                     {format(group.date, 'd', { locale })}
                   </span>
-                  <span className="text-xs font-medium uppercase tracking-wide opacity-80">
+                  <span className="truncate text-center text-xs font-medium uppercase tracking-wide opacity-80">
                     {format(group.date, 'MMM', { locale })}
                   </span>
                 </div>
 
                 {/* Day info */}
-                <div className="min-w-0 flex-1">
+                <div className="min-w-0 flex-1 overflow-hidden">
                   <span
                     className={cn(
                       'block truncate text-base font-semibold sm:text-lg',
@@ -143,7 +148,7 @@ export const AgendaView: React.FC<AgendaViewProps> = ({
                   >
                     {getDateLabel(group.date)}
                   </span>
-                  <span className="block text-xs text-muted-foreground sm:text-sm">
+                  <span className="block truncate text-xs text-muted-foreground sm:text-sm">
                     {getEventCountLabel(group.events.length)}
                   </span>
                 </div>

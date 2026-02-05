@@ -1231,17 +1231,22 @@ var AgendaView = ({
       initial: "hidden",
       animate: "show"
     },
-    groupedEvents.map((group) => /* @__PURE__ */ React12__namespace.default.createElement(framerMotion.motion.div, { key: group.date.toISOString(), className: "relative", variants: item }, /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "sticky top-0 z-10 min-w-0 border-b border-border/50 bg-[#F9F9FB] py-4 backdrop-blur-md" }, /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "flex min-w-0 items-center gap-2 sm:gap-4" }, /* @__PURE__ */ React12__namespace.default.createElement(
+    groupedEvents.map((group) => /* @__PURE__ */ React12__namespace.default.createElement(framerMotion.motion.div, { key: group.date.toISOString(), className: "relative", variants: item }, /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "sticky top-0 z-10 min-w-0 border-b border-border/50 bg-[#F9F9FB] py-4 backdrop-blur-md" }, /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "flex min-w-0 flex-nowrap items-center gap-2 sm:gap-4" }, /* @__PURE__ */ React12__namespace.default.createElement(
       "div",
       {
         className: cn(
-          "flex h-14 w-14 shrink-0 flex-col items-center justify-center rounded-xl transition-all sm:h-16 sm:w-16 sm:rounded-2xl",
+          "flex flex-none flex-col items-center justify-center overflow-hidden rounded-xl transition-all",
+          "h-14 min-h-14 w-14 min-w-14 sm:h-16 sm:min-h-16 sm:w-16 sm:min-w-16 sm:rounded-2xl",
           dateFns.isToday(group.date) ? "bg-primary text-white shadow-lg" : "bg-muted/50 text-foreground"
+        ),
+        style: (
+          // Fallback so the date box never shrinks below readable size (e.g. if Tailwind is purged in consuming app)
+          { minWidth: 56, minHeight: 56 }
         )
       },
-      /* @__PURE__ */ React12__namespace.default.createElement("span", { className: "text-2xl font-bold leading-none" }, dateFns.format(group.date, "d", { locale })),
-      /* @__PURE__ */ React12__namespace.default.createElement("span", { className: "text-xs font-medium uppercase tracking-wide opacity-80" }, dateFns.format(group.date, "MMM", { locale }))
-    ), /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "min-w-0 flex-1" }, /* @__PURE__ */ React12__namespace.default.createElement(
+      /* @__PURE__ */ React12__namespace.default.createElement("span", { className: "truncate text-center text-2xl font-bold leading-none" }, dateFns.format(group.date, "d", { locale })),
+      /* @__PURE__ */ React12__namespace.default.createElement("span", { className: "truncate text-center text-xs font-medium uppercase tracking-wide opacity-80" }, dateFns.format(group.date, "MMM", { locale }))
+    ), /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "min-w-0 flex-1 overflow-hidden" }, /* @__PURE__ */ React12__namespace.default.createElement(
       "span",
       {
         className: cn(
@@ -1250,7 +1255,7 @@ var AgendaView = ({
         )
       },
       getDateLabel(group.date)
-    ), /* @__PURE__ */ React12__namespace.default.createElement("span", { className: "block text-xs text-muted-foreground sm:text-sm" }, getEventCountLabel(group.events.length))))), /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "space-y-3 py-4" }, group.events.map((event) => /* @__PURE__ */ React12__namespace.default.createElement(
+    ), /* @__PURE__ */ React12__namespace.default.createElement("span", { className: "block truncate text-xs text-muted-foreground sm:text-sm" }, getEventCountLabel(group.events.length))))), /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "space-y-3 py-4" }, group.events.map((event) => /* @__PURE__ */ React12__namespace.default.createElement(
       framerMotion.motion.div,
       {
         key: event.id,
