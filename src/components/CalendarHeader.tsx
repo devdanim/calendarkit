@@ -146,8 +146,8 @@ export const CalendarHeader: React.FC<CalendarHeaderProps> = ({
         </div>
       </div>
 
-      {/* Right Section: View Switcher & Theme Toggle */}
-      <div className="flex w-full items-center justify-end gap-2 md:w-auto md:gap-3">
+      {/* Right Section: View Switcher & Theme Toggle — wrap when space is tight so CTA stays visible */}
+      <div className="flex w-full flex-wrap items-center justify-end gap-2 md:w-auto md:gap-3">
         {/* Language Toggle */}
         {!hideLanguageSelector && onLanguageChange && language && (
           <Button

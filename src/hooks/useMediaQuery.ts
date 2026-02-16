@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, RefObject } from 'react';
+import { useState, useEffect, RefObject } from 'react';
 
 export const WIDE_HEADER_MIN_WIDTH = 768; // px — below = compact (icons only)
 

@@ -172,7 +172,7 @@ var CalendarHeader = ({
       },
       /* @__PURE__ */ React12__namespace.default.createElement(lucideReact.ChevronRight, { className: "h-4 w-4 text-muted-foreground" })
     )))),
-    /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "flex w-full items-center justify-end gap-2 md:w-auto md:gap-3" }, !hideLanguageSelector && onLanguageChange && language && /* @__PURE__ */ React12__namespace.default.createElement(
+    /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "flex w-full flex-wrap items-center justify-end gap-2 md:w-auto md:gap-3" }, !hideLanguageSelector && onLanguageChange && language && /* @__PURE__ */ React12__namespace.default.createElement(
       Button,
       {
         variant: "ghost",
