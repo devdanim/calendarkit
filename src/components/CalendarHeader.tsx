@@ -39,6 +39,8 @@ interface CalendarHeaderProps {
     icon?: React.ReactNode;
     onClick?: () => void;
   };
+  showMobileSidebarCta?: boolean;
+  mobileSidebarCtaLabel?: string;
 }
 
 export const CalendarHeader: React.FC<CalendarHeaderProps> = ({
@@ -59,6 +61,8 @@ export const CalendarHeader: React.FC<CalendarHeaderProps> = ({
   onLanguageChange,
   locale,
   newEventButton,
+  showMobileSidebarCta,
+  mobileSidebarCtaLabel,
 }) => {
   const headerRef = useRef<HTMLDivElement>(null);
   const isWide = useIsWideHeader(headerRef);
@@ -81,6 +85,7 @@ export const CalendarHeader: React.FC<CalendarHeaderProps> = ({
       icon: ListTodo,
     },
   ] as const;
+  const showIdeasCta = Boolean(showMobileSidebarCta && onMenuClick && !isWide);
 
   return (
     <div
@@ -144,6 +149,17 @@ export const CalendarHeader: React.FC<CalendarHeaderProps> = ({
             </Button>
           </div>
         </div>
+
+        {showIdeasCta && (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={onMenuClick}
+            className="h-10 shrink-0 rounded-xl border-none bg-[#EEEFF5] px-4 text-sm font-semibold text-foreground transition-all duration-200 hover:bg-[#E3E4EC]"
+          >
+            {mobileSidebarCtaLabel || "Plus d'idées"}
+          </Button>
+        )}
       </div>
 
       {/* Right Section: View Switcher & Theme Toggle — wrap when space is tight so CTA stays visible */}

@@ -74,7 +74,7 @@ export const MiniCalendar: React.FC<MiniCalendarProps> = ({
   };
 
   return (
-    <div className={cn('w-[260px] px-4', className)}>
+    <div className={cn('w-full px-4', className)}>
       {/* Header */}
       <div className="mb-4 flex items-center justify-between">
         <span className="text-sm font-semibold capitalize text-foreground">

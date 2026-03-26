@@ -27,6 +27,8 @@ interface SidebarProps {
   showTimezoneSelector?: boolean;
   /** Date-fns locale for formatting */
   locale?: Locale;
+  /** Use full-width content layout (mobile sheet mode) */
+  isSheetMode?: boolean;
 }
 
 /**
@@ -90,6 +92,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   showCalendarFilters = true,
   showTimezoneSelector = true,
   locale,
+  isSheetMode = false,
 }) => {
   const [timezoneOpen, setTimezoneOpen] = useState(false);
   const [now, setNow] = useState<Date | null>(null);
@@ -221,6 +224,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           currentDate={currentDate}
           onDateChange={onDateChange}
           onViewChange={onViewChange}
+          className={cn(!isSheetMode && 'max-w-[260px]')}
           locale={locale}
         />
       )}

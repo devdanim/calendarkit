@@ -1,4 +1,4 @@
-import React, { useId, useState, useMemo, useCallback, useEffect } from 'react';
+import React, { useId, useState, useMemo, useCallback, useEffect, useRef } from 'react';
 import {
   DndContext,
   useSensor,
@@ -28,7 +28,6 @@ import { cn } from './utils';
 import { getThemeStyles } from './lib/theme';
 import { useCalendarLogic } from './hooks/useCalendarLogic';
 import { differenceInMinutes, format } from 'date-fns';
-import { X } from 'lucide-react';
 import { toZonedTime } from 'date-fns-tz';
 import { useViewSwipe } from './hooks/useSwipeGesture';
 
@@ -123,6 +122,7 @@ export const Scheduler: React.FC<CalendarProps> = ({
   const sidebarEnabled = sidebarFeatureEnabled && sidebarVisible;
   const mobileBreakpoint = sidebarConfig?.mobileBreakpoint ?? 900;
   const [isCompactLayout, setIsCompactLayout] = useState(false);
+  const wasCompactLayoutRef = useRef(false);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -138,6 +138,17 @@ export const Scheduler: React.FC<CalendarProps> = ({
       window.removeEventListener('resize', handleViewportChange);
     };
   }, [mobileBreakpoint]);
+
+  useEffect(() => {
+    const wasCompactLayout = wasCompactLayoutRef.current;
+    const enteredCompactLayout = !wasCompactLayout && isCompactLayout;
+
+    if (enteredCompactLayout && controlledShowSidebar === undefined && sidebarFeatureEnabled) {
+      setInternalSidebarOpen(false);
+    }
+
+    wasCompactLayoutRef.current = isCompactLayout;
+  }, [isCompactLayout, controlledShowSidebar, sidebarFeatureEnabled, setInternalSidebarOpen]);
 
   const handleSidebarToggle = useCallback(() => {
     if (!sidebarFeatureEnabled) return; // Don't toggle if sidebar feature is disabled
@@ -232,6 +243,7 @@ export const Scheduler: React.FC<CalendarProps> = ({
     eventCount: 'event',
     eventsCount: 'events',
     more: 'more',
+    moreOptions: 'More ideas',
     guestCount: 'guest',
     guestsCount: 'guests',
     ...translations,
@@ -342,6 +354,7 @@ export const Scheduler: React.FC<CalendarProps> = ({
               showMiniCalendar={showMiniCalendar}
               showCalendarFilters={showCalendarFilters}
               showTimezoneSelector={showTimezoneSelector}
+              isSheetMode={false}
               locale={locale}
             />
           </div>
@@ -355,31 +368,41 @@ export const Scheduler: React.FC<CalendarProps> = ({
               onClick={handleSidebarToggle}
               aria-label="Close sidebar"
             />
-            <div className="absolute inset-0">
-              <button
-                type="button"
-                onClick={handleSidebarToggle}
-                className="absolute right-4 top-4 z-10 rounded-full bg-black/10 p-2 text-foreground backdrop-blur-sm hover:bg-black/20"
-                aria-label="Close sidebar"
-              >
-                <X className="h-5 w-5" />
-              </button>
+            <motion.div
+              initial={{ y: '100%' }}
+              animate={{ y: 0 }}
+              exit={{ y: '100%' }}
+              transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+              drag="y"
+              dragConstraints={{ top: 0, bottom: 0 }}
+              dragElastic={0.2}
+              onDragEnd={(_, info) => {
+                if (info.offset.y > 120 || info.velocity.y > 700) {
+                  handleSidebarToggle();
+                }
+              }}
+              className="absolute bottom-0 left-0 right-0 mx-auto h-[min(88dvh,760px)] w-full max-w-[560px] touch-pan-y"
+            >
+              <div className="pointer-events-none flex justify-center py-2">
+                <div className="h-1.5 w-12 rounded-full bg-muted-foreground/35" />
+              </div>
               <Sidebar
                 currentDate={currentDate}
                 onDateChange={handleDateChange}
                 onViewChange={handleViewChange}
                 timezone={timezone}
                 onTimezoneChange={onTimezoneChange}
-                className="h-full w-full min-w-0 rounded-none border-0 px-0 py-0 shadow-none"
+                className="h-[calc(100%-0.5rem)] w-full min-w-0 rounded-b-none rounded-t-3xl border-0 px-0 pb-0 pt-2 shadow-xl"
                 calendars={calendars}
                 onCalendarToggle={onCalendarToggle}
                 translations={t}
                 showMiniCalendar={showMiniCalendar}
                 showCalendarFilters={showCalendarFilters}
                 showTimezoneSelector={showTimezoneSelector}
+                isSheetMode
                 locale={locale}
               />
-            </div>
+            </motion.div>
           </div>
         )}
 
@@ -403,6 +426,8 @@ export const Scheduler: React.FC<CalendarProps> = ({
             onLanguageChange={onLanguageChange}
             locale={locale}
             newEventButton={newEventButton}
+            showMobileSidebarCta={isCompactLayout && sidebarFeatureEnabled}
+            mobileSidebarCtaLabel={t.moreOptions || "Plus d'idées"}
           />
 
           <div className="relative flex flex-1 flex-col overflow-hidden">
