@@ -1929,6 +1929,7 @@ var Scheduler = ({
   newEventButton
 }) => {
   const [activeDragEvent, setActiveDragEvent] = React12.useState(null);
+  const sheetTouchStartYRef = React12.useRef(null);
   const { contextMenuEvent, contextMenuPosition, closeContextMenu } = useEventContextMenu();
   const {
     view,
@@ -2073,6 +2074,19 @@ var Scheduler = ({
     setActiveDragEvent(null);
     handleDragEnd(event);
   };
+  const handleSheetHandleTouchStart = (event) => {
+    sheetTouchStartYRef.current = event.touches[0]?.clientY ?? null;
+  };
+  const handleSheetHandleTouchEnd = (event) => {
+    const startY = sheetTouchStartYRef.current;
+    if (startY === null) return;
+    const endY = event.changedTouches[0]?.clientY ?? startY;
+    const deltaY = endY - startY;
+    sheetTouchStartYRef.current = null;
+    if (deltaY > 60) {
+      handleSidebarToggle();
+    }
+  };
   const getDragHeight = () => {
     if (!activeDragEvent) return void 0;
     if (view === "resource") {
@@ -2160,17 +2174,17 @@ var Scheduler = ({
           animate: { y: 0 },
           exit: { y: "100%" },
           transition: { type: "spring", stiffness: 300, damping: 30 },
-          drag: "y",
-          dragConstraints: { top: 0, bottom: 0 },
-          dragElastic: 0.2,
-          onDragEnd: (_, info) => {
-            if (info.offset.y > 120 || info.velocity.y > 700) {
-              handleSidebarToggle();
-            }
-          },
           className: "absolute bottom-0 left-0 right-0 mx-auto h-[min(88dvh,760px)] w-full max-w-[560px] touch-pan-y"
         },
-        /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "pointer-events-none flex justify-center py-2" }, /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "h-1.5 w-12 rounded-full bg-muted-foreground/35" })),
+        /* @__PURE__ */ React12__namespace.default.createElement(
+          "div",
+          {
+            className: "flex justify-center py-2",
+            onTouchStart: handleSheetHandleTouchStart,
+            onTouchEnd: handleSheetHandleTouchEnd
+          },
+          /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "h-1.5 w-12 rounded-full bg-muted-foreground/35" })
+        ),
         /* @__PURE__ */ React12__namespace.default.createElement(
           Sidebar,
           {

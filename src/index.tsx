@@ -83,6 +83,7 @@ export const Scheduler: React.FC<CalendarProps> = ({
   newEventButton,
 }) => {
   const [activeDragEvent, setActiveDragEvent] = useState<CalendarEvent | null>(null);
+  const sheetTouchStartYRef = useRef<number | null>(null);
 
   // Context menu state
   const { contextMenuEvent, contextMenuPosition, closeContextMenu } = useEventContextMenu();
@@ -262,6 +263,23 @@ export const Scheduler: React.FC<CalendarProps> = ({
     handleDragEnd(event);
   };
 
+  const handleSheetHandleTouchStart = (event: React.TouchEvent<HTMLDivElement>) => {
+    sheetTouchStartYRef.current = event.touches[0]?.clientY ?? null;
+  };
+
+  const handleSheetHandleTouchEnd = (event: React.TouchEvent<HTMLDivElement>) => {
+    const startY = sheetTouchStartYRef.current;
+    if (startY === null) return;
+
+    const endY = event.changedTouches[0]?.clientY ?? startY;
+    const deltaY = endY - startY;
+    sheetTouchStartYRef.current = null;
+
+    if (deltaY > 60) {
+      handleSidebarToggle();
+    }
+  };
+
   // Calculate height for week/day view drag overlay
   const getDragHeight = () => {
     if (!activeDragEvent) return undefined;
@@ -373,17 +391,13 @@ export const Scheduler: React.FC<CalendarProps> = ({
               animate={{ y: 0 }}
               exit={{ y: '100%' }}
               transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-              drag="y"
-              dragConstraints={{ top: 0, bottom: 0 }}
-              dragElastic={0.2}
-              onDragEnd={(_, info) => {
-                if (info.offset.y > 120 || info.velocity.y > 700) {
-                  handleSidebarToggle();
-                }
-              }}
               className="absolute bottom-0 left-0 right-0 mx-auto h-[min(88dvh,760px)] w-full max-w-[560px] touch-pan-y"
             >
-              <div className="pointer-events-none flex justify-center py-2">
+              <div
+                className="flex justify-center py-2"
+                onTouchStart={handleSheetHandleTouchStart}
+                onTouchEnd={handleSheetHandleTouchEnd}
+              >
                 <div className="h-1.5 w-12 rounded-full bg-muted-foreground/35" />
               </div>
               <Sidebar
