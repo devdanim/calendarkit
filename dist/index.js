@@ -1945,6 +1945,19 @@ var Scheduler = ({
   const sidebarFeatureEnabled = sidebarConfig?.enabled ?? true;
   const sidebarVisible = controlledShowSidebar ?? internalSidebarOpen;
   const sidebarEnabled = sidebarFeatureEnabled && sidebarVisible;
+  const mobileBreakpoint = sidebarConfig?.mobileBreakpoint ?? 900;
+  const [isCompactLayout, setIsCompactLayout] = React12.useState(false);
+  React12.useEffect(() => {
+    if (typeof window === "undefined") return;
+    const handleViewportChange = () => {
+      setIsCompactLayout(window.innerWidth < mobileBreakpoint);
+    };
+    handleViewportChange();
+    window.addEventListener("resize", handleViewportChange);
+    return () => {
+      window.removeEventListener("resize", handleViewportChange);
+    };
+  }, [mobileBreakpoint]);
   const handleSidebarToggle = React12.useCallback(() => {
     if (!sidebarFeatureEnabled) return;
     const newValue = !sidebarVisible;
@@ -1954,6 +1967,28 @@ var Scheduler = ({
       setInternalSidebarOpen(newValue);
     }
   }, [sidebarFeatureEnabled, sidebarVisible, onSidebarToggle, setInternalSidebarOpen]);
+  React12.useEffect(() => {
+    if (typeof document === "undefined") return;
+    if (isCompactLayout && sidebarEnabled) {
+      const previousOverflow = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+      return () => {
+        document.body.style.overflow = previousOverflow;
+      };
+    }
+  }, [isCompactLayout, sidebarEnabled]);
+  React12.useEffect(() => {
+    if (!isCompactLayout || !sidebarEnabled) return;
+    const handleEscape = (event) => {
+      if (event.key === "Escape") {
+        handleSidebarToggle();
+      }
+    };
+    window.addEventListener("keydown", handleEscape);
+    return () => {
+      window.removeEventListener("keydown", handleEscape);
+    };
+  }, [isCompactLayout, sidebarEnabled, handleSidebarToggle]);
   const showMiniCalendar = sidebarConfig?.showMiniCalendar ?? true;
   const showCalendarFilters = sidebarConfig?.showCalendarFilters ?? true;
   const showTimezoneSelector = sidebarConfig?.showTimezoneSelector ?? true;
@@ -2060,10 +2095,14 @@ var Scheduler = ({
     /* @__PURE__ */ React12__namespace.default.createElement(
       "div",
       {
-        className: cn("relative flex h-full space-x-4 bg-[#F9F9FB] text-foreground", className),
+        className: cn(
+          "relative flex h-full bg-[#F9F9FB] text-foreground",
+          !isCompactLayout && "space-x-4",
+          className
+        ),
         style: getThemeStyles(theme)
       },
-      sidebarEnabled && /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "flex w-64 flex-shrink-0 px-4 py-4" }, /* @__PURE__ */ React12__namespace.default.createElement(
+      sidebarEnabled && !isCompactLayout && /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "flex w-64 flex-shrink-0 px-4 py-4" }, /* @__PURE__ */ React12__namespace.default.createElement(
         Sidebar,
         {
           currentDate,
@@ -2081,6 +2120,41 @@ var Scheduler = ({
           locale
         }
       )),
+      sidebarEnabled && isCompactLayout && /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "fixed inset-0 z-50 h-dvh w-screen" }, /* @__PURE__ */ React12__namespace.default.createElement(
+        "button",
+        {
+          type: "button",
+          className: "absolute inset-0 bg-black/40",
+          onClick: handleSidebarToggle,
+          "aria-label": "Close sidebar"
+        }
+      ), /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "absolute inset-0" }, /* @__PURE__ */ React12__namespace.default.createElement(
+        "button",
+        {
+          type: "button",
+          onClick: handleSidebarToggle,
+          className: "absolute right-4 top-4 z-10 rounded-full bg-black/10 p-2 text-foreground backdrop-blur-sm hover:bg-black/20",
+          "aria-label": "Close sidebar"
+        },
+        /* @__PURE__ */ React12__namespace.default.createElement(lucideReact.X, { className: "h-5 w-5" })
+      ), /* @__PURE__ */ React12__namespace.default.createElement(
+        Sidebar,
+        {
+          currentDate,
+          onDateChange: handleDateChange,
+          onViewChange: handleViewChange,
+          timezone,
+          onTimezoneChange,
+          className: "h-full w-full min-w-0 rounded-none border-0 px-0 py-0 shadow-none",
+          calendars,
+          onCalendarToggle,
+          translations: t,
+          showMiniCalendar,
+          showCalendarFilters,
+          showTimezoneSelector,
+          locale
+        }
+      ))),
       /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "flex flex-1 flex-col overflow-hidden" }, /* @__PURE__ */ React12__namespace.default.createElement(
         CalendarHeader,
         {

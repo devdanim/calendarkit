@@ -130,6 +130,11 @@ export interface SidebarConfig {
   showCalendarFilters?: boolean;
   /** Show/hide the timezone selector (default: true) */
   showTimezoneSelector?: boolean;
+  /**
+   * Breakpoint (in px) below which the sidebar switches to a full-screen modal.
+   * Default: 900
+   */
+  mobileBreakpoint?: number;
 }
 
 /** Individual filter item (e.g., "Work", "Personal") */

@@ -1,4 +1,4 @@
-import React, { useId, useState, useMemo, useCallback } from 'react';
+import React, { useId, useState, useMemo, useCallback, useEffect } from 'react';
 import {
   DndContext,
   useSensor,
@@ -28,6 +28,7 @@ import { cn } from './utils';
 import { getThemeStyles } from './lib/theme';
 import { useCalendarLogic } from './hooks/useCalendarLogic';
 import { differenceInMinutes, format } from 'date-fns';
+import { X } from 'lucide-react';
 import { toZonedTime } from 'date-fns-tz';
 import { useViewSwipe } from './hooks/useSwipeGesture';
 
@@ -120,6 +121,23 @@ export const Scheduler: React.FC<CalendarProps> = ({
   const sidebarFeatureEnabled = sidebarConfig?.enabled ?? true;
   const sidebarVisible = controlledShowSidebar ?? internalSidebarOpen;
   const sidebarEnabled = sidebarFeatureEnabled && sidebarVisible;
+  const mobileBreakpoint = sidebarConfig?.mobileBreakpoint ?? 900;
+  const [isCompactLayout, setIsCompactLayout] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const handleViewportChange = () => {
+      setIsCompactLayout(window.innerWidth < mobileBreakpoint);
+    };
+
+    handleViewportChange();
+    window.addEventListener('resize', handleViewportChange);
+
+    return () => {
+      window.removeEventListener('resize', handleViewportChange);
+    };
+  }, [mobileBreakpoint]);
 
   const handleSidebarToggle = useCallback(() => {
     if (!sidebarFeatureEnabled) return; // Don't toggle if sidebar feature is disabled
@@ -130,6 +148,33 @@ export const Scheduler: React.FC<CalendarProps> = ({
       setInternalSidebarOpen(newValue);
     }
   }, [sidebarFeatureEnabled, sidebarVisible, onSidebarToggle, setInternalSidebarOpen]);
+
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+
+    if (isCompactLayout && sidebarEnabled) {
+      const previousOverflow = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = previousOverflow;
+      };
+    }
+  }, [isCompactLayout, sidebarEnabled]);
+
+  useEffect(() => {
+    if (!isCompactLayout || !sidebarEnabled) return;
+
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        handleSidebarToggle();
+      }
+    };
+
+    window.addEventListener('keydown', handleEscape);
+    return () => {
+      window.removeEventListener('keydown', handleEscape);
+    };
+  }, [isCompactLayout, sidebarEnabled, handleSidebarToggle]);
 
   // Sidebar section visibility (default: all visible)
   const showMiniCalendar = sidebarConfig?.showMiniCalendar ?? true;
@@ -274,11 +319,15 @@ export const Scheduler: React.FC<CalendarProps> = ({
       modifiers={modifiers}
     >
       <div
-        className={cn('relative flex h-full space-x-4 bg-[#F9F9FB] text-foreground', className)}
+        className={cn(
+          'relative flex h-full bg-[#F9F9FB] text-foreground',
+          !isCompactLayout && 'space-x-4',
+          className
+        )}
         style={getThemeStyles(theme)}
       >
         {/* Sidebar à gauche sur toute la hauteur */}
-        {sidebarEnabled && (
+        {sidebarEnabled && !isCompactLayout && (
           <div className="flex w-64 flex-shrink-0 px-4 py-4">
             <Sidebar
               currentDate={currentDate}
@@ -295,6 +344,42 @@ export const Scheduler: React.FC<CalendarProps> = ({
               showTimezoneSelector={showTimezoneSelector}
               locale={locale}
             />
+          </div>
+        )}
+
+        {sidebarEnabled && isCompactLayout && (
+          <div className="fixed inset-0 z-50 h-dvh w-screen">
+            <button
+              type="button"
+              className="absolute inset-0 bg-black/40"
+              onClick={handleSidebarToggle}
+              aria-label="Close sidebar"
+            />
+            <div className="absolute inset-0">
+              <button
+                type="button"
+                onClick={handleSidebarToggle}
+                className="absolute right-4 top-4 z-10 rounded-full bg-black/10 p-2 text-foreground backdrop-blur-sm hover:bg-black/20"
+                aria-label="Close sidebar"
+              >
+                <X className="h-5 w-5" />
+              </button>
+              <Sidebar
+                currentDate={currentDate}
+                onDateChange={handleDateChange}
+                onViewChange={handleViewChange}
+                timezone={timezone}
+                onTimezoneChange={onTimezoneChange}
+                className="h-full w-full min-w-0 rounded-none border-0 px-0 py-0 shadow-none"
+                calendars={calendars}
+                onCalendarToggle={onCalendarToggle}
+                translations={t}
+                showMiniCalendar={showMiniCalendar}
+                showCalendarFilters={showCalendarFilters}
+                showTimezoneSelector={showTimezoneSelector}
+                locale={locale}
+              />
+            </div>
           </div>
         )}
 
