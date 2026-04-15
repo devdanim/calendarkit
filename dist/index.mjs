@@ -954,16 +954,16 @@ var WeekView = ({
                 },
                 title: count > 1 ? `${event.title} (${index + 1}/${count})` : void 0
               },
-              /* @__PURE__ */ React12__default.createElement("div", { className: "flex h-full w-full flex-col overflow-hidden" }, /* @__PURE__ */ React12__default.createElement(
+              /* @__PURE__ */ React12__default.createElement("div", { className: "flex h-full w-full min-w-0 flex-col overflow-hidden" }, /* @__PURE__ */ React12__default.createElement(
                 "div",
                 {
                   className: cn(
-                    "truncate font-semibold leading-tight text-foreground/90",
+                    "min-w-0 truncate font-semibold leading-tight text-foreground/90",
                     isShortEvent ? "text-center text-xs" : "text-xs"
                   )
                 },
                 event.title
-              ), !isShortEvent && /* @__PURE__ */ React12__default.createElement(React12__default.Fragment, null, /* @__PURE__ */ React12__default.createElement("div", { className: "mt-0.5 truncate text-[10px] font-medium leading-tight text-muted-foreground" }, format(zonedEventStart, eventTimeFormat, { locale })), event.description && height > 50 && /* @__PURE__ */ React12__default.createElement("div", { className: "mt-1 truncate text-[10px] font-normal text-[#4C4C56] opacity-80" }, event.description)), count > 1 && !isShortEvent && /* @__PURE__ */ React12__default.createElement("div", { className: "absolute right-1 top-1 flex h-4 w-4 items-center justify-center rounded-full border border-border bg-background/80 text-[9px] font-bold text-muted-foreground shadow-sm backdrop-blur-sm" }, count))
+              ), !isShortEvent && /* @__PURE__ */ React12__default.createElement(React12__default.Fragment, null, /* @__PURE__ */ React12__default.createElement("div", { className: "mt-0.5 min-w-0 truncate text-[10px] font-medium leading-tight text-muted-foreground" }, format(zonedEventStart, eventTimeFormat, { locale })), event.description && height > 50 && /* @__PURE__ */ React12__default.createElement("div", { className: "mt-1 min-w-0 overflow-hidden text-ellipsis whitespace-nowrap text-[10px] font-normal text-[#4C4C56] opacity-80" }, event.description)), count > 1 && !isShortEvent && /* @__PURE__ */ React12__default.createElement("div", { className: "absolute right-1 top-1 flex h-4 w-4 items-center justify-center rounded-full border border-border bg-background/80 text-[9px] font-bold text-muted-foreground shadow-sm backdrop-blur-sm" }, count))
             )
           );
         }),
