@@ -66,7 +66,7 @@ export const generateICS = (
 
     lines.push(`SUMMARY:${escapeICSText(event.title)}`);
 
-    if (event.description) {
+    if (event.description && typeof event.description === 'string') {
       lines.push(`DESCRIPTION:${escapeICSText(event.description)}`);
     }
 
