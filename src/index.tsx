@@ -429,7 +429,7 @@ export const Scheduler: React.FC<CalendarProps> = ({
             onToday={handleToday}
             view={view}
             onViewChange={handleViewChange}
-            onMenuClick={handleSidebarToggle}
+            onMenuClick={sidebarFeatureEnabled ? handleSidebarToggle : undefined}
             isDarkMode={isDarkMode}
             onThemeToggle={onThemeToggle}
             translations={t}
@@ -490,6 +490,7 @@ export const Scheduler: React.FC<CalendarProps> = ({
                           onDateClick={handleDateClick}
                           timezone={timezone}
                           locale={locale}
+                          readonly={readOnly}
                           translations={{ more: t.more }}
                         />
                       )}
@@ -522,6 +523,7 @@ export const Scheduler: React.FC<CalendarProps> = ({
                           events={filteredEvents}
                           onEventClick={handleEventClickInternal}
                           locale={locale}
+                          readonly={readOnly}
                           translations={{
                             today: t.today,
                             tomorrow: t.tomorrow,
@@ -544,6 +546,7 @@ export const Scheduler: React.FC<CalendarProps> = ({
                             handleTimeSlotClick(date);
                           }}
                           locale={locale}
+                          readonly={readOnly}
                         />
                       )}
                     </motion.div>

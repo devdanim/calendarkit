@@ -20,6 +20,7 @@ interface AgendaViewProps {
   onEventClick?: (event: CalendarEvent) => void;
   onCreateEvent?: () => void;
   locale?: Locale;
+  readonly?: boolean;
   translations?: {
     today?: string;
     tomorrow?: string;
@@ -45,6 +46,7 @@ export const AgendaView: React.FC<AgendaViewProps> = ({
   events,
   onEventClick,
   locale,
+  readonly,
   translations,
 }) => {
   const getDateLabel = (date: Date): string => {
@@ -158,17 +160,17 @@ export const AgendaView: React.FC<AgendaViewProps> = ({
             {/* Events List */}
             <div className="space-y-3 py-4">
               {group.events.map((event) => (
-                <motion.div
+                <div
                   key={event.id}
-                  onClick={() => onEventClick?.(event)}
+                  onClick={() => {
+                    if (readonly) return;
+                    onEventClick?.(event);
+                  }}
                   className={cn(
-                    'group relative flex min-w-0 gap-2 rounded-xl border border-border/40 p-3 sm:gap-4 sm:rounded-2xl sm:p-4',
-                    'hover:border-primary/40 hover:shadow-lg hover:shadow-primary/5',
-                    'cursor-pointer transition-all duration-200',
-                    'from-card via-card to-card/80 bg-gradient-to-br'
+                    'relative flex min-w-0 gap-2 rounded-xl border border-border/40 p-3 sm:gap-4 sm:rounded-2xl sm:p-4',
+                    'from-card via-card to-card/80 bg-gradient-to-br',
+                    readonly ? 'cursor-default' : onEventClick && 'cursor-pointer'
                   )}
-                  whileHover={{ scale: 1.01, y: -2 }}
-                  transition={{ duration: 0.2 }}
                 >
                   {/* Left accent bar */}
                   <div
@@ -207,7 +209,7 @@ export const AgendaView: React.FC<AgendaViewProps> = ({
                   {/* Event Details */}
                   <div className="min-w-0 flex-1 space-y-2 overflow-hidden">
                     <div className="flex min-w-0 items-start justify-between gap-2">
-                      <h4 className="min-w-0 flex-1 truncate text-sm font-semibold text-foreground transition-colors group-hover:text-primary sm:text-base">
+                      <h4 className="min-w-0 flex-1 truncate text-sm font-semibold text-foreground sm:text-base">
                         {event.title}
                       </h4>
                       {/* Color dot */}
@@ -259,19 +261,7 @@ export const AgendaView: React.FC<AgendaViewProps> = ({
                     </div>
                   </div>
 
-                  {/* Hover arrow indicator */}
-                  <div className="absolute right-2 top-1/2 hidden shrink-0 -translate-y-1/2 opacity-0 transition-opacity group-hover:opacity-100 sm:right-4 sm:block">
-                    <svg
-                      className="h-5 w-5 text-muted-foreground"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                    >
-                      <path d="M9 18l6-6-6-6" />
-                    </svg>
-                  </div>
-                </motion.div>
+                </div>
               ))}
             </div>
           </motion.div>

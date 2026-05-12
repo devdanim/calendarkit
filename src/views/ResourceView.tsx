@@ -4,6 +4,7 @@ import { CalendarEvent, Resource } from '../types';
 import { Locale } from 'date-fns';
 import { DraggableEvent } from '../components/dnd/DraggableEvent';
 import { DroppableCell } from '../components/dnd/DroppableCell';
+import { cn } from '../utils';
 
 interface ResourceViewProps {
   currentDate: Date;
@@ -12,6 +13,7 @@ interface ResourceViewProps {
   onEventClick?: (event: CalendarEvent) => void;
   onTimeSlotClick?: (date: Date, resourceId: string) => void;
   locale?: Locale;
+  readonly?: boolean;
 }
 
 export const ResourceView: React.FC<ResourceViewProps> = ({
@@ -21,6 +23,7 @@ export const ResourceView: React.FC<ResourceViewProps> = ({
   onEventClick,
   onTimeSlotClick,
   locale,
+  readonly,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -136,7 +139,10 @@ export const ResourceView: React.FC<ResourceViewProps> = ({
                         e.stopPropagation();
                         onEventClick?.(event);
                       }}
-                      className="absolute bottom-2 top-2 z-10 cursor-pointer overflow-hidden rounded-md border px-2 py-1 text-xs font-medium shadow-sm transition-all hover:brightness-95"
+                      className={cn(
+                        'absolute bottom-2 top-2 z-10 overflow-hidden rounded-md border px-2 py-1 text-xs font-medium shadow-sm transition-all',
+                        readonly ? 'cursor-default' : 'cursor-grab active:cursor-grabbing'
+                      )}
                       style={{
                         ...getEventStyle(event),
                         backgroundColor: event.color || resource.color || 'var(--primary)',

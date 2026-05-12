@@ -203,7 +203,7 @@ export const DayView: React.FC<DayViewProps> = ({
                 >
                   <div
                     className={cn(
-                      'group h-full overflow-hidden rounded-lg border-[0.5px] shadow-sm transition-all hover:z-20 hover:shadow-lg',
+                      'h-full overflow-hidden rounded-lg border-[0.5px] shadow-sm transition-all',
                       'glass backdrop-blur-sm',
                       readonly ? 'cursor-default' : 'cursor-grab active:cursor-grabbing',
                       !event.color && 'border-primary/20 bg-primary/10',
@@ -225,20 +225,21 @@ export const DayView: React.FC<DayViewProps> = ({
                     <div className="flex h-full w-full flex-col overflow-hidden">
                       <div
                         className={cn(
-                          'truncate font-semibold leading-tight',
+                          'truncate pb-0.5 font-semibold leading-snug',
                           isShortEvent ? 'text-xs' : 'text-sm',
-                          event.color ? 'text-foreground' : 'text-foreground/90'
+                          event.color ? 'text-foreground' : 'text-foreground/90',
+                          count > 1 && !isShortEvent && 'pr-6'
                         )}
                       >
                         {event.title}
                       </div>
                       {!isShortEvent && (
                         <>
-                          <div className="mt-0.5 text-xs font-medium text-muted-foreground">
+                          <div className="text-xs font-medium leading-snug text-muted-foreground">
                             {format(zonedStart, eventTimeFormat, { locale })}
                           </div>
                           {event.description && height > 60 && (
-                            <div className="mt-1 line-clamp-2 text-xs text-muted-foreground/80">
+                            <div className="mt-1 line-clamp-2 text-xs leading-snug text-muted-foreground/80">
                               {event.description}
                             </div>
                           )}

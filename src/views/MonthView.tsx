@@ -15,6 +15,7 @@ interface MonthViewProps {
   onDateClick?: (date: Date) => void;
   timezone?: string;
   locale?: Locale;
+  readonly?: boolean;
   /** Translations for month view (e.g. more for "+N more") */
   translations?: { more?: string };
 }
@@ -24,17 +25,18 @@ const EventItem = React.memo(
   ({
     event,
     onEventClick,
+    readonly,
   }: {
     event: CalendarEvent;
     onEventClick?: (e: CalendarEvent) => void;
+    readonly?: boolean;
   }) => (
     <DraggableEvent event={event}>
       <div
         className={cn(
-          'cursor-pointer truncate rounded-lg px-2.5 py-1.5 text-xs shadow-sm transition-all duration-200',
-          'hover:z-10 hover:scale-[1.02] hover:shadow-md',
-          !event.color &&
-            'border-[0.5px] border-primary/20 bg-primary/10 text-primary hover:bg-primary/15'
+          'truncate rounded-lg px-2.5 py-1.5 text-xs shadow-sm transition-all duration-200',
+          readonly ? 'cursor-default' : 'cursor-grab active:cursor-grabbing',
+          !event.color && 'border-[0.5px] border-primary/20 bg-primary/10 text-primary'
         )}
         style={
           event.color
@@ -65,6 +67,7 @@ export const MonthView: React.FC<MonthViewProps> = ({
   onDateClick,
   timezone,
   locale,
+  readonly,
   translations,
 }) => {
   const days = useMemo(() => getMonthGrid(currentDate), [currentDate]);
@@ -132,8 +135,7 @@ export const MonthView: React.FC<MonthViewProps> = ({
                 date={day}
                 className={cn(
                   'group relative flex h-[130px] flex-col gap-1.5 overflow-hidden border-b-[0.5px] border-r-[0.5px] border-border/30 p-2 transition-all duration-200 last:border-r-0',
-                  !isCurrentMonth && 'bg-muted/5 text-muted-foreground/60',
-                  isToday(day) && 'bg-primary/5 ring-1 ring-inset ring-primary/20'
+                  !isCurrentMonth && 'bg-muted/5 text-muted-foreground/60'
                 )}
                 onClick={() => onDateClick?.(day)}
               >
@@ -159,6 +161,7 @@ export const MonthView: React.FC<MonthViewProps> = ({
                       key={`${event.id}-${dayKey}`}
                       event={event}
                       onEventClick={onEventClick}
+                      readonly={readonly}
                     />
                   ))}
                   {dayEvents.length > 4 && (

@@ -290,7 +290,7 @@ export const WeekView: React.FC<WeekViewProps> = ({
                       >
                         <div
                           className={cn(
-                            'group relative overflow-hidden rounded-md border shadow-sm transition-all hover:shadow-md',
+                            'relative overflow-hidden rounded-md border shadow-sm transition-all',
                             'glass',
                             readonly ? 'cursor-default' : 'cursor-grab active:cursor-grabbing',
                             !event.color && 'border-primary/20 bg-primary/10',
@@ -311,22 +311,23 @@ export const WeekView: React.FC<WeekViewProps> = ({
                           }}
                           title={count > 1 ? `${event.title} (${index + 1}/${count})` : undefined}
                         >
-                          <div className="flex h-full w-full min-w-0 flex-col overflow-hidden">
+                          <div className="flex h-full w-full min-w-0 flex-col gap-0.5 overflow-hidden">
                             <div
                               className={cn(
-                                'min-w-0 truncate font-semibold leading-tight text-foreground/90',
-                                isShortEvent ? 'text-center text-xs' : 'text-xs'
+                                'min-w-0 truncate pb-0.5 font-semibold leading-snug text-foreground/90',
+                                isShortEvent ? 'text-center text-xs' : 'text-xs',
+                                count > 1 && !isShortEvent && 'pr-5'
                               )}
                             >
                               {event.title}
                             </div>
                             {!isShortEvent && (
                               <>
-                                <div className="mt-0.5 min-w-0 truncate text-[10px] font-medium leading-tight text-muted-foreground">
+                                <div className="min-w-0 truncate text-[10px] font-medium leading-snug text-muted-foreground">
                                   {format(zonedEventStart, eventTimeFormat, { locale })}
                                 </div>
-                                {event.description && height > 50 && (
-                                  <div className="mt-1 min-w-0 overflow-hidden text-ellipsis whitespace-nowrap text-[10px] font-normal text-[#4C4C56] opacity-80">
+                                {event.description && height > 60 && (
+                                  <div className="mt-0.5 min-w-0 overflow-hidden text-ellipsis whitespace-nowrap text-[10px] font-normal leading-snug text-[#4C4C56] opacity-80">
                                     {event.description}
                                   </div>
                                 )}

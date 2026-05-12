@@ -95,8 +95,8 @@ export const CalendarHeader: React.FC<CalendarHeaderProps> = ({
       {/* Left Section: Menu, Navigation, Title */}
       <div className="flex w-full items-center justify-between gap-2 md:w-auto md:justify-start">
         <div className="flex items-center gap-2 md:gap-3">
-          {/* Menu Button - hidden in reduced view (sidebar hidden), visible when wide */}
-          {isWide && (
+          {/* Menu Button - hidden in reduced view (sidebar hidden) and when no menu action is provided */}
+          {isWide && onMenuClick && (
             <Button
               variant="ghost"
               size="icon"
