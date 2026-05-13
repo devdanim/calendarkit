@@ -130,7 +130,7 @@ var CalendarHeader = ({
         title: translations.today,
         className: cn(
           "h-9 w-9 shrink-0 rounded-xl border-[0.5px] border-border/60 bg-[#EEEFF5] text-sm font-medium transition-all duration-200 hover:border-primary/40 hover:bg-primary/5 hover:text-primary",
-          isWide && "w-auto px-4 pl-3 [&>svg]:mr-2"
+          isWide && "w-auto gap-2 px-4 pl-3"
         )
       },
       /* @__PURE__ */ React12__default.createElement(CalendarCheck, { className: "h-4 w-4" }),
@@ -205,7 +205,7 @@ var CalendarHeader = ({
         title: newEventButton.label,
         className: cn(
           "h-9 w-9 shrink-0 rounded-xl border-none bg-[#7FDDF0] text-sm font-medium transition-all duration-200 hover:bg-primary/5 hover:text-primary",
-          isWide && "w-auto px-5 [&>svg]:mr-2"
+          isWide && "w-auto gap-2 px-5"
         ),
         onClick: newEventButton.onClick
       },
