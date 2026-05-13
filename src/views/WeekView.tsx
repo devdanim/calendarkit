@@ -294,7 +294,7 @@ export const WeekView: React.FC<WeekViewProps> = ({
                             'glass',
                             readonly ? 'cursor-default' : 'cursor-grab active:cursor-grabbing',
                             !event.color && 'border-primary/20 bg-primary/10',
-                            isShortEvent ? 'flex items-center justify-center px-1' : 'p-2',
+                            isShortEvent ? 'flex items-center justify-center px-1' : 'px-2 pb-1 pt-1.5',
                             // Add active border for overlapped events to distinguish them
                             count > 1 && 'border-l-4 border-l-primary/50'
                           )}
@@ -311,10 +311,10 @@ export const WeekView: React.FC<WeekViewProps> = ({
                           }}
                           title={count > 1 ? `${event.title} (${index + 1}/${count})` : undefined}
                         >
-                          <div className="flex h-full w-full min-w-0 flex-col gap-0.5 overflow-hidden">
+                          <div className="flex h-full w-full min-w-0 flex-col overflow-hidden">
                             <div
                               className={cn(
-                                'min-w-0 truncate pb-0.5 font-semibold leading-snug text-foreground/90',
+                                'min-w-0 truncate font-semibold leading-snug text-foreground/90',
                                 isShortEvent ? 'text-center text-xs' : 'text-xs',
                                 count > 1 && !isShortEvent && 'pr-5'
                               )}
@@ -327,7 +327,7 @@ export const WeekView: React.FC<WeekViewProps> = ({
                                   {format(zonedEventStart, eventTimeFormat, { locale })}
                                 </div>
                                 {event.description && height > 50 && (
-                                  <div className="mt-1 min-w-0 overflow-hidden text-ellipsis whitespace-nowrap text-[10px] font-normal leading-snug text-[#4C4C56] opacity-80">
+                                  <div className="mt-0.5 min-w-0 overflow-hidden text-ellipsis whitespace-nowrap pb-0.5 text-[10px] font-normal leading-snug text-[#4C4C56] opacity-80">
                                     {event.description}
                                   </div>
                                 )}
