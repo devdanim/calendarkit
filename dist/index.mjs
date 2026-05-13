@@ -956,7 +956,7 @@ var WeekView = ({
                 },
                 title: count > 1 ? `${event.title} (${index + 1}/${count})` : void 0
               },
-              /* @__PURE__ */ React12__default.createElement("div", { className: "flex h-full w-full min-w-0 flex-col overflow-hidden" }, /* @__PURE__ */ React12__default.createElement(
+              /* @__PURE__ */ React12__default.createElement("div", { className: "flex h-full w-full min-w-0 flex-col justify-center overflow-hidden" }, /* @__PURE__ */ React12__default.createElement(
                 "div",
                 {
                   className: cn(
@@ -1137,7 +1137,7 @@ var DayView = ({
           },
           title: count > 1 ? `${event.title} (${index + 1}/${count})` : void 0
         },
-        /* @__PURE__ */ React12__default.createElement("div", { className: "flex h-full w-full flex-col overflow-hidden" }, /* @__PURE__ */ React12__default.createElement(
+        /* @__PURE__ */ React12__default.createElement("div", { className: "flex h-full w-full flex-col justify-center overflow-hidden" }, /* @__PURE__ */ React12__default.createElement(
           "div",
           {
             className: cn(

@@ -311,7 +311,7 @@ export const WeekView: React.FC<WeekViewProps> = ({
                           }}
                           title={count > 1 ? `${event.title} (${index + 1}/${count})` : undefined}
                         >
-                          <div className="flex h-full w-full min-w-0 flex-col overflow-hidden">
+                          <div className="flex h-full w-full min-w-0 flex-col justify-center overflow-hidden">
                             <div
                               className={cn(
                                 'min-w-0 truncate font-semibold leading-snug text-foreground/90',

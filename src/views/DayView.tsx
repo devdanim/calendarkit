@@ -222,7 +222,7 @@ export const DayView: React.FC<DayViewProps> = ({
                     }}
                     title={count > 1 ? `${event.title} (${index + 1}/${count})` : undefined}
                   >
-                    <div className="flex h-full w-full flex-col overflow-hidden">
+                    <div className="flex h-full w-full flex-col justify-center overflow-hidden">
                       <div
                         className={cn(
                           'truncate pb-0.5 font-semibold leading-snug',
