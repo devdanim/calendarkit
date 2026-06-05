@@ -150,7 +150,7 @@ var CalendarHeader = ({
         onClick: onToday,
         title: translations.today,
         className: cn(
-          "h-9 w-9 shrink-0 rounded-xl border-[0.5px] border-border/60 bg-[#EEEFF5] text-sm font-medium transition-all duration-200 hover:border-primary/40 hover:bg-primary/5 hover:text-primary",
+          "h-9 w-9 shrink-0 rounded-xl border-[0.5px] border-border/60 bg-[#EEEFF5] text-sm font-medium transition-all duration-200 hover:bg-[#E3E4EC]",
           isWide && "w-auto gap-2 px-4 pl-3"
         )
       },
@@ -178,11 +178,13 @@ var CalendarHeader = ({
       Button,
       {
         variant: "outline",
-        size: "sm",
+        size: "icon",
         onClick: onMenuClick,
-        className: "h-10 shrink-0 rounded-xl border-none bg-[#EEEFF5] px-4 text-sm font-semibold text-foreground transition-all duration-200 hover:bg-[#E3E4EC]"
+        title: mobileSidebarCtaLabel || "Plus d'id\xE9es",
+        "aria-label": mobileSidebarCtaLabel || "Plus d'id\xE9es",
+        className: "h-10 w-10 shrink-0 rounded-xl border-none bg-[#EEEFF5] text-foreground transition-all duration-200 hover:bg-[#E3E4EC]"
       },
-      mobileSidebarCtaLabel || "Plus d'id\xE9es"
+      /* @__PURE__ */ React12__namespace.default.createElement(lucideReact.SlidersHorizontal, { className: "h-5 w-5" })
     )),
     /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "flex w-full flex-wrap items-center justify-end gap-2 md:w-auto md:gap-3" }, !hideLanguageSelector && onLanguageChange && language && /* @__PURE__ */ React12__namespace.default.createElement(
       Button,
@@ -225,7 +227,7 @@ var CalendarHeader = ({
         size: "icon",
         title: newEventButton.label,
         className: cn(
-          "h-9 w-9 shrink-0 rounded-xl border-none bg-[#7FDDF0] text-sm font-medium transition-all duration-200 hover:bg-primary/5 hover:text-primary",
+          "h-9 w-9 shrink-0 rounded-xl border-none bg-gradient-to-br from-[#7FDDF0] to-[#4FC3DE] text-sm font-medium text-foreground transition-all duration-200 hover:brightness-95",
           isWide && "w-auto gap-2 px-5"
         ),
         onClick: newEventButton.onClick

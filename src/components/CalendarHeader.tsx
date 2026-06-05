@@ -12,6 +12,7 @@ import {
   Calendar,
   ListTodo,
   CalendarCheck,
+  SlidersHorizontal,
 } from 'lucide-react';
 import { ViewType } from '../types';
 import { cn } from '../utils';
@@ -121,7 +122,7 @@ export const CalendarHeader: React.FC<CalendarHeaderProps> = ({
             onClick={onToday}
             title={translations.today}
             className={cn(
-              'h-9 w-9 shrink-0 rounded-xl border-[0.5px] border-border/60 bg-[#EEEFF5] text-sm font-medium transition-all duration-200 hover:border-primary/40 hover:bg-primary/5 hover:text-primary',
+              'h-9 w-9 shrink-0 rounded-xl border-[0.5px] border-border/60 bg-[#EEEFF5] text-sm font-medium transition-all duration-200 hover:bg-[#E3E4EC]',
               isWide && 'w-auto gap-2 px-4 pl-3'
             )}
           >
@@ -153,11 +154,13 @@ export const CalendarHeader: React.FC<CalendarHeaderProps> = ({
         {showIdeasCta && (
           <Button
             variant="outline"
-            size="sm"
+            size="icon"
             onClick={onMenuClick}
-            className="h-10 shrink-0 rounded-xl border-none bg-[#EEEFF5] px-4 text-sm font-semibold text-foreground transition-all duration-200 hover:bg-[#E3E4EC]"
+            title={mobileSidebarCtaLabel || "Plus d'idées"}
+            aria-label={mobileSidebarCtaLabel || "Plus d'idées"}
+            className="h-10 w-10 shrink-0 rounded-xl border-none bg-[#EEEFF5] text-foreground transition-all duration-200 hover:bg-[#E3E4EC]"
           >
-            {mobileSidebarCtaLabel || "Plus d'idées"}
+            <SlidersHorizontal className="h-5 w-5" />
           </Button>
         )}
       </div>
@@ -224,7 +227,7 @@ export const CalendarHeader: React.FC<CalendarHeaderProps> = ({
             size="icon"
             title={newEventButton.label}
             className={cn(
-              'h-9 w-9 shrink-0 rounded-xl border-none bg-[#7FDDF0] text-sm font-medium transition-all duration-200 hover:bg-primary/5 hover:text-primary',
+              'h-9 w-9 shrink-0 rounded-xl border-none bg-gradient-to-br from-[#7FDDF0] to-[#4FC3DE] text-sm font-medium text-foreground transition-all duration-200 hover:brightness-95',
               isWide && 'w-auto gap-2 px-5'
             )}
             onClick={newEventButton.onClick}
