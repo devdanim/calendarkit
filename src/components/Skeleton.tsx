@@ -118,24 +118,21 @@ export const DayViewSkeleton: React.FC = () => (
   </div>
 );
 
-// Agenda View Skeleton
-export const AgendaViewSkeleton: React.FC = () => (
-  <div className="h-full overflow-hidden rounded-2xl border border-border/50 bg-background p-6">
-    <div className="space-y-6">
-      {Array.from({ length: 4 }).map((_, dayIdx) => (
-        <div key={dayIdx}>
-          <Skeleton className="mb-4 h-5 w-40" />
-          <div className="space-y-3">
-            {Array.from({ length: 2 + (dayIdx % 3) }).map((_, eventIdx) => (
-              <div key={eventIdx} className="flex items-center gap-4 rounded-xl bg-muted/10 p-3">
-                <Skeleton className="h-10 w-10 rounded-lg" />
-                <div className="flex-1 space-y-2">
-                  <Skeleton className="h-4 w-3/4" />
-                  <Skeleton className="h-3 w-1/2" />
-                </div>
-              </div>
-            ))}
-          </div>
+// List View Skeleton
+export const ListViewSkeleton: React.FC = () => (
+  <div className="flex h-full flex-col gap-4 px-2 md:px-4">
+    {/* Sort bar */}
+    <Skeleton className="h-12 w-full rounded-2xl" />
+    {/* Rows */}
+    <div className="space-y-1">
+      {Array.from({ length: 10 }).map((_, rowIdx) => (
+        <div key={rowIdx} className="flex items-center gap-4 rounded-lg bg-muted/10 px-4 py-3">
+          <Skeleton className="h-9 w-9 rounded-lg" />
+          <Skeleton className="h-4 flex-1" />
+          <Skeleton className="hidden h-4 w-24 sm:block" />
+          <Skeleton className="hidden h-5 w-20 rounded-full md:block" />
+          <Skeleton className="hidden h-4 w-20 lg:block" />
+          <Skeleton className="h-8 w-20 rounded-lg" />
         </div>
       ))}
     </div>
@@ -212,7 +209,7 @@ export const CalendarSkeleton: React.FC<{ view?: string }> = ({ view = 'month' }
         {view === 'month' && <MonthViewSkeleton />}
         {view === 'week' && <WeekViewSkeleton />}
         {view === 'day' && <DayViewSkeleton />}
-        {view === 'agenda' && <AgendaViewSkeleton />}
+        {view === 'list' && <ListViewSkeleton />}
       </div>
     </div>
   </div>

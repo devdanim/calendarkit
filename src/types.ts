@@ -1,6 +1,6 @@
 import { Locale } from 'date-fns';
 
-export type ViewType = 'month' | 'week' | 'day' | 'agenda' | 'resource';
+export type ViewType = 'month' | 'week' | 'day' | 'list' | 'resource';
 
 export interface EventAttachment {
   id: string;
@@ -50,6 +50,54 @@ export interface Resource {
   avatar?: string;
 }
 
+/**
+ * A single column of the List view. The consuming app provides the cell
+ * rendering via `render`, keeping the library agnostic of domain-specific
+ * data (status, creator, social networks, etc.).
+ */
+export interface ListColumn {
+  /** Unique key for this column */
+  key: string;
+  /** Column header content (string or custom node) */
+  header?: React.ReactNode;
+  /** Renders the cell content for a given event. Falls back to event.title. */
+  render?: (event: CalendarEvent) => React.ReactNode;
+  /** Extra classes applied to the body cell (<td>) */
+  className?: string;
+  /** Extra classes applied to the header cell (<th>) */
+  headerClassName?: string;
+  /** Horizontal alignment of the cell content (default: 'left') */
+  align?: 'left' | 'center' | 'right';
+}
+
+/** A sort option exposed in the "Sort by" dropdown of the List view. */
+export interface ListSortOption {
+  /** Unique key for this sort option */
+  key: string;
+  /** Label shown in the dropdown */
+  label: string;
+  /** Comparator used to sort events for this option */
+  comparator: (a: CalendarEvent, b: CalendarEvent) => number;
+}
+
+/** Configuration for the List view (render-props based). */
+export interface ListViewConfig {
+  /** Columns to render. When omitted, default Title + Date columns are used. */
+  columns?: ListColumn[];
+  /** Sort options for the "Sort by" dropdown. Defaults to most recent / oldest. */
+  sortOptions?: ListSortOption[];
+  /** Key of the sort option selected by default. Defaults to the first option. */
+  defaultSortKey?: string;
+  /** Number of rows per page (default: 12). Set to 0 to disable pagination. */
+  pageSize?: number;
+  /** Show the "Sort by" dropdown (default: true) */
+  showSort?: boolean;
+  /** Show the pagination footer (default: true) */
+  showPagination?: boolean;
+  /** Custom renderer for the row actions cell (e.g. preview button, "…" menu) */
+  renderActions?: (event: CalendarEvent) => React.ReactNode;
+}
+
 export interface ThemeColors {
   primary?: string;
   secondary?: string;
@@ -73,7 +121,7 @@ export interface CalendarTranslations {
   month: string;
   week: string;
   day: string;
-  agenda: string;
+  list: string;
   resource: string;
   createEvent: string;
   editEvent: string;
@@ -119,6 +167,14 @@ export interface CalendarTranslations {
   doesNotRepeat: string;
   locationHelpText: string;
   calendars: string;
+  /** List view: label of the "Sort by" dropdown */
+  sortBy: string;
+  /** List view: default "most recent" sort option label */
+  mostRecent: string;
+  /** List view: "oldest" sort option label */
+  oldest: string;
+  /** List view: empty state label when there are no items */
+  noEvents: string;
 }
 
 export interface SidebarConfig {
@@ -177,6 +233,8 @@ export interface CalendarProps {
    */
   calendars?: CalendarFilterItem[] | CalendarFilterSection[];
   resources?: Resource[];
+  /** Configuration for the List view (columns, sorting, pagination). */
+  listViewConfig?: ListViewConfig;
   eventTypes?: EventType[]; // Pre-defined types
   onCalendarToggle?: (calendarId: string, active: boolean) => void;
   isLoading?: boolean;

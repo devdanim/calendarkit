@@ -122,8 +122,8 @@ var CalendarHeader = ({
       icon: lucideReact.Calendar
     },
     {
-      key: "agenda",
-      icon: lucideReact.ListTodo
+      key: "list",
+      icon: lucideReact.List
     }
   ];
   const showIdeasCta = Boolean(showMobileSidebarCta && onMenuClick && !isWide);
@@ -1186,133 +1186,214 @@ var DayView = ({
     /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "absolute -left-1.5 h-3 w-3 animate-pulse rounded-full bg-primary shadow-lg shadow-primary/40 ring-2 ring-background" })
   )))));
 };
-var formatDuration = (start, end) => {
-  const minutes = dateFns.differenceInMinutes(end, start);
-  if (minutes < 60) return `${minutes}m`;
-  const hours = Math.floor(minutes / 60);
-  const remainingMinutes = minutes % 60;
-  if (remainingMinutes === 0) return `${hours}h`;
-  return `${hours}h ${remainingMinutes}m`;
-};
-var AgendaView = ({
-  currentDate,
+var DEFAULT_PAGE_SIZE = 12;
+var alignClass = (align) => align === "center" ? "text-center" : align === "right" ? "text-right" : "text-left";
+var ListView = ({
   events,
   onEventClick,
   locale,
   readonly,
+  config,
   translations
 }) => {
-  const getDateLabel = (date) => {
-    if (dateFns.isToday(date)) return translations?.today || "Today";
-    if (dateFns.isTomorrow(date)) return translations?.tomorrow || "Tomorrow";
-    return dateFns.format(date, "EEEE", { locale });
-  };
-  const getEventCountLabel = (count) => {
-    if (count === 1) {
-      return `1 ${translations?.eventCount || "event"}`;
-    }
-    return `${count} ${translations?.eventsCount || "events"}`;
-  };
-  const getGuestCountLabel = (count) => {
-    if (count === 1) {
-      return `1 ${translations?.guestCount || "guest"}`;
-    }
-    return `${count} ${translations?.guestsCount || "guests"}`;
-  };
-  const groupedEvents = React12.useMemo(() => {
-    const startDate = dateFns.startOfDay(currentDate);
-    const groups = [];
-    const sortedEvents = [...events].sort((a, b) => a.start.getTime() - b.start.getTime());
-    for (let i = 0; i < 30; i++) {
-      const day = dateFns.addDays(startDate, i);
-      const dayEvents = sortedEvents.filter((event) => dateFns.isSameDay(event.start, day));
-      if (dayEvents.length > 0) {
-        groups.push({ date: day, events: dayEvents });
+  const showSort = config?.showSort ?? true;
+  const showPagination = config?.showPagination ?? true;
+  const pageSize = config?.pageSize ?? DEFAULT_PAGE_SIZE;
+  const providedColumns = config?.columns;
+  const providedSortOptions = config?.sortOptions;
+  const titleLabel = translations?.title;
+  const dateLabel = translations?.date;
+  const mostRecentLabel = translations?.mostRecent;
+  const oldestLabel = translations?.oldest;
+  const columns = React12.useMemo(() => {
+    if (providedColumns && providedColumns.length > 0) return providedColumns;
+    return [
+      {
+        key: "title",
+        header: titleLabel || "Title",
+        render: (event) => /* @__PURE__ */ React12__namespace.default.createElement("span", { className: "truncate font-medium text-foreground" }, event.title)
+      },
+      {
+        key: "date",
+        header: dateLabel || "Date",
+        render: (event) => /* @__PURE__ */ React12__namespace.default.createElement("span", { className: "text-muted-foreground" }, dateFns.format(event.start, "P", { locale }))
       }
-    }
-    return groups;
-  }, [currentDate, events]);
-  const container = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.05
+    ];
+  }, [providedColumns, titleLabel, dateLabel, locale]);
+  const sortOptions = React12.useMemo(() => {
+    if (providedSortOptions && providedSortOptions.length > 0) return providedSortOptions;
+    return [
+      {
+        key: "recent",
+        label: mostRecentLabel || "Most recent",
+        comparator: (a, b) => b.start.getTime() - a.start.getTime()
+      },
+      {
+        key: "oldest",
+        label: oldestLabel || "Oldest",
+        comparator: (a, b) => a.start.getTime() - b.start.getTime()
       }
-    }
+    ];
+  }, [providedSortOptions, mostRecentLabel, oldestLabel]);
+  const [sortKey, setSortKey] = React12.useState(
+    config?.defaultSortKey || sortOptions[0]?.key || "recent"
+  );
+  const [sortOpen, setSortOpen] = React12.useState(false);
+  const [page, setPage] = React12.useState(0);
+  const activeSort = sortOptions.find((option) => option.key === sortKey) || sortOptions[0];
+  const sortedEvents = React12.useMemo(() => {
+    const list = [...events];
+    if (activeSort?.comparator) list.sort(activeSort.comparator);
+    return list;
+  }, [events, activeSort]);
+  const usePagination = showPagination && pageSize > 0;
+  const pageCount = usePagination ? Math.max(1, Math.ceil(sortedEvents.length / pageSize)) : 1;
+  const safePage = Math.min(page, pageCount - 1);
+  const pagedEvents = usePagination ? sortedEvents.slice(safePage * pageSize, safePage * pageSize + pageSize) : sortedEvents;
+  const goToPage = (next) => {
+    setPage(Math.max(0, Math.min(next, pageCount - 1)));
   };
-  const item = {
-    hidden: { opacity: 0, x: -20 },
-    show: { opacity: 1, x: 0 }
-  };
-  return /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "flex h-full min-w-0 flex-col overflow-y-auto overflow-x-hidden bg-[#F9F9FB]" }, /* @__PURE__ */ React12__namespace.default.createElement(
-    framerMotion.motion.div,
+  const hasActions = Boolean(config?.renderActions);
+  const columnCount = columns.length + (hasActions ? 1 : 0);
+  return /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "flex h-full min-w-0 flex-col gap-4 overflow-y-auto overflow-x-hidden bg-[#F9F9FB] px-2 pb-6 md:px-4" }, showSort && /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "relative w-full" }, /* @__PURE__ */ React12__namespace.default.createElement(
+    "button",
     {
-      className: "mx-auto w-full min-w-0 max-w-3xl px-4 pb-10 md:px-6",
-      variants: container,
-      initial: "hidden",
-      animate: "show"
+      type: "button",
+      onClick: () => setSortOpen((open) => !open),
+      className: "flex w-full items-center justify-between rounded-2xl border border-border/60 bg-white px-4 py-2.5 text-left transition-all duration-200 hover:bg-muted/20 focus:outline-none focus:ring-2 focus:ring-primary/20"
     },
-    groupedEvents.map((group) => /* @__PURE__ */ React12__namespace.default.createElement(framerMotion.motion.div, { key: group.date.toISOString(), className: "relative", variants: item }, /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "sticky top-0 z-10 min-w-0 border-b border-border/50 bg-[#F9F9FB] py-4 backdrop-blur-md" }, /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "flex min-w-0 flex-nowrap items-center gap-2 sm:gap-4" }, /* @__PURE__ */ React12__namespace.default.createElement(
-      "div",
+    /* @__PURE__ */ React12__namespace.default.createElement("span", { className: "flex flex-col" }, /* @__PURE__ */ React12__namespace.default.createElement("span", { className: "text-xs text-muted-foreground" }, translations?.sortBy || "Sort by"), /* @__PURE__ */ React12__namespace.default.createElement("span", { className: "text-sm font-medium text-foreground" }, activeSort?.label)),
+    /* @__PURE__ */ React12__namespace.default.createElement(
+      lucideReact.ChevronDown,
       {
         className: cn(
-          "flex flex-none flex-col items-center justify-center overflow-hidden rounded-xl transition-all",
-          "h-14 min-h-14 w-14 min-w-14 sm:h-16 sm:min-h-16 sm:w-16 sm:min-w-16 sm:rounded-2xl",
-          dateFns.isToday(group.date) ? "bg-primary text-white shadow-lg" : "bg-muted/50 text-foreground"
-        ),
-        style: (
-          // Fallback so the date box never shrinks below readable size (e.g. if Tailwind is purged in consuming app)
-          { minWidth: 56, minHeight: 56 }
+          "h-4 w-4 text-muted-foreground transition-transform duration-200",
+          sortOpen && "rotate-180"
         )
-      },
-      /* @__PURE__ */ React12__namespace.default.createElement("span", { className: "truncate text-center text-2xl font-bold leading-none" }, dateFns.format(group.date, "d", { locale })),
-      /* @__PURE__ */ React12__namespace.default.createElement("span", { className: "truncate text-center text-xs font-medium uppercase tracking-wide opacity-80" }, dateFns.format(group.date, "MMM", { locale }))
-    ), /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "min-w-0 flex-1 overflow-hidden" }, /* @__PURE__ */ React12__namespace.default.createElement(
-      "span",
-      {
-        className: cn(
-          "block truncate text-base font-semibold sm:text-lg",
-          dateFns.isToday(group.date) && "text-primary"
-        )
-      },
-      getDateLabel(group.date)
-    ), /* @__PURE__ */ React12__namespace.default.createElement("span", { className: "block truncate text-xs text-muted-foreground sm:text-sm" }, getEventCountLabel(group.events.length))))), /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "space-y-3 py-4" }, group.events.map((event) => /* @__PURE__ */ React12__namespace.default.createElement(
-      "div",
-      {
-        key: event.id,
-        onClick: () => {
-          if (readonly) return;
-          onEventClick?.(event);
-        },
-        className: cn(
-          "relative flex min-w-0 gap-2 rounded-xl border border-border/40 p-3 sm:gap-4 sm:rounded-2xl sm:p-4",
-          "from-card via-card to-card/80 bg-gradient-to-br",
-          readonly ? "cursor-default" : onEventClick && "cursor-pointer"
-        )
-      },
-      /* @__PURE__ */ React12__namespace.default.createElement(
-        "div",
-        {
-          className: "absolute bottom-3 left-0 top-3 w-1 rounded-full",
-          style: { backgroundColor: event.color || "var(--primary)" }
-        }
+      }
+    )
+  ), sortOpen && /* @__PURE__ */ React12__namespace.default.createElement(React12__namespace.default.Fragment, null, /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "fixed inset-0 z-40", onClick: () => setSortOpen(false) }), /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "animate-in fade-in zoom-in-95 absolute left-0 right-0 top-full z-50 mt-2 overflow-hidden rounded-xl border border-border/60 bg-white p-1.5 shadow-2xl duration-200" }, sortOptions.map((option) => /* @__PURE__ */ React12__namespace.default.createElement(
+    "div",
+    {
+      key: option.key,
+      className: cn(
+        "cursor-pointer rounded-lg px-3 py-2.5 text-sm transition-all duration-200",
+        option.key === sortKey ? "bg-primary font-semibold text-primary-foreground" : "text-foreground hover:bg-accent/80"
       ),
-      /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "flex w-14 shrink-0 flex-col items-center pl-2 sm:min-w-[70px]" }, event.allDay ? /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "flex flex-col items-center" }, /* @__PURE__ */ React12__namespace.default.createElement("span", { className: "rounded-full bg-muted/80 px-2.5 py-1 text-xs font-semibold text-muted-foreground" }, translations?.allDay || "All Day")) : /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "flex flex-col items-center" }, /* @__PURE__ */ React12__namespace.default.createElement("span", { className: "text-base font-semibold text-foreground" }, dateFns.format(event.start, locale?.code === "fr" ? "H:mm" : "h:mm", {
-        locale
-      })), locale?.code !== "fr" && /* @__PURE__ */ React12__namespace.default.createElement("span", { className: "text-xs uppercase text-muted-foreground" }, dateFns.format(event.start, "a", { locale })), /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "my-1 h-3 w-px bg-border" }), /* @__PURE__ */ React12__namespace.default.createElement("span", { className: "text-xs font-medium text-muted-foreground/70" }, formatDuration(event.start, event.end)))),
-      /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "min-w-0 flex-1 space-y-2 overflow-hidden" }, /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "flex min-w-0 items-start justify-between gap-2" }, /* @__PURE__ */ React12__namespace.default.createElement("h4", { className: "min-w-0 flex-1 truncate text-sm font-semibold text-foreground sm:text-base" }, event.title), /* @__PURE__ */ React12__namespace.default.createElement(
-        "div",
-        {
-          className: "mt-1.5 h-3 w-3 shrink-0 rounded-full",
-          style: { backgroundColor: event.color || "var(--primary)" }
-        }
-      )), event.description && /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "line-clamp-2 text-sm leading-relaxed text-muted-foreground" }, event.description), /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "flex min-w-0 flex-wrap items-center gap-2 pt-1 sm:gap-3" }, !event.allDay && /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "flex items-center gap-1.5 text-xs text-muted-foreground" }, /* @__PURE__ */ React12__namespace.default.createElement(lucideReact.Clock, { className: "h-3.5 w-3.5" }), /* @__PURE__ */ React12__namespace.default.createElement("span", null, dateFns.format(event.start, locale?.code === "fr" ? "H:mm" : "h:mm a", {
-        locale
-      }))), event.guests && event.guests.length > 0 && /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "flex items-center gap-1.5 text-xs text-muted-foreground" }, /* @__PURE__ */ React12__namespace.default.createElement(lucideReact.Users, { className: "h-3.5 w-3.5" }), /* @__PURE__ */ React12__namespace.default.createElement("span", null, getGuestCountLabel(event.guests.length))), event.attachments && event.attachments.length > 0 && /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "flex items-center gap-1.5 text-xs text-muted-foreground" }, /* @__PURE__ */ React12__namespace.default.createElement(lucideReact.Paperclip, { className: "h-3.5 w-3.5" }), /* @__PURE__ */ React12__namespace.default.createElement("span", null, event.attachments.length)), event.reminders && event.reminders.length > 0 && /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "flex items-center gap-1.5 text-xs text-muted-foreground" }, /* @__PURE__ */ React12__namespace.default.createElement(lucideReact.Bell, { className: "h-3.5 w-3.5" }), /* @__PURE__ */ React12__namespace.default.createElement("span", null, event.reminders.length))))
-    )))))
-  ));
+      onClick: () => {
+        setSortKey(option.key);
+        setSortOpen(false);
+        setPage(0);
+      }
+    },
+    option.label
+  ))))), /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "min-w-0 flex-1 overflow-x-auto" }, /* @__PURE__ */ React12__namespace.default.createElement("table", { className: "w-full min-w-[640px] border-separate border-spacing-0" }, /* @__PURE__ */ React12__namespace.default.createElement("thead", null, /* @__PURE__ */ React12__namespace.default.createElement("tr", null, columns.map((column) => /* @__PURE__ */ React12__namespace.default.createElement(
+    "th",
+    {
+      key: column.key,
+      className: cn(
+        "whitespace-nowrap px-4 py-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground",
+        alignClass(column.align),
+        column.headerClassName
+      )
+    },
+    column.header
+  )), hasActions && /* @__PURE__ */ React12__namespace.default.createElement("th", { className: "px-4 py-3" }))), /* @__PURE__ */ React12__namespace.default.createElement("tbody", null, pagedEvents.length === 0 ? /* @__PURE__ */ React12__namespace.default.createElement("tr", null, /* @__PURE__ */ React12__namespace.default.createElement(
+    "td",
+    {
+      colSpan: columnCount,
+      className: "px-4 py-16 text-center text-sm text-muted-foreground"
+    },
+    translations?.noEvents || "No events"
+  )) : pagedEvents.map((event) => /* @__PURE__ */ React12__namespace.default.createElement(
+    "tr",
+    {
+      key: event.id,
+      onClick: () => {
+        if (readonly) return;
+        onEventClick?.(event);
+      },
+      className: cn(
+        "border-b border-border/40 bg-white transition-colors",
+        readonly ? "cursor-default" : onEventClick && "cursor-pointer hover:bg-muted/30"
+      )
+    },
+    columns.map((column) => /* @__PURE__ */ React12__namespace.default.createElement(
+      "td",
+      {
+        key: column.key,
+        className: cn(
+          "border-b border-border/40 px-4 py-3 text-sm text-foreground",
+          alignClass(column.align),
+          column.className
+        )
+      },
+      column.render ? column.render(event) : event.title
+    )),
+    hasActions && /* @__PURE__ */ React12__namespace.default.createElement(
+      "td",
+      {
+        className: "border-b border-border/40 px-4 py-3 text-right",
+        onClick: (e) => e.stopPropagation()
+      },
+      config?.renderActions?.(event)
+    )
+  ))))), usePagination && pageCount > 1 && /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "flex items-center justify-center gap-1" }, /* @__PURE__ */ React12__namespace.default.createElement(
+    PaginationButton,
+    {
+      onClick: () => goToPage(0),
+      disabled: safePage === 0,
+      "aria-label": "First page"
+    },
+    /* @__PURE__ */ React12__namespace.default.createElement(lucideReact.ChevronsLeft, { className: "h-4 w-4" })
+  ), /* @__PURE__ */ React12__namespace.default.createElement(
+    PaginationButton,
+    {
+      onClick: () => goToPage(safePage - 1),
+      disabled: safePage === 0,
+      "aria-label": "Previous page"
+    },
+    /* @__PURE__ */ React12__namespace.default.createElement(lucideReact.ChevronLeft, { className: "h-4 w-4" })
+  ), Array.from({ length: pageCount }).map((_, index) => /* @__PURE__ */ React12__namespace.default.createElement(
+    PaginationButton,
+    {
+      key: index,
+      onClick: () => goToPage(index),
+      active: index === safePage
+    },
+    index + 1
+  )), /* @__PURE__ */ React12__namespace.default.createElement(
+    PaginationButton,
+    {
+      onClick: () => goToPage(safePage + 1),
+      disabled: safePage === pageCount - 1,
+      "aria-label": "Next page"
+    },
+    /* @__PURE__ */ React12__namespace.default.createElement(lucideReact.ChevronRight, { className: "h-4 w-4" })
+  ), /* @__PURE__ */ React12__namespace.default.createElement(
+    PaginationButton,
+    {
+      onClick: () => goToPage(pageCount - 1),
+      disabled: safePage === pageCount - 1,
+      "aria-label": "Last page"
+    },
+    /* @__PURE__ */ React12__namespace.default.createElement(lucideReact.ChevronsRight, { className: "h-4 w-4" })
+  )));
 };
+var PaginationButton = ({ active, className, children, ...props }) => /* @__PURE__ */ React12__namespace.default.createElement(
+  "button",
+  {
+    type: "button",
+    className: cn(
+      "flex h-8 min-w-8 items-center justify-center rounded-lg px-2 text-sm font-medium transition-all duration-200",
+      active ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-muted/40 hover:text-foreground",
+      "disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent",
+      className
+    ),
+    ...props
+  },
+  children
+);
 var ResourceView = ({
   currentDate,
   events,
@@ -1433,7 +1514,7 @@ var DayViewSkeleton = () => /* @__PURE__ */ React12__namespace.default.createEle
     style: { top: "400px", height: "80px" }
   }
 ))));
-var AgendaViewSkeleton = () => /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "h-full overflow-hidden rounded-2xl border border-border/50 bg-background p-6" }, /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "space-y-6" }, Array.from({ length: 4 }).map((_, dayIdx) => /* @__PURE__ */ React12__namespace.default.createElement("div", { key: dayIdx }, /* @__PURE__ */ React12__namespace.default.createElement(Skeleton, { className: "mb-4 h-5 w-40" }), /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "space-y-3" }, Array.from({ length: 2 + dayIdx % 3 }).map((_2, eventIdx) => /* @__PURE__ */ React12__namespace.default.createElement("div", { key: eventIdx, className: "flex items-center gap-4 rounded-xl bg-muted/10 p-3" }, /* @__PURE__ */ React12__namespace.default.createElement(Skeleton, { className: "h-10 w-10 rounded-lg" }), /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "flex-1 space-y-2" }, /* @__PURE__ */ React12__namespace.default.createElement(Skeleton, { className: "h-4 w-3/4" }), /* @__PURE__ */ React12__namespace.default.createElement(Skeleton, { className: "h-3 w-1/2" })))))))));
+var ListViewSkeleton = () => /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "flex h-full flex-col gap-4 px-2 md:px-4" }, /* @__PURE__ */ React12__namespace.default.createElement(Skeleton, { className: "h-12 w-full rounded-2xl" }), /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "space-y-1" }, Array.from({ length: 10 }).map((_, rowIdx) => /* @__PURE__ */ React12__namespace.default.createElement("div", { key: rowIdx, className: "flex items-center gap-4 rounded-lg bg-muted/10 px-4 py-3" }, /* @__PURE__ */ React12__namespace.default.createElement(Skeleton, { className: "h-9 w-9 rounded-lg" }), /* @__PURE__ */ React12__namespace.default.createElement(Skeleton, { className: "h-4 flex-1" }), /* @__PURE__ */ React12__namespace.default.createElement(Skeleton, { className: "hidden h-4 w-24 sm:block" }), /* @__PURE__ */ React12__namespace.default.createElement(Skeleton, { className: "hidden h-5 w-20 rounded-full md:block" }), /* @__PURE__ */ React12__namespace.default.createElement(Skeleton, { className: "hidden h-4 w-20 lg:block" }), /* @__PURE__ */ React12__namespace.default.createElement(Skeleton, { className: "h-8 w-20 rounded-lg" })))));
 var EventContextMenu = ({
   event,
   position,
@@ -1692,9 +1773,6 @@ var useCalendarLogic = ({
       case "resource":
         handleDateChange(dateFns.subDays(currentDate, 1));
         break;
-      case "agenda":
-        handleDateChange(dateFns.subDays(currentDate, 7));
-        break;
     }
   };
   const handleNext = () => {
@@ -1708,9 +1786,6 @@ var useCalendarLogic = ({
       case "day":
       case "resource":
         handleDateChange(dateFns.addDays(currentDate, 1));
-        break;
-      case "agenda":
-        handleDateChange(dateFns.addDays(currentDate, 7));
         break;
     }
   };
@@ -1911,6 +1986,7 @@ var Scheduler = ({
   readOnly,
   calendars,
   resources,
+  listViewConfig,
   onCalendarToggle,
   isLoading,
   isDarkMode,
@@ -2035,7 +2111,7 @@ var Scheduler = ({
     month: "Month",
     week: "Week",
     day: "Day",
-    agenda: "Agenda",
+    list: "List",
     resource: "Resource",
     createEvent: "Create Event",
     editEvent: "Edit Event",
@@ -2061,6 +2137,10 @@ var Scheduler = ({
     moreOptions: "More ideas",
     guestCount: "guest",
     guestsCount: "guests",
+    sortBy: "Sort by",
+    mostRecent: "Most recent",
+    oldest: "Oldest",
+    noEvents: "No events",
     ...translations
   };
   const handleDragStart = (event) => {
@@ -2152,7 +2232,7 @@ var Scheduler = ({
           calendars,
           onCalendarToggle,
           translations: t,
-          showMiniCalendar,
+          showMiniCalendar: showMiniCalendar && view !== "list",
           showCalendarFilters,
           showTimezoneSelector,
           isSheetMode: false,
@@ -2197,7 +2277,7 @@ var Scheduler = ({
             calendars,
             onCalendarToggle,
             translations: t,
-            showMiniCalendar,
+            showMiniCalendar: showMiniCalendar && view !== "list",
             showCalendarFilters,
             showTimezoneSelector,
             isSheetMode: true,
@@ -2228,7 +2308,7 @@ var Scheduler = ({
           showMobileSidebarCta: isCompactLayout && sidebarFeatureEnabled,
           mobileSidebarCtaLabel: t.moreOptions || "Plus d'id\xE9es"
         }
-      ), /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "relative flex flex-1 flex-col overflow-hidden" }, isLoading ? /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "flex-1 overflow-auto p-0 md:p-4" }, /* @__PURE__ */ React12__namespace.default.createElement("div", { className: cn("h-full", view !== "agenda" && "min-w-[max(100%,800px)]") }, view === "month" && /* @__PURE__ */ React12__namespace.default.createElement(MonthViewSkeleton, null), view === "week" && /* @__PURE__ */ React12__namespace.default.createElement(WeekViewSkeleton, null), view === "day" && /* @__PURE__ */ React12__namespace.default.createElement(DayViewSkeleton, null), view === "agenda" && /* @__PURE__ */ React12__namespace.default.createElement(AgendaViewSkeleton, null), view === "resource" && /* @__PURE__ */ React12__namespace.default.createElement(WeekViewSkeleton, null))) : /* @__PURE__ */ React12__namespace.default.createElement("div", { ref: swipeRef, className: "flex-1 touch-pan-y overflow-auto p-0 md:p-4" }, /* @__PURE__ */ React12__namespace.default.createElement("div", { className: cn("h-full", view !== "agenda" && "min-w-[max(100%,800px)]") }, /* @__PURE__ */ React12__namespace.default.createElement(framerMotion.AnimatePresence, { mode: "wait", initial: false }, /* @__PURE__ */ React12__namespace.default.createElement(
+      ), /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "relative flex flex-1 flex-col overflow-hidden" }, isLoading ? /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "flex-1 overflow-auto p-0 md:p-4" }, /* @__PURE__ */ React12__namespace.default.createElement("div", { className: cn("h-full", view !== "list" && "min-w-[max(100%,800px)]") }, view === "month" && /* @__PURE__ */ React12__namespace.default.createElement(MonthViewSkeleton, null), view === "week" && /* @__PURE__ */ React12__namespace.default.createElement(WeekViewSkeleton, null), view === "day" && /* @__PURE__ */ React12__namespace.default.createElement(DayViewSkeleton, null), view === "list" && /* @__PURE__ */ React12__namespace.default.createElement(ListViewSkeleton, null), view === "resource" && /* @__PURE__ */ React12__namespace.default.createElement(WeekViewSkeleton, null))) : /* @__PURE__ */ React12__namespace.default.createElement("div", { ref: swipeRef, className: "flex-1 touch-pan-y overflow-auto p-0 md:p-4" }, /* @__PURE__ */ React12__namespace.default.createElement("div", { className: cn("h-full", view !== "list" && "min-w-[max(100%,800px)]") }, /* @__PURE__ */ React12__namespace.default.createElement(framerMotion.AnimatePresence, { mode: "wait", initial: false }, /* @__PURE__ */ React12__namespace.default.createElement(
         framerMotion.motion.div,
         {
           key: `${view}-${currentDate.toISOString()}-${timezone || "local"}`,
@@ -2291,22 +2371,21 @@ var Scheduler = ({
             translations: { today: t.today }
           }
         ),
-        view === "agenda" && /* @__PURE__ */ React12__namespace.default.createElement(
-          AgendaView,
+        view === "list" && /* @__PURE__ */ React12__namespace.default.createElement(
+          ListView,
           {
-            currentDate,
             events: filteredEvents,
             onEventClick: handleEventClickInternal,
             locale,
             readonly: readOnly,
+            config: listViewConfig,
             translations: {
-              today: t.today,
-              tomorrow: t.tomorrow,
-              allDay: t.allDay,
-              eventCount: t.eventCount,
-              eventsCount: t.eventsCount,
-              guestCount: t.guestCount,
-              guestsCount: t.guestsCount
+              sortBy: t.sortBy,
+              mostRecent: t.mostRecent,
+              oldest: t.oldest,
+              noEvents: t.noEvents,
+              title: t.title,
+              date: t.dateAndTime
             }
           }
         ),

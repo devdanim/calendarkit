@@ -76,9 +76,6 @@ export const useCalendarLogic = ({
       case 'resource':
         handleDateChange(subDays(currentDate, 1));
         break;
-      case 'agenda':
-        handleDateChange(subDays(currentDate, 7));
-        break;
     }
   };
 
@@ -93,9 +90,6 @@ export const useCalendarLogic = ({
       case 'day':
       case 'resource':
         handleDateChange(addDays(currentDate, 1));
-        break;
-      case 'agenda':
-        handleDateChange(addDays(currentDate, 7));
         break;
     }
   };
