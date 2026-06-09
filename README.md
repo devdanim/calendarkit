@@ -70,7 +70,7 @@ function MyCalendar() {
 | Prop | Type | Description |
 |------|------|-------------|
 | `events` | `CalendarEvent[]` | Array of events to display |
-| `view` | `ViewType` | Current view: `'month'` \| `'week'` \| `'day'` \| `'agenda'` \| `'resource'` |
+| `view` | `ViewType` | Current view: `'month'` \| `'week'` \| `'day'` \| `'list'` \| `'resource'` |
 | `date` | `Date` | Currently focused date |
 | `onViewChange` | `(view: ViewType) => void` | View change callback |
 | `onDateChange` | `(date: Date) => void` | Date change callback |
@@ -88,6 +88,8 @@ function MyCalendar() {
 | `readOnly` | `boolean` | Disable editing |
 | `isLoading` | `boolean` | Show loading skeletons |
 | `hideViewSwitcher` | `boolean` | Hide view switcher |
+| `blurContent` | `boolean` | Blur the content area (grid + events) without blurring header/sidebar — paywall teaser. No effect on `list` view. |
+| `listViewConfig` | `ListViewConfig` | Columns / sorting / pagination for the `list` view |
 | `renderEventForm` | `(props) => ReactNode` | Custom event form |
 | `hideLanguageSelector` | `boolean` | Hide language selector |
 | `hideDarkModeToggle` | `boolean` | Hide dark mode toggle |

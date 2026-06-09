@@ -1,5 +1,20 @@
 # Pro-Scheduler Changelog
 
+## 1.2.0
+
+### List view (replaces Agenda)
+- `ViewType` `'agenda'` renamed to `'list'`
+- New `ListView` (`views/ListView.tsx`): flat, table-style listing (no per-day grouping)
+- Render-props API: `ListColumn`, `ListSortOption`, `ListViewConfig` (`listViewConfig` prop)
+- Built-in "Sort by" dropdown (default: most recent) + pagination
+- Mini-calendar is hidden in the sidebar while in `list` view
+
+### Paywall content blur
+- New `blurContent?: boolean` prop on `Scheduler` / `CalendarProps`
+- Blurs only the view content area (grid + events) with `blur(5px)`, plus
+  `pointer-events: none` / `user-select: none`; header and sidebar stay sharp
+- No effect on the `list` view
+
 ## Features Added
 
 ### Event Resizing

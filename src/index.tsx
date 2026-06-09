@@ -79,6 +79,7 @@ export const Scheduler: React.FC<CalendarProps> = ({
   sidebarConfig,
   translations,
   hideViewSwitcher,
+  blurContent,
   hideLanguageSelector,
   hideDarkModeToggle,
   language,
@@ -466,98 +467,112 @@ export const Scheduler: React.FC<CalendarProps> = ({
             ) : (
               <div ref={swipeRef} className="flex-1 touch-pan-y overflow-auto p-0 md:p-4">
                 <div className={cn('h-full', view !== 'list' && 'min-w-[max(100%,800px)]')}>
-                  <AnimatePresence mode="wait" initial={false}>
-                    <motion.div
-                      key={`${view}-${currentDate.toISOString()}-${timezone || 'local'}`}
-                      initial={{ opacity: 0, scale: 0.98, y: 15 }}
-                      animate={{
-                        opacity: 1,
-                        scale: 1,
-                        y: 0,
-                        transition: {
-                          duration: 0.25,
-                          ease: [0.25, 0.1, 0.25, 1],
-                        },
-                      }}
-                      exit={{
-                        opacity: 0,
-                        scale: 0.98,
-                        y: -10,
-                        transition: {
-                          duration: 0.15,
-                          ease: [0.25, 0.1, 0.25, 1],
-                        },
-                      }}
-                      className="h-full"
-                    >
-                      {view === 'month' && (
-                        <MonthView
-                          currentDate={currentDate}
-                          events={filteredEvents}
-                          onEventClick={handleEventClickInternal}
-                          onDateClick={handleDateClick}
-                          timezone={timezone}
-                          locale={locale}
-                          readonly={readOnly}
-                          translations={{ more: t.more }}
-                        />
-                      )}
-                      {view === 'week' && (
-                        <WeekView
-                          currentDate={currentDate}
-                          events={filteredEvents}
-                          onEventClick={handleEventClickInternal}
-                          onTimeSlotClick={handleTimeSlotClick}
-                          timezone={timezone}
-                          locale={locale}
-                          readonly={readOnly}
-                        />
-                      )}
-                      {view === 'day' && (
-                        <DayView
-                          currentDate={currentDate}
-                          events={filteredEvents}
-                          onEventClick={handleEventClickInternal}
-                          onTimeSlotClick={handleTimeSlotClick}
-                          timezone={timezone}
-                          locale={locale}
-                          readonly={readOnly}
-                          translations={{ today: t.today }}
-                        />
-                      )}
-                      {view === 'list' && (
-                        <ListView
-                          events={filteredEvents}
-                          onEventClick={handleEventClickInternal}
-                          locale={locale}
-                          readonly={readOnly}
-                          config={listViewConfig}
-                          translations={{
-                            sortBy: t.sortBy,
-                            mostRecent: t.mostRecent,
-                            oldest: t.oldest,
-                            noEvents: t.noEvents,
-                            title: t.title,
-                            date: t.dateAndTime,
-                          }}
-                        />
-                      )}
-                      {view === 'resource' && resources && (
-                        <ResourceView
-                          currentDate={currentDate}
-                          events={filteredEvents}
-                          resources={resources}
-                          onEventClick={handleEventClickInternal}
-                          onTimeSlotClick={(date) => {
-                            if (readOnly) return;
-                            handleTimeSlotClick(date);
-                          }}
-                          locale={locale}
-                          readonly={readOnly}
-                        />
-                      )}
-                    </motion.div>
-                  </AnimatePresence>
+                  <div
+                    className="h-full"
+                    aria-hidden={blurContent && view !== 'list' ? true : undefined}
+                    style={
+                      blurContent && view !== 'list'
+                        ? {
+                            filter: 'blur(5px)',
+                            pointerEvents: 'none',
+                            userSelect: 'none',
+                          }
+                        : undefined
+                    }
+                  >
+                    <AnimatePresence mode="wait" initial={false}>
+                      <motion.div
+                        key={`${view}-${currentDate.toISOString()}-${timezone || 'local'}`}
+                        initial={{ opacity: 0, scale: 0.98, y: 15 }}
+                        animate={{
+                          opacity: 1,
+                          scale: 1,
+                          y: 0,
+                          transition: {
+                            duration: 0.25,
+                            ease: [0.25, 0.1, 0.25, 1],
+                          },
+                        }}
+                        exit={{
+                          opacity: 0,
+                          scale: 0.98,
+                          y: -10,
+                          transition: {
+                            duration: 0.15,
+                            ease: [0.25, 0.1, 0.25, 1],
+                          },
+                        }}
+                        className="h-full"
+                      >
+                        {view === 'month' && (
+                          <MonthView
+                            currentDate={currentDate}
+                            events={filteredEvents}
+                            onEventClick={handleEventClickInternal}
+                            onDateClick={handleDateClick}
+                            timezone={timezone}
+                            locale={locale}
+                            readonly={readOnly}
+                            translations={{ more: t.more }}
+                          />
+                        )}
+                        {view === 'week' && (
+                          <WeekView
+                            currentDate={currentDate}
+                            events={filteredEvents}
+                            onEventClick={handleEventClickInternal}
+                            onTimeSlotClick={handleTimeSlotClick}
+                            timezone={timezone}
+                            locale={locale}
+                            readonly={readOnly}
+                          />
+                        )}
+                        {view === 'day' && (
+                          <DayView
+                            currentDate={currentDate}
+                            events={filteredEvents}
+                            onEventClick={handleEventClickInternal}
+                            onTimeSlotClick={handleTimeSlotClick}
+                            timezone={timezone}
+                            locale={locale}
+                            readonly={readOnly}
+                            translations={{ today: t.today }}
+                          />
+                        )}
+                        {view === 'list' && (
+                          <ListView
+                            events={filteredEvents}
+                            onEventClick={handleEventClickInternal}
+                            locale={locale}
+                            readonly={readOnly}
+                            config={listViewConfig}
+                            translations={{
+                              sortBy: t.sortBy,
+                              mostRecent: t.mostRecent,
+                              oldest: t.oldest,
+                              noEvents: t.noEvents,
+                              title: t.title,
+                              date: t.dateAndTime,
+                            }}
+                          />
+                        )}
+                        {view === 'resource' && resources && (
+                          <ResourceView
+                            currentDate={currentDate}
+                            events={filteredEvents}
+                            resources={resources}
+                            onEventClick={handleEventClickInternal}
+                            onTimeSlotClick={(date) => {
+                              if (readOnly) return;
+                              handleTimeSlotClick(date);
+                            }}
+                            locale={locale}
+                            readonly={readOnly}
+                          />
+                        )}
+                      </motion.div>
+                    </AnimatePresence>
+                  </div>
                 </div>
               </div>
             )}

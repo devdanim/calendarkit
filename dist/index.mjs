@@ -1975,6 +1975,7 @@ var Scheduler = ({
   sidebarConfig,
   translations,
   hideViewSwitcher,
+  blurContent,
   hideLanguageSelector,
   hideDarkModeToggle,
   language,
@@ -2287,103 +2288,115 @@ var Scheduler = ({
           showMobileSidebarCta: isCompactLayout && sidebarFeatureEnabled,
           mobileSidebarCtaLabel: t.moreOptions || "Plus d'id\xE9es"
         }
-      ), /* @__PURE__ */ React12__default.createElement("div", { className: "relative flex flex-1 flex-col overflow-hidden" }, isLoading ? /* @__PURE__ */ React12__default.createElement("div", { className: "flex-1 overflow-auto p-0 md:p-4" }, /* @__PURE__ */ React12__default.createElement("div", { className: cn("h-full", view !== "list" && "min-w-[max(100%,800px)]") }, view === "month" && /* @__PURE__ */ React12__default.createElement(MonthViewSkeleton, null), view === "week" && /* @__PURE__ */ React12__default.createElement(WeekViewSkeleton, null), view === "day" && /* @__PURE__ */ React12__default.createElement(DayViewSkeleton, null), view === "list" && /* @__PURE__ */ React12__default.createElement(ListViewSkeleton, null), view === "resource" && /* @__PURE__ */ React12__default.createElement(WeekViewSkeleton, null))) : /* @__PURE__ */ React12__default.createElement("div", { ref: swipeRef, className: "flex-1 touch-pan-y overflow-auto p-0 md:p-4" }, /* @__PURE__ */ React12__default.createElement("div", { className: cn("h-full", view !== "list" && "min-w-[max(100%,800px)]") }, /* @__PURE__ */ React12__default.createElement(AnimatePresence, { mode: "wait", initial: false }, /* @__PURE__ */ React12__default.createElement(
-        motion.div,
+      ), /* @__PURE__ */ React12__default.createElement("div", { className: "relative flex flex-1 flex-col overflow-hidden" }, isLoading ? /* @__PURE__ */ React12__default.createElement("div", { className: "flex-1 overflow-auto p-0 md:p-4" }, /* @__PURE__ */ React12__default.createElement("div", { className: cn("h-full", view !== "list" && "min-w-[max(100%,800px)]") }, view === "month" && /* @__PURE__ */ React12__default.createElement(MonthViewSkeleton, null), view === "week" && /* @__PURE__ */ React12__default.createElement(WeekViewSkeleton, null), view === "day" && /* @__PURE__ */ React12__default.createElement(DayViewSkeleton, null), view === "list" && /* @__PURE__ */ React12__default.createElement(ListViewSkeleton, null), view === "resource" && /* @__PURE__ */ React12__default.createElement(WeekViewSkeleton, null))) : /* @__PURE__ */ React12__default.createElement("div", { ref: swipeRef, className: "flex-1 touch-pan-y overflow-auto p-0 md:p-4" }, /* @__PURE__ */ React12__default.createElement("div", { className: cn("h-full", view !== "list" && "min-w-[max(100%,800px)]") }, /* @__PURE__ */ React12__default.createElement(
+        "div",
         {
-          key: `${view}-${currentDate.toISOString()}-${timezone || "local"}`,
-          initial: { opacity: 0, scale: 0.98, y: 15 },
-          animate: {
-            opacity: 1,
-            scale: 1,
-            y: 0,
-            transition: {
-              duration: 0.25,
-              ease: [0.25, 0.1, 0.25, 1]
-            }
-          },
-          exit: {
-            opacity: 0,
-            scale: 0.98,
-            y: -10,
-            transition: {
-              duration: 0.15,
-              ease: [0.25, 0.1, 0.25, 1]
-            }
-          },
-          className: "h-full"
+          className: "h-full",
+          "aria-hidden": blurContent && view !== "list" ? true : void 0,
+          style: blurContent && view !== "list" ? {
+            filter: "blur(5px)",
+            pointerEvents: "none",
+            userSelect: "none"
+          } : void 0
         },
-        view === "month" && /* @__PURE__ */ React12__default.createElement(
-          MonthView,
+        /* @__PURE__ */ React12__default.createElement(AnimatePresence, { mode: "wait", initial: false }, /* @__PURE__ */ React12__default.createElement(
+          motion.div,
           {
-            currentDate,
-            events: filteredEvents,
-            onEventClick: handleEventClickInternal,
-            onDateClick: handleDateClick,
-            timezone,
-            locale,
-            readonly: readOnly,
-            translations: { more: t.more }
-          }
-        ),
-        view === "week" && /* @__PURE__ */ React12__default.createElement(
-          WeekView,
-          {
-            currentDate,
-            events: filteredEvents,
-            onEventClick: handleEventClickInternal,
-            onTimeSlotClick: handleTimeSlotClick,
-            timezone,
-            locale,
-            readonly: readOnly
-          }
-        ),
-        view === "day" && /* @__PURE__ */ React12__default.createElement(
-          DayView,
-          {
-            currentDate,
-            events: filteredEvents,
-            onEventClick: handleEventClickInternal,
-            onTimeSlotClick: handleTimeSlotClick,
-            timezone,
-            locale,
-            readonly: readOnly,
-            translations: { today: t.today }
-          }
-        ),
-        view === "list" && /* @__PURE__ */ React12__default.createElement(
-          ListView,
-          {
-            events: filteredEvents,
-            onEventClick: handleEventClickInternal,
-            locale,
-            readonly: readOnly,
-            config: listViewConfig,
-            translations: {
-              sortBy: t.sortBy,
-              mostRecent: t.mostRecent,
-              oldest: t.oldest,
-              noEvents: t.noEvents,
-              title: t.title,
-              date: t.dateAndTime
-            }
-          }
-        ),
-        view === "resource" && resources && /* @__PURE__ */ React12__default.createElement(
-          ResourceView,
-          {
-            currentDate,
-            events: filteredEvents,
-            resources,
-            onEventClick: handleEventClickInternal,
-            onTimeSlotClick: (date) => {
-              if (readOnly) return;
-              handleTimeSlotClick(date);
+            key: `${view}-${currentDate.toISOString()}-${timezone || "local"}`,
+            initial: { opacity: 0, scale: 0.98, y: 15 },
+            animate: {
+              opacity: 1,
+              scale: 1,
+              y: 0,
+              transition: {
+                duration: 0.25,
+                ease: [0.25, 0.1, 0.25, 1]
+              }
             },
-            locale,
-            readonly: readOnly
-          }
-        )
-      )))))),
+            exit: {
+              opacity: 0,
+              scale: 0.98,
+              y: -10,
+              transition: {
+                duration: 0.15,
+                ease: [0.25, 0.1, 0.25, 1]
+              }
+            },
+            className: "h-full"
+          },
+          view === "month" && /* @__PURE__ */ React12__default.createElement(
+            MonthView,
+            {
+              currentDate,
+              events: filteredEvents,
+              onEventClick: handleEventClickInternal,
+              onDateClick: handleDateClick,
+              timezone,
+              locale,
+              readonly: readOnly,
+              translations: { more: t.more }
+            }
+          ),
+          view === "week" && /* @__PURE__ */ React12__default.createElement(
+            WeekView,
+            {
+              currentDate,
+              events: filteredEvents,
+              onEventClick: handleEventClickInternal,
+              onTimeSlotClick: handleTimeSlotClick,
+              timezone,
+              locale,
+              readonly: readOnly
+            }
+          ),
+          view === "day" && /* @__PURE__ */ React12__default.createElement(
+            DayView,
+            {
+              currentDate,
+              events: filteredEvents,
+              onEventClick: handleEventClickInternal,
+              onTimeSlotClick: handleTimeSlotClick,
+              timezone,
+              locale,
+              readonly: readOnly,
+              translations: { today: t.today }
+            }
+          ),
+          view === "list" && /* @__PURE__ */ React12__default.createElement(
+            ListView,
+            {
+              events: filteredEvents,
+              onEventClick: handleEventClickInternal,
+              locale,
+              readonly: readOnly,
+              config: listViewConfig,
+              translations: {
+                sortBy: t.sortBy,
+                mostRecent: t.mostRecent,
+                oldest: t.oldest,
+                noEvents: t.noEvents,
+                title: t.title,
+                date: t.dateAndTime
+              }
+            }
+          ),
+          view === "resource" && resources && /* @__PURE__ */ React12__default.createElement(
+            ResourceView,
+            {
+              currentDate,
+              events: filteredEvents,
+              resources,
+              onEventClick: handleEventClickInternal,
+              onTimeSlotClick: (date) => {
+                if (readOnly) return;
+                handleTimeSlotClick(date);
+              },
+              locale,
+              readonly: readOnly
+            }
+          )
+        ))
+      ))))),
       /* @__PURE__ */ React12__default.createElement(
         EventContextMenu,
         {

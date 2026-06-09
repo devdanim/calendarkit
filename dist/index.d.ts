@@ -231,6 +231,13 @@ interface CalendarProps {
     /** Fine-grained sidebar configuration */
     sidebarConfig?: SidebarConfig;
     hideViewSwitcher?: boolean;
+    /**
+     * Visually blur the calendar content area (grid + events) without blurring
+     * the header or sidebar. Useful as a paywall teaser. The blurred content is
+     * also non-interactive (pointer-events/user-select disabled). Has no effect
+     * on the `list` view, which stays sharp. Default: false.
+     */
+    blurContent?: boolean;
     /** Hide the language selector in the header (default: false) */
     hideLanguageSelector?: boolean;
     /** Hide the dark mode toggle in the header (default: false) */
