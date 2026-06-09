@@ -9,9 +9,10 @@ import {
   EventType,
   CalendarFilterSection,
 } from '@/index';
-import { addDays, startOfWeek, addHours } from 'date-fns';
+import { addDays, startOfWeek, addHours, format } from 'date-fns';
 import { fr, enUS } from 'date-fns/locale';
-import { PlusIcon } from 'lucide-react';
+import { PlusIcon, Eye, MoreHorizontal, Facebook, Instagram, Linkedin, Music2 } from 'lucide-react';
+import type { ListViewConfig } from '@/index';
 
 // Generate demo events
 const generateDemoEvents = (): CalendarEvent[] => {
@@ -31,6 +32,9 @@ const generateDemoEvents = (): CalendarEvent[] => {
   ): CalendarEvent => {
     const start = addHours(addDays(weekStart, dayOffset), hourStart);
     const end = addHours(start, duration);
+    const statuses = ['draft', 'scheduled', 'published', 'error'] as const;
+    const allNetworks = ['facebook', 'instagram', 'linkedin', 'tiktok'];
+    const n = Number(id);
     return {
       id,
       title,
@@ -39,6 +43,10 @@ const generateDemoEvents = (): CalendarEvent[] => {
       calendarId,
       color,
       resourceId,
+      // Publication-specific demo fields (consumed by listViewConfig below)
+      status: statuses[n % statuses.length],
+      creator: ['Alex M.', 'Jordan U.', 'Sam R.'][n % 3],
+      networks: allNetworks.slice(0, (n % 3) + 1),
     };
   };
 
@@ -104,6 +112,97 @@ const demoEventTypes: EventType[] = [
   },
 ];
 
+// --- List view (publications) demo config ---
+const STATUS_STYLES: Record<string, { label: string; className: string }> = {
+  draft: { label: 'Brouillon', className: 'bg-gray-100 text-gray-700' },
+  scheduled: { label: 'Programmée', className: 'bg-blue-100 text-blue-700' },
+  published: { label: 'Publiée', className: 'bg-green-100 text-green-700' },
+  error: { label: 'Erreur', className: 'bg-red-100 text-red-700' },
+};
+
+const NETWORK_ICONS: Record<string, React.ReactNode> = {
+  facebook: <Facebook className="h-4 w-4 text-[#1877F2]" />,
+  instagram: <Instagram className="h-4 w-4 text-[#E4405F]" />,
+  linkedin: <Linkedin className="h-4 w-4 text-[#0A66C2]" />,
+  tiktok: <Music2 className="h-4 w-4 text-foreground" />,
+};
+
+const publicationsListConfig: ListViewConfig = {
+  pageSize: 8,
+  columns: [
+    {
+      key: 'title',
+      header: 'Nom de la publication',
+      render: (event) => (
+        <div className="flex items-center gap-3">
+          <div className="h-9 w-9 shrink-0 rounded-md bg-gradient-to-br from-violet-400 to-blue-400" />
+          <span className="truncate font-medium text-foreground">{event.title}</span>
+        </div>
+      ),
+    },
+    {
+      key: 'creator',
+      header: 'Créateur',
+      render: (event) => <span className="text-muted-foreground">{event.creator || '—'}</span>,
+    },
+    {
+      key: 'status',
+      header: 'Status',
+      render: (event) => {
+        const status = STATUS_STYLES[event.status as string];
+        if (!status) return null;
+        return (
+          <span
+            className={`inline-flex rounded-full px-2.5 py-1 text-xs font-medium ${status.className}`}
+          >
+            {status.label}
+          </span>
+        );
+      },
+    },
+    {
+      key: 'date',
+      header: 'Date de publication',
+      render: (event) =>
+        event.status === 'draft' ? (
+          <span className="text-muted-foreground">-</span>
+        ) : (
+          <span className="text-muted-foreground">{format(event.start, 'dd/MM/yyyy')}</span>
+        ),
+    },
+    {
+      key: 'networks',
+      header: 'Réseaux',
+      render: (event) => (
+        <div className="flex items-center gap-1.5">
+          {(event.networks as string[] | undefined)?.map((net) => (
+            <span key={net}>{NETWORK_ICONS[net]}</span>
+          ))}
+        </div>
+      ),
+    },
+  ],
+  renderActions: (event) => (
+    <div className="flex items-center justify-end gap-1">
+      <button
+        type="button"
+        onClick={() => console.log('Aperçu', event.id)}
+        className="inline-flex items-center gap-1.5 rounded-lg border border-border/60 bg-white px-3 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-muted/40"
+      >
+        <Eye className="h-3.5 w-3.5" />
+        Aperçu
+      </button>
+      <button
+        type="button"
+        onClick={() => console.log('More', event.id)}
+        className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted/40"
+      >
+        <MoreHorizontal className="h-4 w-4" />
+      </button>
+    </div>
+  ),
+};
+
 // Translations
 const translations = {
   en: {
@@ -112,8 +211,11 @@ const translations = {
     month: 'Month',
     week: 'Week',
     day: 'Day',
-    agenda: 'Agenda',
+    list: 'List',
     resource: 'Resource',
+    sortBy: 'Sort by',
+    mostRecent: 'Most recent',
+    oldest: 'Oldest',
     createEvent: 'Create Event',
     editEvent: 'Edit Event',
     delete: 'Delete',
@@ -143,8 +245,11 @@ const translations = {
     month: 'Mois',
     week: 'Semaine',
     day: 'Jour',
-    agenda: 'Agenda',
+    list: 'Liste',
     resource: 'Ressource',
+    sortBy: 'Trier par',
+    mostRecent: 'Plus récent',
+    oldest: 'Plus ancien',
     createEvent: 'Créer un évènement',
     editEvent: "Modifier l'évènement",
     delete: 'Supprimer',
@@ -262,6 +367,7 @@ export default function Home() {
         onCalendarToggle={handleCalendarToggle}
         resources={demoResources}
         eventTypes={demoEventTypes}
+        listViewConfig={publicationsListConfig}
         isDarkMode={isDarkMode}
         onThemeToggle={() => setIsDarkMode(!isDarkMode)}
         timezone={timezone}

@@ -14,13 +14,13 @@ import { Sidebar } from './components/Sidebar';
 import { MonthView } from './views/MonthView';
 import { WeekView } from './views/WeekView';
 import { DayView } from './views/DayView';
-import { AgendaView } from './views/AgendaView';
+import { ListView } from './views/ListView';
 import { ResourceView } from './views/ResourceView';
 import {
   MonthViewSkeleton,
   WeekViewSkeleton,
   DayViewSkeleton,
-  AgendaViewSkeleton,
+  ListViewSkeleton,
 } from './components/Skeleton';
 import { EventContextMenu, useEventContextMenu } from './components/ContextMenu';
 import { CalendarProps, CalendarEvent } from './types';
@@ -46,6 +46,9 @@ export type {
   SidebarConfig,
   CalendarFilterItem,
   CalendarFilterSection,
+  ListColumn,
+  ListSortOption,
+  ListViewConfig,
 } from './types';
 
 // Re-export utilities
@@ -66,6 +69,7 @@ export const Scheduler: React.FC<CalendarProps> = ({
   readOnly,
   calendars,
   resources,
+  listViewConfig,
   onCalendarToggle,
   isLoading,
   isDarkMode,
@@ -221,7 +225,7 @@ export const Scheduler: React.FC<CalendarProps> = ({
     month: 'Month',
     week: 'Week',
     day: 'Day',
-    agenda: 'Agenda',
+    list: 'List',
     resource: 'Resource',
     createEvent: 'Create Event',
     editEvent: 'Edit Event',
@@ -247,6 +251,10 @@ export const Scheduler: React.FC<CalendarProps> = ({
     moreOptions: 'More ideas',
     guestCount: 'guest',
     guestsCount: 'guests',
+    sortBy: 'Sort by',
+    mostRecent: 'Most recent',
+    oldest: 'Oldest',
+    noEvents: 'No events',
     ...translations,
   };
 
@@ -369,7 +377,7 @@ export const Scheduler: React.FC<CalendarProps> = ({
               calendars={calendars}
               onCalendarToggle={onCalendarToggle}
               translations={t}
-              showMiniCalendar={showMiniCalendar}
+              showMiniCalendar={showMiniCalendar && view !== 'list'}
               showCalendarFilters={showCalendarFilters}
               showTimezoneSelector={showTimezoneSelector}
               isSheetMode={false}
@@ -410,7 +418,7 @@ export const Scheduler: React.FC<CalendarProps> = ({
                 calendars={calendars}
                 onCalendarToggle={onCalendarToggle}
                 translations={t}
-                showMiniCalendar={showMiniCalendar}
+                showMiniCalendar={showMiniCalendar && view !== 'list'}
                 showCalendarFilters={showCalendarFilters}
                 showTimezoneSelector={showTimezoneSelector}
                 isSheetMode
@@ -447,17 +455,17 @@ export const Scheduler: React.FC<CalendarProps> = ({
           <div className="relative flex flex-1 flex-col overflow-hidden">
             {isLoading ? (
               <div className="flex-1 overflow-auto p-0 md:p-4">
-                <div className={cn('h-full', view !== 'agenda' && 'min-w-[max(100%,800px)]')}>
+                <div className={cn('h-full', view !== 'list' && 'min-w-[max(100%,800px)]')}>
                   {view === 'month' && <MonthViewSkeleton />}
                   {view === 'week' && <WeekViewSkeleton />}
                   {view === 'day' && <DayViewSkeleton />}
-                  {view === 'agenda' && <AgendaViewSkeleton />}
+                  {view === 'list' && <ListViewSkeleton />}
                   {view === 'resource' && <WeekViewSkeleton />}
                 </div>
               </div>
             ) : (
               <div ref={swipeRef} className="flex-1 touch-pan-y overflow-auto p-0 md:p-4">
-                <div className={cn('h-full', view !== 'agenda' && 'min-w-[max(100%,800px)]')}>
+                <div className={cn('h-full', view !== 'list' && 'min-w-[max(100%,800px)]')}>
                   <AnimatePresence mode="wait" initial={false}>
                     <motion.div
                       key={`${view}-${currentDate.toISOString()}-${timezone || 'local'}`}
@@ -517,21 +525,20 @@ export const Scheduler: React.FC<CalendarProps> = ({
                           translations={{ today: t.today }}
                         />
                       )}
-                      {view === 'agenda' && (
-                        <AgendaView
-                          currentDate={currentDate}
+                      {view === 'list' && (
+                        <ListView
                           events={filteredEvents}
                           onEventClick={handleEventClickInternal}
                           locale={locale}
                           readonly={readOnly}
+                          config={listViewConfig}
                           translations={{
-                            today: t.today,
-                            tomorrow: t.tomorrow,
-                            allDay: t.allDay,
-                            eventCount: t.eventCount,
-                            eventsCount: t.eventsCount,
-                            guestCount: t.guestCount,
-                            guestsCount: t.guestsCount,
+                            sortBy: t.sortBy,
+                            mostRecent: t.mostRecent,
+                            oldest: t.oldest,
+                            noEvents: t.noEvents,
+                            title: t.title,
+                            date: t.dateAndTime,
                           }}
                         />
                       )}

@@ -10,7 +10,7 @@ import {
   CalendarDays,
   CalendarRange,
   Calendar,
-  ListTodo,
+  List,
   CalendarCheck,
   SlidersHorizontal,
 } from 'lucide-react';
@@ -82,8 +82,8 @@ export const CalendarHeader: React.FC<CalendarHeaderProps> = ({
       icon: Calendar,
     },
     {
-      key: 'agenda',
-      icon: ListTodo,
+      key: 'list',
+      icon: List,
     },
   ] as const;
   const showIdeasCta = Boolean(showMobileSidebarCta && onMenuClick && !isWide);
