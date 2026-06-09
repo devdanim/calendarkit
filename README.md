@@ -88,7 +88,7 @@ function MyCalendar() {
 | `readOnly` | `boolean` | Disable editing |
 | `isLoading` | `boolean` | Show loading skeletons |
 | `hideViewSwitcher` | `boolean` | Hide view switcher |
-| `blurContent` | `boolean` | Blur the content area (grid + events) without blurring header/sidebar — paywall teaser. No effect on `list` view. |
+| `blurContent` | `boolean` | Blur the content area (grid + events, or the list) without blurring header/sidebar — paywall teaser. Applies to all views. |
 | `listViewConfig` | `ListViewConfig` | Columns / sorting / pagination for the `list` view |
 | `renderEventForm` | `(props) => ReactNode` | Custom event form |
 | `hideLanguageSelector` | `boolean` | Hide language selector |

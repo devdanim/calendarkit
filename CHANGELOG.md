@@ -11,9 +11,9 @@
 
 ### Paywall content blur
 - New `blurContent?: boolean` prop on `Scheduler` / `CalendarProps`
-- Blurs only the view content area (grid + events) with `blur(5px)`, plus
-  `pointer-events: none` / `user-select: none`; header and sidebar stay sharp
-- No effect on the `list` view
+- Blurs only the view content area (grid + events, or the list) with `blur(5px)`,
+  plus `pointer-events: none` / `user-select: none`; header and sidebar stay sharp
+- Applies to all views, including `list`
 
 ## Features Added
 

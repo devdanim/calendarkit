@@ -2313,8 +2313,8 @@ var Scheduler = ({
         "div",
         {
           className: "h-full",
-          "aria-hidden": blurContent && view !== "list" ? true : void 0,
-          style: blurContent && view !== "list" ? {
+          "aria-hidden": blurContent ? true : void 0,
+          style: blurContent ? {
             filter: "blur(5px)",
             pointerEvents: "none",
             userSelect: "none"

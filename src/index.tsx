@@ -469,9 +469,9 @@ export const Scheduler: React.FC<CalendarProps> = ({
                 <div className={cn('h-full', view !== 'list' && 'min-w-[max(100%,800px)]')}>
                   <div
                     className="h-full"
-                    aria-hidden={blurContent && view !== 'list' ? true : undefined}
+                    aria-hidden={blurContent ? true : undefined}
                     style={
-                      blurContent && view !== 'list'
+                      blurContent
                         ? {
                             filter: 'blur(5px)',
                             pointerEvents: 'none',
