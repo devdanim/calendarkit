@@ -39,11 +39,12 @@ export const MiniCalendar: React.FC<MiniCalendarProps> = ({
     setViewDate(currentDate);
   }, [currentDate]);
 
-  const days = React.useMemo(() => getMonthGrid(viewDate), [viewDate]);
+  // Week starts on Monday to stay aligned with the main calendar (WeekView / MonthView)
+  const days = React.useMemo(() => getMonthGrid(viewDate, 1), [viewDate]);
 
-  // Generate weekday headers based on locale
+  // Generate weekday headers based on locale, starting on Monday like the grid
   const weekDays = React.useMemo(() => {
-    const start = startOfWeek(new Date(), { locale });
+    const start = startOfWeek(new Date(), { weekStartsOn: 1, locale });
     return Array.from(
       {
         length: 7,

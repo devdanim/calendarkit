@@ -268,9 +268,9 @@ var MiniCalendar = ({
   React12__namespace.default.useEffect(() => {
     setViewDate(currentDate);
   }, [currentDate]);
-  const days = React12__namespace.default.useMemo(() => getMonthGrid(viewDate), [viewDate]);
+  const days = React12__namespace.default.useMemo(() => getMonthGrid(viewDate, 1), [viewDate]);
   const weekDays = React12__namespace.default.useMemo(() => {
-    const start = dateFns.startOfWeek(/* @__PURE__ */ new Date(), { locale });
+    const start = dateFns.startOfWeek(/* @__PURE__ */ new Date(), { weekStartsOn: 1, locale });
     return Array.from(
       {
         length: 7
@@ -700,7 +700,7 @@ var MonthView = ({
   readonly,
   translations
 }) => {
-  const days = React12.useMemo(() => getMonthGrid(currentDate), [currentDate]);
+  const days = React12.useMemo(() => getMonthGrid(currentDate, 1), [currentDate]);
   const weekDays = React12.useMemo(() => {
     const start = dateFns.startOfWeek(currentDate, { weekStartsOn: 1 });
     const end = dateFns.endOfWeek(currentDate, { weekStartsOn: 1 });

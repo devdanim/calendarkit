@@ -70,7 +70,8 @@ export const MonthView: React.FC<MonthViewProps> = ({
   readonly,
   translations,
 }) => {
-  const days = useMemo(() => getMonthGrid(currentDate), [currentDate]);
+  // Week starts on Monday to stay aligned with the weekday headers below
+  const days = useMemo(() => getMonthGrid(currentDate, 1), [currentDate]);
 
   // Dynamic week days generation
   const weekDays = useMemo(() => {
