@@ -11,6 +11,12 @@ interface DroppableCellProps {
   className?: string;
   style?: React.CSSProperties;
   onClick?: () => void;
+  /**
+   * Extra `data-*` attributes forwarded to the cell element. Lets a host app
+   * anchor end-to-end tests on the cell without coupling them to internal
+   * class names or to the cell's position in the grid.
+   */
+  dataAttributes?: Record<string, string>;
 }
 
 export const DroppableCell: React.FC<DroppableCellProps> = ({
@@ -21,6 +27,7 @@ export const DroppableCell: React.FC<DroppableCellProps> = ({
   className,
   style,
   onClick,
+  dataAttributes,
 }) => {
   const isPast = isPastDate(date);
 
@@ -52,6 +59,7 @@ export const DroppableCell: React.FC<DroppableCellProps> = ({
       )}
       style={style}
       onClick={isPast ? undefined : onClick}
+      {...dataAttributes}
     >
       {children}
     </div>

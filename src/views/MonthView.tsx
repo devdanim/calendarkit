@@ -139,9 +139,19 @@ export const MonthView: React.FC<MonthViewProps> = ({
                   !isCurrentMonth && 'bg-muted/5 text-muted-foreground/60'
                 )}
                 onClick={() => onDateClick?.(day)}
+                dataAttributes={{
+                  'data-testid': 'calendar-month-cell',
+                  'data-date': dayKey,
+                  // Cells spilling over from the neighbouring months are part of
+                  // the grid but not of `currentDate`'s month. Exposing it lets a
+                  // test assert that behaviour directly instead of recomputing
+                  // the grid geometry on its side.
+                  'data-outside-month': String(!isCurrentMonth),
+                }}
               >
                 <div className="flex items-start justify-between">
                   <div
+                    data-testid="calendar-month-cell-day"
                     className={cn(
                       'flex h-7 w-7 items-center justify-center rounded-full text-sm font-semibold transition-all duration-200',
                       isToday(day) && 'bg-primary text-white shadow-md shadow-primary/30'
@@ -150,7 +160,10 @@ export const MonthView: React.FC<MonthViewProps> = ({
                     {format(day, 'd', { locale })}
                   </div>
                   {dayEvents.length > 0 && (
-                    <div className="rounded-full bg-muted/50 px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground/60">
+                    <div
+                      data-testid="calendar-month-cell-count"
+                      className="rounded-full bg-muted/50 px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground/60"
+                    >
                       {dayEvents.length}
                     </div>
                   )}

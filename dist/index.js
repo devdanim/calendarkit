@@ -637,7 +637,8 @@ var DroppableCell = ({
   children,
   className,
   style,
-  onClick
+  onClick,
+  dataAttributes
 }) => {
   const isPast = isPastDate(date);
   const { isOver, setNodeRef } = core.useDroppable({
@@ -657,7 +658,8 @@ var DroppableCell = ({
         isPast && "pointer-events-auto cursor-not-allowed !bg-gray-100 text-muted-foreground/80 dark:!bg-gray-700/90 [&_*]:pointer-events-none"
       ),
       style,
-      onClick: isPast ? void 0 : onClick
+      onClick: isPast ? void 0 : onClick,
+      ...dataAttributes
     },
     children
   );
@@ -747,18 +749,35 @@ var MonthView = ({
           "group relative flex h-[130px] flex-col gap-1.5 overflow-hidden border-b-[0.5px] border-r-[0.5px] border-border/30 p-2 transition-all duration-200 last:border-r-0",
           !isCurrentMonth && "bg-muted/5 text-muted-foreground/60"
         ),
-        onClick: () => onDateClick?.(day)
+        onClick: () => onDateClick?.(day),
+        dataAttributes: {
+          "data-testid": "calendar-month-cell",
+          "data-date": dayKey,
+          // Cells spilling over from the neighbouring months are part of
+          // the grid but not of `currentDate`'s month. Exposing it lets a
+          // test assert that behaviour directly instead of recomputing
+          // the grid geometry on its side.
+          "data-outside-month": String(!isCurrentMonth)
+        }
       },
       /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "flex items-start justify-between" }, /* @__PURE__ */ React12__namespace.default.createElement(
         "div",
         {
+          "data-testid": "calendar-month-cell-day",
           className: cn(
             "flex h-7 w-7 items-center justify-center rounded-full text-sm font-semibold transition-all duration-200",
             dateFns.isToday(day) && "bg-primary text-white shadow-md shadow-primary/30"
           )
         },
         dateFns.format(day, "d", { locale })
-      ), dayEvents.length > 0 && /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "rounded-full bg-muted/50 px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground/60" }, dayEvents.length)),
+      ), dayEvents.length > 0 && /* @__PURE__ */ React12__namespace.default.createElement(
+        "div",
+        {
+          "data-testid": "calendar-month-cell-count",
+          className: "rounded-full bg-muted/50 px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground/60"
+        },
+        dayEvents.length
+      )),
       /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "scrollbar-hide flex flex-1 flex-col gap-1 overflow-x-auto overflow-y-auto" }, dayEvents.slice(0, 4).map((event) => /* @__PURE__ */ React12__namespace.default.createElement(
         EventItem,
         {
