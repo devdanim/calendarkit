@@ -108,6 +108,7 @@ var CalendarHeader = ({
 }) => {
   const headerRef = React12.useRef(null);
   const isWide = useIsWideHeader(headerRef);
+  const isDateNavigable = view !== "list";
   const viewConfig = [
     {
       key: "month",
@@ -142,7 +143,7 @@ var CalendarHeader = ({
         onClick: onMenuClick
       },
       /* @__PURE__ */ React12__namespace.default.createElement(lucideReact.Menu, { className: "h-5 w-5" })
-    ), /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "ml-2 md:ml-4" }, /* @__PURE__ */ React12__namespace.default.createElement("h2", { className: "whitespace-nowrap text-lg font-semibold capitalize tracking-tight text-foreground md:text-xl" }, dateFns.format(currentDate, "MMMM yyyy", { locale }))), /* @__PURE__ */ React12__namespace.default.createElement(
+    ), /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "ml-2 md:ml-4" }, /* @__PURE__ */ React12__namespace.default.createElement("h2", { className: "whitespace-nowrap text-lg font-semibold capitalize tracking-tight text-foreground md:text-xl" }, isDateNavigable ? dateFns.format(currentDate, "MMMM yyyy", { locale }) : translations.list)), isDateNavigable && /* @__PURE__ */ React12__namespace.default.createElement(React12__namespace.default.Fragment, null, /* @__PURE__ */ React12__namespace.default.createElement(
       Button,
       {
         variant: "outline",
@@ -174,7 +175,7 @@ var CalendarHeader = ({
         className: "h-8 w-8 rounded-lg transition-all duration-200 hover:bg-background/80"
       },
       /* @__PURE__ */ React12__namespace.default.createElement(lucideReact.ChevronRight, { className: "h-4 w-4 text-muted-foreground" })
-    ))), showIdeasCta && /* @__PURE__ */ React12__namespace.default.createElement(
+    )))), showIdeasCta && /* @__PURE__ */ React12__namespace.default.createElement(
       Button,
       {
         variant: "outline",
@@ -2105,7 +2106,7 @@ var Scheduler = ({
   const modifiers$1 = [snapToGrid, modifiers.restrictToWindowEdges];
   const dndSensors = readOnly ? [] : sensors;
   const id = React12.useId();
-  const swipeRef = useViewSwipe(handlePrev, handleNext, true);
+  const swipeRef = useViewSwipe(handlePrev, handleNext, view !== "list");
   const t = {
     today: "Today",
     tomorrow: "Tomorrow",

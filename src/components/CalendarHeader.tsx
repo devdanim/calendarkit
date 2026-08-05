@@ -67,6 +67,10 @@ export const CalendarHeader: React.FC<CalendarHeaderProps> = ({
 }) => {
   const headerRef = useRef<HTMLDivElement>(null);
   const isWide = useIsWideHeader(headerRef);
+  // `handlePrev`/`handleNext` have no branch for the List view: it shows every
+  // event regardless of `currentDate`. Same reasoning as the mini calendar,
+  // which the Scheduler already hides for that view.
+  const isDateNavigable = view !== 'list';
 
   const viewConfig = [
     {
@@ -108,47 +112,56 @@ export const CalendarHeader: React.FC<CalendarHeaderProps> = ({
             </Button>
           )}
 
-          {/* Current Date Display */}
+          {/* Current Date Display - the List view spans every event, so labelling
+              it with a single month would describe a period it does not show. */}
           <div className="ml-2 md:ml-4">
             <h2 className="whitespace-nowrap text-lg font-semibold capitalize tracking-tight text-foreground md:text-xl">
-              {format(currentDate, 'MMMM yyyy', { locale })}
+              {isDateNavigable
+                ? format(currentDate, 'MMMM yyyy', { locale })
+                : translations.list}
             </h2>
           </div>
 
-          {/* Today Button - icon only in reduced view, label when wide */}
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={onToday}
-            title={translations.today}
-            className={cn(
-              'h-9 w-9 shrink-0 rounded-xl border-[0.5px] border-border/60 bg-[#EEEFF5] text-sm font-medium transition-all duration-200 hover:bg-[#E3E4EC]',
-              isWide && 'w-auto gap-2 px-4 pl-3'
-            )}
-          >
-            <CalendarCheck className="h-4 w-4" />
-            {isWide && <span>{translations.today}</span>}
-          </Button>
+          {/* Today Button and Navigation Arrows - hidden in the List view, where
+              they would render as controls that move nothing. */}
+          {isDateNavigable && (
+            <>
+              {/* Today Button - icon only in reduced view, label when wide */}
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={onToday}
+                title={translations.today}
+                className={cn(
+                  'h-9 w-9 shrink-0 rounded-xl border-[0.5px] border-border/60 bg-[#EEEFF5] text-sm font-medium transition-all duration-200 hover:bg-[#E3E4EC]',
+                  isWide && 'w-auto gap-2 px-4 pl-3'
+                )}
+              >
+                <CalendarCheck className="h-4 w-4" />
+                {isWide && <span>{translations.today}</span>}
+              </Button>
 
-          {/* Navigation Arrows */}
-          <div className="flex items-center rounded-xl bg-muted/40 p-0.5">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={onPrev}
-              className="h-8 w-8 rounded-lg transition-all duration-200 hover:bg-background/80"
-            >
-              <ChevronLeft className="h-4 w-4 text-muted-foreground" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={onNext}
-              className="h-8 w-8 rounded-lg transition-all duration-200 hover:bg-background/80"
-            >
-              <ChevronRight className="h-4 w-4 text-muted-foreground" />
-            </Button>
-          </div>
+              {/* Navigation Arrows */}
+              <div className="flex items-center rounded-xl bg-muted/40 p-0.5">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={onPrev}
+                  className="h-8 w-8 rounded-lg transition-all duration-200 hover:bg-background/80"
+                >
+                  <ChevronLeft className="h-4 w-4 text-muted-foreground" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={onNext}
+                  className="h-8 w-8 rounded-lg transition-all duration-200 hover:bg-background/80"
+                >
+                  <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                </Button>
+              </div>
+            </>
+          )}
         </div>
 
         {showIdeasCta && (

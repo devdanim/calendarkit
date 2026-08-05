@@ -87,6 +87,7 @@ var CalendarHeader = ({
 }) => {
   const headerRef = useRef(null);
   const isWide = useIsWideHeader(headerRef);
+  const isDateNavigable = view !== "list";
   const viewConfig = [
     {
       key: "month",
@@ -121,7 +122,7 @@ var CalendarHeader = ({
         onClick: onMenuClick
       },
       /* @__PURE__ */ React12__default.createElement(Menu, { className: "h-5 w-5" })
-    ), /* @__PURE__ */ React12__default.createElement("div", { className: "ml-2 md:ml-4" }, /* @__PURE__ */ React12__default.createElement("h2", { className: "whitespace-nowrap text-lg font-semibold capitalize tracking-tight text-foreground md:text-xl" }, format(currentDate, "MMMM yyyy", { locale }))), /* @__PURE__ */ React12__default.createElement(
+    ), /* @__PURE__ */ React12__default.createElement("div", { className: "ml-2 md:ml-4" }, /* @__PURE__ */ React12__default.createElement("h2", { className: "whitespace-nowrap text-lg font-semibold capitalize tracking-tight text-foreground md:text-xl" }, isDateNavigable ? format(currentDate, "MMMM yyyy", { locale }) : translations.list)), isDateNavigable && /* @__PURE__ */ React12__default.createElement(React12__default.Fragment, null, /* @__PURE__ */ React12__default.createElement(
       Button,
       {
         variant: "outline",
@@ -153,7 +154,7 @@ var CalendarHeader = ({
         className: "h-8 w-8 rounded-lg transition-all duration-200 hover:bg-background/80"
       },
       /* @__PURE__ */ React12__default.createElement(ChevronRight, { className: "h-4 w-4 text-muted-foreground" })
-    ))), showIdeasCta && /* @__PURE__ */ React12__default.createElement(
+    )))), showIdeasCta && /* @__PURE__ */ React12__default.createElement(
       Button,
       {
         variant: "outline",
@@ -2084,7 +2085,7 @@ var Scheduler = ({
   const modifiers = [snapToGrid, restrictToWindowEdges];
   const dndSensors = readOnly ? [] : sensors;
   const id = useId();
-  const swipeRef = useViewSwipe(handlePrev, handleNext, true);
+  const swipeRef = useViewSwipe(handlePrev, handleNext, view !== "list");
   const t = {
     today: "Today",
     tomorrow: "Tomorrow",

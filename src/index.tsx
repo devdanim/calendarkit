@@ -216,8 +216,9 @@ export const Scheduler: React.FC<CalendarProps> = ({
 
   const id = useId();
 
-  // Mobile swipe gesture support
-  const swipeRef = useViewSwipe<HTMLDivElement>(handlePrev, handleNext, true);
+  // Mobile swipe gesture support - disabled in the List view, whose content does
+  // not depend on `currentDate`, so a swipe there would feel like a dead gesture.
+  const swipeRef = useViewSwipe<HTMLDivElement>(handlePrev, handleNext, view !== 'list');
 
   // Default Translations
   const t = {
