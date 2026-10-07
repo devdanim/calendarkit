@@ -6,6 +6,10 @@ import {
   PointerSensor,
   Modifier,
   DragOverlay,
+  CollisionDetection,
+  DragOverEvent,
+  pointerWithin,
+  rectIntersection,
 } from '@dnd-kit/core';
 import { createSnapModifier, restrictToWindowEdges } from '@dnd-kit/modifiers';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -88,6 +92,7 @@ export const Scheduler: React.FC<CalendarProps> = ({
   newEventButton,
 }) => {
   const [activeDragEvent, setActiveDragEvent] = useState<CalendarEvent | null>(null);
+  const [dragOverDate, setDragOverDate] = useState<Date | null>(null);
   const sheetTouchStartYRef = useRef<number | null>(null);
 
   // Context menu state
@@ -211,6 +216,16 @@ export const Scheduler: React.FC<CalendarProps> = ({
   const snapToGrid = createSnapModifier(gridSize);
   const modifiers: Modifier[] = [snapToGrid, restrictToWindowEdges];
 
+  // In the time grids, the target slot is the one under the pointer, wherever the
+  // card was grabbed. Comparing the card's rectangle to the 15-minute slots would
+  // pick the slot under its top edge. Month and Resource views keep that default.
+  const collisionDetection: CollisionDetection = (args) => {
+    if ((view !== 'week' && view !== 'day') || !args.pointerCoordinates) {
+      return rectIntersection(args);
+    }
+    return pointerWithin(args);
+  };
+
   // Disable DnD if readOnly
   const dndSensors = readOnly ? [] : sensors;
 
@@ -265,11 +280,17 @@ export const Scheduler: React.FC<CalendarProps> = ({
     const draggedEvent = expandedEvents.find((e) => e.id === String(active.id));
     if (draggedEvent) {
       setActiveDragEvent(draggedEvent);
+      setDragOverDate(null);
     }
+  };
+
+  const handleDragOver = (event: DragOverEvent) => {
+    setDragOverDate((event.over?.data.current?.date as Date | undefined) ?? null);
   };
 
   const onDragEndWrapper = (event: Parameters<typeof handleDragEnd>[0]) => {
     setActiveDragEvent(null);
+    setDragOverDate(null);
     handleDragEnd(event);
   };
 
@@ -355,7 +376,9 @@ export const Scheduler: React.FC<CalendarProps> = ({
       id={id}
       sensors={dndSensors}
       onDragStart={handleDragStart}
+      onDragOver={handleDragOver}
       onDragEnd={onDragEndWrapper}
+      collisionDetection={collisionDetection}
       modifiers={modifiers}
     >
       <div
@@ -608,9 +631,15 @@ export const Scheduler: React.FC<CalendarProps> = ({
                 const dragHeight = getDragHeight();
                 const isShortEvent = dragHeight ? dragHeight <= 40 : false;
                 const eventTimeFormat = locale?.code === 'fr' ? 'H:mm' : 'h:mm a';
-                const zonedStart = timezone
-                  ? toZonedTime(activeDragEvent.start, timezone)
-                  : activeDragEvent.start;
+                // Slot dates are already in the display timezone: show the time the
+                // event will get once dropped, or its own start outside any slot.
+                const isTimeGrid = view === 'week' || view === 'day';
+                const zonedStart =
+                  isTimeGrid && dragOverDate
+                    ? dragOverDate
+                    : timezone
+                      ? toZonedTime(activeDragEvent.start, timezone)
+                      : activeDragEvent.start;
                 const showDescription =
                   activeDragEvent.description && !isShortEvent && dragHeight && dragHeight > 50;
 

@@ -1,6 +1,6 @@
 import * as React12 from 'react';
 import React12__default, { useState, useRef, useEffect, useCallback, useId, useMemo } from 'react';
-import { useDraggable, useSensors, useSensor, PointerSensor, DndContext, DragOverlay, useDroppable } from '@dnd-kit/core';
+import { useDraggable, useSensors, useSensor, PointerSensor, DndContext, DragOverlay, rectIntersection, pointerWithin, useDroppable } from '@dnd-kit/core';
 import { createSnapModifier, restrictToWindowEdges } from '@dnd-kit/modifiers';
 import { motion, AnimatePresence } from 'framer-motion';
 import { format, differenceInMinutes, startOfWeek, endOfWeek, eachDayOfInterval, isSameMonth, isToday, isSameDay, differenceInMilliseconds, addDays, addWeeks, addMonths, subDays, subWeeks, subMonths, startOfMonth, endOfMonth, startOfDay } from 'date-fns';
@@ -2005,6 +2005,7 @@ var Scheduler = ({
   newEventButton
 }) => {
   const [activeDragEvent, setActiveDragEvent] = useState(null);
+  const [dragOverDate, setDragOverDate] = useState(null);
   const sheetTouchStartYRef = useRef(null);
   const { contextMenuEvent, contextMenuPosition, closeContextMenu } = useEventContextMenu();
   const {
@@ -2102,6 +2103,12 @@ var Scheduler = ({
   const gridSize = 15;
   const snapToGrid = createSnapModifier(gridSize);
   const modifiers = [snapToGrid, restrictToWindowEdges];
+  const collisionDetection = (args) => {
+    if (view !== "week" && view !== "day" || !args.pointerCoordinates) {
+      return rectIntersection(args);
+    }
+    return pointerWithin(args);
+  };
   const dndSensors = readOnly ? [] : sensors;
   const id = useId();
   const swipeRef = useViewSwipe(handlePrev, handleNext, view !== "list");
@@ -2148,10 +2155,15 @@ var Scheduler = ({
     const draggedEvent = expandedEvents.find((e) => e.id === String(active.id));
     if (draggedEvent) {
       setActiveDragEvent(draggedEvent);
+      setDragOverDate(null);
     }
+  };
+  const handleDragOver = (event) => {
+    setDragOverDate(event.over?.data.current?.date ?? null);
   };
   const onDragEndWrapper = (event) => {
     setActiveDragEvent(null);
+    setDragOverDate(null);
     handleDragEnd(event);
   };
   const handleSheetHandleTouchStart = (event) => {
@@ -2207,7 +2219,9 @@ var Scheduler = ({
       id,
       sensors: dndSensors,
       onDragStart: handleDragStart,
+      onDragOver: handleDragOver,
       onDragEnd: onDragEndWrapper,
+      collisionDetection,
       modifiers
     },
     /* @__PURE__ */ React12__default.createElement(
@@ -2444,7 +2458,8 @@ var Scheduler = ({
         const dragHeight = getDragHeight();
         const isShortEvent = dragHeight ? dragHeight <= 40 : false;
         const eventTimeFormat = locale?.code === "fr" ? "H:mm" : "h:mm a";
-        const zonedStart = timezone ? toZonedTime(activeDragEvent.start, timezone) : activeDragEvent.start;
+        const isTimeGrid = view === "week" || view === "day";
+        const zonedStart = isTimeGrid && dragOverDate ? dragOverDate : timezone ? toZonedTime(activeDragEvent.start, timezone) : activeDragEvent.start;
         const showDescription = activeDragEvent.description && !isShortEvent && dragHeight && dragHeight > 50;
         const isMonthView = view === "month";
         const padding = isShortEvent ? isMonthView ? "px-2.5 py-1.5" : "px-1" : view === "day" ? "px-3 py-2" : "p-2";
