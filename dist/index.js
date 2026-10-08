@@ -2026,6 +2026,7 @@ var Scheduler = ({
   newEventButton
 }) => {
   const [activeDragEvent, setActiveDragEvent] = React12.useState(null);
+  const [dragOverDate, setDragOverDate] = React12.useState(null);
   const sheetTouchStartYRef = React12.useRef(null);
   const { contextMenuEvent, contextMenuPosition, closeContextMenu } = useEventContextMenu();
   const {
@@ -2123,6 +2124,12 @@ var Scheduler = ({
   const gridSize = 15;
   const snapToGrid = modifiers.createSnapModifier(gridSize);
   const modifiers$1 = [snapToGrid, modifiers.restrictToWindowEdges];
+  const collisionDetection = (args) => {
+    if (view !== "week" && view !== "day" || !args.pointerCoordinates) {
+      return core.rectIntersection(args);
+    }
+    return core.pointerWithin(args);
+  };
   const dndSensors = readOnly ? [] : sensors;
   const id = React12.useId();
   const swipeRef = useViewSwipe(handlePrev, handleNext, view !== "list");
@@ -2169,10 +2176,15 @@ var Scheduler = ({
     const draggedEvent = expandedEvents.find((e) => e.id === String(active.id));
     if (draggedEvent) {
       setActiveDragEvent(draggedEvent);
+      setDragOverDate(null);
     }
+  };
+  const handleDragOver = (event) => {
+    setDragOverDate(event.over?.data.current?.date ?? null);
   };
   const onDragEndWrapper = (event) => {
     setActiveDragEvent(null);
+    setDragOverDate(null);
     handleDragEnd(event);
   };
   const handleSheetHandleTouchStart = (event) => {
@@ -2228,7 +2240,9 @@ var Scheduler = ({
       id,
       sensors: dndSensors,
       onDragStart: handleDragStart,
+      onDragOver: handleDragOver,
       onDragEnd: onDragEndWrapper,
+      collisionDetection,
       modifiers: modifiers$1
     },
     /* @__PURE__ */ React12__namespace.default.createElement(
@@ -2465,7 +2479,8 @@ var Scheduler = ({
         const dragHeight = getDragHeight();
         const isShortEvent = dragHeight ? dragHeight <= 40 : false;
         const eventTimeFormat = locale?.code === "fr" ? "H:mm" : "h:mm a";
-        const zonedStart = timezone ? dateFnsTz.toZonedTime(activeDragEvent.start, timezone) : activeDragEvent.start;
+        const isTimeGrid = view === "week" || view === "day";
+        const zonedStart = isTimeGrid && dragOverDate ? dragOverDate : timezone ? dateFnsTz.toZonedTime(activeDragEvent.start, timezone) : activeDragEvent.start;
         const showDescription = activeDragEvent.description && !isShortEvent && dragHeight && dragHeight > 50;
         const isMonthView = view === "month";
         const padding = isShortEvent ? isMonthView ? "px-2.5 py-1.5" : "px-1" : view === "day" ? "px-3 py-2" : "p-2";
