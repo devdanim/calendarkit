@@ -1269,6 +1269,7 @@ var ListView = ({
   const usePagination = showPagination && pageSize > 0;
   const pageCount = usePagination ? Math.max(1, Math.ceil(sortedEvents.length / pageSize)) : 1;
   const safePage = Math.min(page, pageCount - 1);
+  if (page !== safePage) setPage(safePage);
   const pagedEvents = usePagination ? sortedEvents.slice(safePage * pageSize, safePage * pageSize + pageSize) : sortedEvents;
   const goToPage = (next) => {
     setPage(Math.max(0, Math.min(next, pageCount - 1)));
@@ -1358,7 +1359,13 @@ var ListView = ({
       },
       config?.renderActions?.(event)
     )
-  ))))), usePagination && pageCount > 1 && /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "flex items-center justify-center gap-1" }, /* @__PURE__ */ React12__namespace.default.createElement(
+  ))))), usePagination && pageCount > 1 && config?.renderPagination?.({
+    pageIndex: safePage,
+    pageCount,
+    pageSize,
+    total: sortedEvents.length,
+    goToPage
+  }), usePagination && pageCount > 1 && !config?.renderPagination && /* @__PURE__ */ React12__namespace.default.createElement("div", { className: "flex items-center justify-center gap-1" }, /* @__PURE__ */ React12__namespace.default.createElement(
     PaginationButton,
     {
       onClick: () => goToPage(0),

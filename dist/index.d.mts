@@ -73,6 +73,19 @@ interface ListSortOption {
     /** Comparator used to sort events for this option */
     comparator: (a: CalendarEvent, b: CalendarEvent) => number;
 }
+/** Pagination state handed to `ListViewConfig.renderPagination`. */
+interface ListPagination {
+    /** Zero-based index of the page shown */
+    pageIndex: number;
+    /** Number of pages (always >= 2 when the renderer is called) */
+    pageCount: number;
+    /** Rows per page */
+    pageSize: number;
+    /** Number of events across all pages */
+    total: number;
+    /** Shows the page at this zero-based index (clamped) */
+    goToPage: (pageIndex: number) => void;
+}
 /** Configuration for the List view (render-props based). */
 interface ListViewConfig {
     /** Columns to render. When omitted, default Title + Date columns are used. */
@@ -89,6 +102,8 @@ interface ListViewConfig {
     showPagination?: boolean;
     /** Custom renderer for the row actions cell (e.g. preview button, "…" menu) */
     renderActions?: (event: CalendarEvent) => React.ReactNode;
+    /** Custom renderer for the pagination footer, replacing the default one */
+    renderPagination?: (pagination: ListPagination) => React.ReactNode;
 }
 interface ThemeColors {
     primary?: string;
@@ -263,4 +278,4 @@ declare function cn(...inputs: ClassValue[]): string;
 
 declare const Scheduler: React$1.FC<CalendarProps>;
 
-export { type CalendarEvent, type CalendarFilterItem, type CalendarFilterSection, type CalendarProps, type CalendarTheme, type CalendarTranslations, type EventAttachment, type EventReminder, type EventType, type ListColumn, type ListSortOption, type ListViewConfig, type Resource, Scheduler, type SidebarConfig, type ThemeColors, type ViewType, cn };
+export { type CalendarEvent, type CalendarFilterItem, type CalendarFilterSection, type CalendarProps, type CalendarTheme, type CalendarTranslations, type EventAttachment, type EventReminder, type EventType, type ListColumn, type ListPagination, type ListSortOption, type ListViewConfig, type Resource, Scheduler, type SidebarConfig, type ThemeColors, type ViewType, cn };

@@ -51,6 +51,7 @@ export type {
   CalendarFilterItem,
   CalendarFilterSection,
   ListColumn,
+  ListPagination,
   ListSortOption,
   ListViewConfig,
 } from './types';
