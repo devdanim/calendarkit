@@ -101,6 +101,9 @@ export const ListView: React.FC<ListViewProps> = ({
   const usePagination = showPagination && pageSize > 0;
   const pageCount = usePagination ? Math.max(1, Math.ceil(sortedEvents.length / pageSize)) : 1;
   const safePage = Math.min(page, pageCount - 1);
+  // Keep the stored page in range, so a list that shrinks then grows again
+  // stays on the page shown instead of jumping back to an older one.
+  if (page !== safePage) setPage(safePage);
   const pagedEvents = usePagination
     ? sortedEvents.slice(safePage * pageSize, safePage * pageSize + pageSize)
     : sortedEvents;
@@ -235,7 +238,14 @@ export const ListView: React.FC<ListViewProps> = ({
       </div>
 
       {/* Pagination */}
-      {usePagination && pageCount > 1 && (
+      {usePagination && pageCount > 1 && config?.renderPagination?.({
+        pageIndex: safePage,
+        pageCount,
+        pageSize,
+        total: sortedEvents.length,
+        goToPage,
+      })}
+      {usePagination && pageCount > 1 && !config?.renderPagination && (
         <div className="flex items-center justify-center gap-1">
           <PaginationButton
             onClick={() => goToPage(0)}
